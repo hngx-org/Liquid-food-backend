@@ -1,4 +1,4 @@
-package org.hngxfreelunch.LiquidApplicationApi.Entities;
+package org.hngxfreelunch.LiquidApplicationApi.data.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
