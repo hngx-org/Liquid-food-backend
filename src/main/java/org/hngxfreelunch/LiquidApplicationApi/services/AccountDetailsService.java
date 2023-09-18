@@ -1,6 +1,5 @@
-package org.hngxfreelunch.LiquidApplicationApi.Services;
+package org.hngxfreelunch.LiquidApplicationApi.services;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -1,6 +1,6 @@
-package org.hngxfreelunch.LiquidApplicationApi.Repositories;
+package org.hngxfreelunch.LiquidApplicationApi.repositories;
 
-import org.hngxfreelunch.LiquidApplicationApi.Entities.Organization;
+import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organization;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

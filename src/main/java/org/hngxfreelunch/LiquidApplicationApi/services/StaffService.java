@@ -1,4 +1,4 @@
-package org.hngxfreelunch.LiquidApplicationApi.Services;
+package org.hngxfreelunch.LiquidApplicationApi.services;
 
 import org.springframework.stereotype.Service;
 

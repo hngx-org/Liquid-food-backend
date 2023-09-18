@@ -1,6 +1,6 @@
-package org.hngxfreelunch.LiquidApplicationApi.Repositories;
+package org.hngxfreelunch.LiquidApplicationApi.repositories;
 
-import org.hngxfreelunch.LiquidApplicationApi.Entities.WithdrawalRequest;
+import org.hngxfreelunch.LiquidApplicationApi.data.entities.WithdrawalRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
