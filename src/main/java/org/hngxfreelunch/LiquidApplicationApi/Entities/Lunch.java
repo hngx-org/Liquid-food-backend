@@ -6,20 +6,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigInteger;
-import java.util.List;
+import java.time.Instant;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Organization {
+public class Lunch {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    @OneToMany
-    @JoinColumn(name = "staff_id", referencedColumnName = "id")
-    private List<Staff> staffList;
+    private Long senderId;
+    private Long receiverId;
+    private String message;
+    private Integer lunchCredits;
+    private Instant DateCreated;
 }

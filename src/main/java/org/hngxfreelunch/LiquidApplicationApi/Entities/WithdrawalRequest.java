@@ -6,20 +6,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigInteger;
-import java.util.List;
-
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Organization {
+public class WithdrawalRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    @OneToMany
+    @OneToOne
     @JoinColumn(name = "staff_id", referencedColumnName = "id")
-    private List<Staff> staffList;
+    private Staff staff;
+    private Integer lunchCredits;
 }
