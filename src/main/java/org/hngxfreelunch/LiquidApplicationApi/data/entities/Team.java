@@ -2,22 +2,20 @@ package org.hngxfreelunch.LiquidApplicationApi.data.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Entity
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AccountDetails {
+@Data
+@Entity
+public class Team {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String accountNumber;
-    private String bankName;
-    private String fullName;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Staff staff;
 
 }

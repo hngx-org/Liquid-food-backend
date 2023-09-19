@@ -1,8 +1,6 @@
-package org.hngxfreelunch.LiquidApplicationApi.services;
+package org.hngxfreelunch.LiquidApplicationApi.services.lunch;
 
-import org.springframework.stereotype.Service;
 
-@Service
 public interface LunchService {
     // TODO: SEND LUNCH TO STAFF ID
     // TODO: GET ALL LUNCHES RECEIVED BY STAFF ID

@@ -1,4 +1,4 @@
-package org.hngxfreelunch.LiquidApplicationApi.Entities;
+package org.hngxfreelunch.LiquidApplicationApi.data.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,11 +12,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class WithdrawalRequest {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne
-    @JoinColumn(name = "staff_id", referencedColumnName = "id")
+    @OneToOne()
     private Staff staff;
     private Integer lunchCredits;
+
 }

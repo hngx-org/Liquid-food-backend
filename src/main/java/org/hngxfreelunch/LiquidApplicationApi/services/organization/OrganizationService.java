@@ -1,8 +1,6 @@
-package org.hngxfreelunch.LiquidApplicationApi.services;
+package org.hngxfreelunch.LiquidApplicationApi.services.organization;
 
-import org.springframework.stereotype.Service;
 
-@Service
 public interface OrganizationService {
     // TODO: CREATE ORGANIZATION
     // TODO: ADD STAFF

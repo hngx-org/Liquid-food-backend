@@ -1,4 +1,4 @@
-package org.hngxfreelunch.LiquidApplicationApi.Entities;
+package org.hngxfreelunch.LiquidApplicationApi.data.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -14,12 +15,14 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Lunch {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Long senderId;
     private Long receiverId;
     private String message;
     private Integer lunchCredits;
-    private Instant DateCreated;
+    private LocalDate dateCreated;
+
 }

@@ -1,8 +1,5 @@
-package org.hngxfreelunch.LiquidApplicationApi.services;
+package org.hngxfreelunch.LiquidApplicationApi.services.accountDetails;
 
-import org.springframework.stereotype.Service;
-
-@Service
 public interface AccountDetailsService {
     // TODO: GET STAFF ACCOUNT DETAILS
     // TODO: SET STAFF ACCOUNT DETAILS

@@ -1,8 +1,6 @@
-package org.hngxfreelunch.LiquidApplicationApi.services;
+package org.hngxfreelunch.LiquidApplicationApi.services.staff;
 
-import org.springframework.stereotype.Service;
 
-@Service
 public interface StaffService {
     // TODO: ADD NEW STAFF TO TEAM
     // TODO: GET STAFF DETAILS
