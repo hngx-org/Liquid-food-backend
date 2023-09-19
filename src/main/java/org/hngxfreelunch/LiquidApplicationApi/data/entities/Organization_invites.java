@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@Entity
 @Getter
 @Setter
 @AllArgsConstructor
@@ -26,5 +27,9 @@ public class Organization_invites {
 
     private LocalDateTime TTL;
 
-    //organisation!
+    @ManyToOne
+    @JoinColumn(name = "org_id")
+    private Organization organization;
+
+
 }

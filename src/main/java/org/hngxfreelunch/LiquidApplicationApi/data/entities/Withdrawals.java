@@ -20,7 +20,7 @@ public class Withdrawals {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne()
+    @ManyToOne
     @JoinColumn(name = "userId")
     private Users user;
 

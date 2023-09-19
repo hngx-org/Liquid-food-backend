@@ -29,6 +29,9 @@ public class Organization {
     @OneToMany(mappedBy = "organization")
     private List<Users> users;
 
+    @OneToMany(mappedBy = "organization")
+    private List<Organization_invites> invites;
+
 
 
 }
