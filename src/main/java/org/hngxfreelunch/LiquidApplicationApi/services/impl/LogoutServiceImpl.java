@@ -25,9 +25,7 @@ public class LogoutServiceImpl implements LogoutHandler {
             JwToken jwtToken = jwtTokenRepository.findByAccessToken(accessToken)
                     .orElseThrow(() -> new RuntimeException(""));
             if(jwtToken != null){
-                jwtToken.setExpired(true);
-                jwtToken.setRevoked(true);
-                jwtTokenRepository.save(jwtToken);
+                jwtTokenRepository.delete(jwtToken);
             }
         }
     }

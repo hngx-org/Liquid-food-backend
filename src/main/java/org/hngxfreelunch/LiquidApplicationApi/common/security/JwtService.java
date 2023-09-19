@@ -8,7 +8,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.xml.bind.DatatypeConverter;
 import lombok.RequiredArgsConstructor;
 import org.hngxfreelunch.LiquidApplicationApi.common.utils.DateUtils;
-import org.hngxfreelunch.LiquidApplicationApi.domain.model.User;
+import org.hngxfreelunch.LiquidApplicationApi.domain.model.Staff;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -44,8 +44,8 @@ public class JwtService {
                 .compact();
     }
 
-    public void revokeTokens(User user){
-        List<JwToken> tokens = tokenRepository.findAllByUser(user);
+    public void revokeTokens(Staff staff){
+        List<JwToken> tokens = tokenRepository.findAllByUser(staff);
         if(!tokens.isEmpty()){
             tokens.forEach(t->{
                 t.setRevoked(true);

@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .authenticationProvider(authProvider)
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> {
-                    logout.logoutUrl("/logout");
+                    logout.logoutUrl("/auth/logout");
                     logout.addLogoutHandler(logoutService);
                     logout.logoutSuccessHandler((((request, response, authentication) -> SecurityContextHolder.clearContext())));
                 });

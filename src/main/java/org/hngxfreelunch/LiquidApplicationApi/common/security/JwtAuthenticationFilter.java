@@ -5,7 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.hngxfreelunch.LiquidApplicationApi.domain.model.User;
+import org.hngxfreelunch.LiquidApplicationApi.domain.model.Staff;
 import org.hngxfreelunch.LiquidApplicationApi.services.impl.CustomUserServiceImpl;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,13 +35,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         accessToken = authHeader.substring(7);
         username = jwtService.extractUsername(accessToken);
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
-            User user = userService.loadUserByUsername(username);
+            Staff staff = userService.loadUserByUsername(username);
             var isTokenValid = jwTokenRepository.findByAccessToken(accessToken)
                     .map(t-> !t.isExpired() && !t.isRevoked())
                     .orElse(false);
-            if(jwtService.isTokenValid(accessToken,user) && isTokenValid){
+            if(jwtService.isTokenValid(accessToken, staff) && isTokenValid){
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
-                        = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                        = new UsernamePasswordAuthenticationToken(staff, null, staff.getAuthorities());
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }

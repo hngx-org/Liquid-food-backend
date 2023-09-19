@@ -17,8 +17,8 @@ import java.util.Collections;
 @Getter
 @Setter
 @Entity
-@Table(name = "users")
-public class User implements UserDetails {
+@Table(name = "staff")
+public class Staff implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,7 +33,7 @@ public class User implements UserDetails {
     @JoinColumn(name = "org_id", referencedColumnName = "id")
     private Organization organization;
 
-    @OneToOne(mappedBy = "user", orphanRemoval = true)
+    @OneToOne(mappedBy = "staff", orphanRemoval = true)
     private JwToken jwToken;
 
     @Override

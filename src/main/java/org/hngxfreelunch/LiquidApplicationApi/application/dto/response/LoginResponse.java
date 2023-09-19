@@ -10,5 +10,5 @@ import lombok.Data;
 public class LoginResponse {
     private String accessToken;
     private String role;
-    private UserResponse user;
+    private StaffResponse staff;
 }

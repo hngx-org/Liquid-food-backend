@@ -19,5 +19,5 @@ public class Organization {
     private String name;
     private String email;
     @OneToMany(mappedBy = "organization", orphanRemoval = true)
-    private List<User> users;
+    private List<Staff> staff;
 }
