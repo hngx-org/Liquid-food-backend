@@ -22,12 +22,13 @@ public class Organization {
 
     private String name;
 
-    @OneToMany(mappedBy = "organization")
-    private List<Users> users;
-
     private Integer lunch_price;
 
     private String currency;
+
+    @OneToMany(mappedBy = "organization")
+    private List<Users> users;
+
 
 
 }

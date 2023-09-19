@@ -25,4 +25,6 @@ public class Organization_invites {
     private String token;
 
     private LocalDateTime TTL;
+
+    //organisation!
 }

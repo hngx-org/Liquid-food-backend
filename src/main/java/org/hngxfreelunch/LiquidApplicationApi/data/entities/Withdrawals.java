@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -22,6 +24,10 @@ public class Withdrawals {
     @JoinColumn(name = "userId")
     private Users user;
 
-    private Integer amount;
+    private String status;
+
+    private Long amount;
+
+    private LocalDateTime created_at;
 
 }

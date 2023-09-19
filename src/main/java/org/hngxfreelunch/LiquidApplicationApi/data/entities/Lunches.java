@@ -33,6 +33,8 @@ public class Lunches {
 
     private Integer quantity;
 
+    private Boolean redeemed;
+
     private LocalDate created_at;
 
 }
