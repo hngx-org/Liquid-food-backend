@@ -11,6 +11,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "liquid_withdrawal_request")
 public class WithdrawalRequest {
 
     @Id

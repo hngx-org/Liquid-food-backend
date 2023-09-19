@@ -14,6 +14,7 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "liquid_lunch")
 public class Lunch {
 
     @Id
