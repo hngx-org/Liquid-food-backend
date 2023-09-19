@@ -1,8 +1,6 @@
 package org.hngxfreelunch.LiquidApplicationApi.services.email;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.EmailRequest;
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.MailInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
