@@ -1,15 +1,11 @@
-package org.hngxfreelunch.LiquidApplicationApi.utils;
+package org.hngxfreelunch.LiquidApplicationApi.config;
 
 import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import com.cloudinary.utils.ObjectUtils;
-import org.springframework.web.reactive.function.client.WebClient;
 
-@Configuration
-public class BeanStore {
-
+public class CloudinaryConfig {
     @Value("${cloudinary_name}")
     private String cloudName;
     @Value("${cloudinary_api_key}")
@@ -28,8 +24,4 @@ public class BeanStore {
         );
     }
 
-    @Bean
-    public WebClient.Builder getWebClientBuilder() {
-        return WebClient.builder();
-    }
 }

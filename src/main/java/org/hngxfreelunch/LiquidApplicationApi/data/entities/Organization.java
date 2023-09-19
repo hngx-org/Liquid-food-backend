@@ -1,24 +1,23 @@
 package org.hngxfreelunch.LiquidApplicationApi.data.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
-@Entity
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "liquid_organization")
+@Builder
+@Getter
+@Setter
+@Entity
+@Table(name = "organization")
 public class Organization {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-
+    private String email;
+    @OneToMany(mappedBy = "organization", orphanRemoval = true)
+    private List<Staff> staff;
 }
