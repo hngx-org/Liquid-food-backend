@@ -7,22 +7,29 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
+@Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "organization_lunch_wallet")
-public class Organization_lunch_wallet {
+@Table(name = "organization_invites")
+public class organization_invites {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long balance;
+    private String email;
 
-    @OneToOne
+    private String token;
+
+    private LocalDateTime TTL;
+
+    @ManyToOne
     @JoinColumn(name = "org_id")
-    private Organization organization;
+    private organization organization;
 
 
 }

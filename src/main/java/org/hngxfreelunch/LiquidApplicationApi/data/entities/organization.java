@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "organization")
-public class Organization {
+public class organization {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,11 +27,13 @@ public class Organization {
     private String currency;
 
     @OneToMany(mappedBy = "organization")
-    private List<Users> users;
+    private List<users> users;
 
     @OneToMany(mappedBy = "organization")
-    private List<Organization_invites> invites;
+    private List<organization_invites> invites;
 
 
+    @OneToOne
+    private organization_lunch_wallet wallet;
 
 }

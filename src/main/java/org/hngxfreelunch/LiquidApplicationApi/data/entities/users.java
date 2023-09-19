@@ -1,10 +1,7 @@
 package org.hngxfreelunch.LiquidApplicationApi.data.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,14 +12,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "users")
-public class Users {
+public class users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "org_id")
-    private Organization organization;
+    private organization organization;
 
     private String profile_picture;
 
@@ -50,7 +47,12 @@ public class Users {
 
     private Boolean isAdmin;
 
-    private Long lunch_credit_balance;
+    private String lunch_credit_balance;
+
+
+
+    @OneToMany(mappedBy = "user")
+    private List<withdrawals> withdrawals;
 
 
 

@@ -1,6 +1,5 @@
 package org.hngxfreelunch.LiquidApplicationApi.data.entities;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,22 +13,21 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "organization_invites")
-public class Organization_invites {
+@Table(name = "withdrawals")
+public class withdrawals {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String email;
-
-    private String token;
-
-    private LocalDateTime TTL;
-
     @ManyToOne
-    @JoinColumn(name = "org_id")
-    private Organization organization;
+    @JoinColumn(name = "userId")
+    private users user;
 
+    private String status;
+
+    private Long amount;
+
+    private LocalDateTime created_at;
 
 }

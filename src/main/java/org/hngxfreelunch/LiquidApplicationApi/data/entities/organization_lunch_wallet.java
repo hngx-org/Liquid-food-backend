@@ -1,33 +1,29 @@
 package org.hngxfreelunch.LiquidApplicationApi.data.entities;
 
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "withdrawals")
-public class Withdrawals {
+@Table(name = "organization_lunch_wallet")
+public class organization_lunch_wallet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "userId")
-    private Users user;
+    private Long balance;
 
-    private String status;
+    @OneToOne
+    @JoinColumn(name = "org_id")
+    private organization organization;
 
-    private Long amount;
-
-    private LocalDateTime created_at;
 
 }

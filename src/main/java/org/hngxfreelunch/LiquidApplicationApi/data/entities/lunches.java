@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Table(name = "lunches")
 
-public class Lunches {
+public class lunches {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,11 +23,11 @@ public class Lunches {
 
     @OneToOne
     @JoinColumn(name = "senderId")
-    private Users sender;
+    private users sender;
 
     @OneToOne
     @JoinColumn(name = "receiverId")
-    private Users receiver;
+    private users receiver;
 
     private String note;
 
