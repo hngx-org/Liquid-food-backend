@@ -7,14 +7,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
-import java.time.LocalDate;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "liquid_lunch")
+@Table(name = "lunches")
 public class Lunch {
 
     @Id
@@ -22,8 +21,9 @@ public class Lunch {
     private Long id;
     private Long senderId;
     private Long receiverId;
-    private String message;
-    private Integer lunchCredits;
-    private LocalDate dateCreated;
+    private Integer quantity;
+    private boolean redeemed;
+    private Instant dateCreated;
+    private String note;
 
 }

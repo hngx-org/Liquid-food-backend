@@ -6,19 +6,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
+
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "liquid_withdrawal_request")
-public class WithdrawalRequest {
-
+@Table(name = "organization_invites")
+public class OrganizationInvite {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne()
-    private Staff staff;
-    private Integer lunchCredits;
-
+    private String email;
+    private String token;
+    private Instant TTL;
+    @ManyToOne
+    private Organization organization;
 }
