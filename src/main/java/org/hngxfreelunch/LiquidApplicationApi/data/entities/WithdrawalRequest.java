@@ -6,19 +6,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "liquid_organization")
-public class Organization {
+@Table(name = "liquid_withdrawal_request")
+public class WithdrawalRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+    @OneToOne()
+    private Staff staff;
+    private Integer lunchCredits;
 
 }
