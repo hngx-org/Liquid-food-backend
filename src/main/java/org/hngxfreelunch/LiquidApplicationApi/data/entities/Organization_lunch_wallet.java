@@ -1,33 +1,28 @@
 package org.hngxfreelunch.LiquidApplicationApi.data.entities;
 
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
-@Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "organization")
-public class Organization {
+@Table(name = "organization_lunch_wallet")
+public class Organization_lunch_wallet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private Long balance;
 
-    @OneToMany(mappedBy = "organization")
-    private List<Users> users;
-
-    private Integer lunch_price;
-
-    private String currency;
+    @OneToOne
+    @JoinColumn(name = "org_id")
+    private Organization organization;
 
 
 }

@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.Instant;
 import java.time.LocalDate;
 
 @Entity
@@ -14,16 +13,26 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "liquid_lunch")
-public class Lunch {
+@Table(name = "lunches")
+
+public class Lunches {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private Long senderId;
-    private Long receiverId;
-    private String message;
-    private Integer lunchCredits;
-    private LocalDate dateCreated;
+
+    @OneToOne
+    @JoinColumn(name = "senderId")
+    private Users sender;
+
+    @OneToOne
+    @JoinColumn(name = "receiverId")
+    private Users receiver;
+
+    private String note;
+
+    private Integer quantity;
+
+    private LocalDate created_at;
 
 }

@@ -6,28 +6,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "organization")
-public class Organization {
+@Table(name = "withdrawals")
+public class Withdrawals {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    @OneToOne()
+    @JoinColumn(name = "userId")
+    private Users user;
 
-    @OneToMany(mappedBy = "organization")
-    private List<Users> users;
-
-    private Integer lunch_price;
-
-    private String currency;
-
+    private Integer amount;
 
 }

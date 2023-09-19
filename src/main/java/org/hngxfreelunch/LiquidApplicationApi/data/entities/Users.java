@@ -7,33 +7,38 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "liquid_staff")
-public class Staff {
+@Table(name = "users")
+public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String firstname;
-    private String lastname;
-    private String stack;
-    private Integer lunchCredits;
+    private String name;
+//    private String stack;
+
+//    private Integer lunchCredits;
+      private Integer phonenumber;
 
     @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "org_id")
     private Organization organization;
 
     @OneToOne()
     private AccountDetails accountDetails;
 
     @OneToMany
-    private List<Lunch> lunches_sent;
+    private List<Lunches> lunches_sent;
 
     @OneToMany
-    private List<Lunch> lunches_received;
+    private List<Lunches> lunches_received;
+
+    private String email;
+
+    private String password_hash;
 
 }
