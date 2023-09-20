@@ -48,9 +48,7 @@ public class OrganizationServiceImplementation implements OrganizationService {
 
     @Override
     public ApiResponseDto sendOrganizationInviteToStaff(OrganizationInviteDto request) {
-        //TODO find the organization
         String token = RandomStringUtils.randomNumeric(5);
-
 
         LocalDateTime expirationTime = LocalDateTime.now().plusHours(24);
         int expirationTimeInHours = expirationTime.getHour();
@@ -69,7 +67,6 @@ public class OrganizationServiceImplementation implements OrganizationService {
         organizationInvites.setToken(token);
         organizationInvites.setEmail(request.getEmail());
         organizationInvites.setTTL(expirationTime);
-//        organizationInvites.setOrganization();
         organizationInvitesRepository.save(organizationInvites);
         return new ApiResponseDto("Success", HttpStatus.SC_OK);
     }
@@ -100,6 +97,5 @@ public class OrganizationServiceImplementation implements OrganizationService {
     public ApiResponseDto sendLunchCredit(OrganizationInviteDto request) {
         return null;
     }
-
 
 }
