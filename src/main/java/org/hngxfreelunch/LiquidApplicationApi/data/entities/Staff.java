@@ -2,7 +2,6 @@ package org.hngxfreelunch.LiquidApplicationApi.data.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hngxfreelunch.LiquidApplicationApi.data.enums.Role;
 import org.hngxfreelunch.LiquidApplicationApi.security.JwToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

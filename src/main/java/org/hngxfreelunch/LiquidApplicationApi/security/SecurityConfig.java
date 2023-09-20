@@ -1,4 +1,4 @@
-package org.hngxfreelunch.LiquidApplicationApi.config;
+package org.hngxfreelunch.LiquidApplicationApi.security;
 
 import lombok.RequiredArgsConstructor;
 import org.hngxfreelunch.LiquidApplicationApi.security.JwtAuthenticationFilter;

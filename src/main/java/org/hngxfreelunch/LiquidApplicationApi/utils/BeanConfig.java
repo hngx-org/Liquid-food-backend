@@ -1,4 +1,4 @@
-package org.hngxfreelunch.LiquidApplicationApi.config;
+package org.hngxfreelunch.LiquidApplicationApi.utils;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
