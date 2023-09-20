@@ -1,10 +1,7 @@
 package org.hngxfreelunch.LiquidApplicationApi.data.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -38,6 +35,6 @@ public class Organization {
     private OrganizationLunchWallet wallet;
 
     private String email;
-    @OneToMany(mappedBy = "organization", orphanRemoval = true)
-    private List<Staff> staff;
+//    @OneToMany(mappedBy = "organization", orphanRemoval = true)
+//    private List<Staff> staff;
 }
