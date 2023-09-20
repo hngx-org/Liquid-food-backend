@@ -10,7 +10,6 @@ import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organization;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.OrganizationInvites;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.OrganizationInvitesRepository;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.OrganizationRepository;
-import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
 import org.hngxfreelunch.LiquidApplicationApi.services.email.EmailService;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +30,7 @@ public class OrganizationServiceImplementation implements OrganizationService {
     public ApiResponseDto createOrganization(OrganizationRegistrationDto request) {
         boolean isExists = organizationRepository.existsByOrganizationName(request.getOrganizationName());
         if (isExists) {
-            return new ApiResponseDto("Organization name already exists", HttpStatus.SC_BAD_REQUEST);
+            return new ApiResponseDto(null,"Organization name already exists", HttpStatus.SC_BAD_REQUEST);
         }
         Organization newOrganization = Organization.builder()
                 .name(request.getOrganizationName())
@@ -40,7 +39,7 @@ public class OrganizationServiceImplementation implements OrganizationService {
                 .build();
         organizationRepository.save(newOrganization);
 
-        return new ApiResponseDto("Organization Created successfully", HttpStatus.SC_CREATED);
+        return new ApiResponseDto(newOrganization,"Organization Created successfully", HttpStatus.SC_CREATED);
 
     }
 
@@ -66,7 +65,7 @@ public class OrganizationServiceImplementation implements OrganizationService {
         organizationInvites.setEmail(request.getEmail());
         organizationInvites.setTTL(expirationTime);
         organizationInvitesRepository.save(organizationInvites);
-        return new ApiResponseDto("Success", HttpStatus.SC_OK);
+        return new ApiResponseDto(organizationInvites,"Success", HttpStatus.SC_OK);
     }
 
     @Override
@@ -85,10 +84,10 @@ public class OrganizationServiceImplementation implements OrganizationService {
                             "RSVP before " + expirationTime + " hours with this unique RSVP Token: " + token;
 
             emailService.sendEmail(organizationInvites.getEmail(), subject, htmlContent);
-            return new ApiResponseDto("Email sent successfully", HttpStatus.SC_OK);
+            return new ApiResponseDto(null,"Email sent successfully", HttpStatus.SC_OK);
         }
 
-        return new ApiResponseDto("Email successfully verified", HttpStatus.SC_OK);
+        return new ApiResponseDto(null,"Email successfully verified", HttpStatus.SC_OK);
     }
 
     @Override
