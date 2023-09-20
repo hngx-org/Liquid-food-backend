@@ -6,8 +6,8 @@ import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.WithdrawalRespo
 
 
 public interface WithdrawalService {
+    WithdrawalResponseDto processWithdrawalRequest(WithdrawalRequestDto withdrawalRequestDto, Long userId);
 
-    public WithdrawalResponseDto processWithdrawalRequest(WithdrawalRequestDto withdrawalRequestDto, Long userId);
 
     // TODO: CREATE NEW WITHDRAWAL REQUEST
 

@@ -9,8 +9,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ApiResponseDto {
+public class ApiResponseDto<T> {
 
     private String message;
-    private int statusCode;
+    private Integer statusCode;
+    private T data;
+
+    public ApiResponseDto(T data, String message, Integer statusCode){
+        this.data = data;
+        this.message = message;
+        this.statusCode = statusCode;
+    }
 }
