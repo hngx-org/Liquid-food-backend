@@ -5,7 +5,6 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
 @Entity
 @Getter
 @Setter
@@ -44,6 +43,10 @@ public class User {
     private String bank_code;
 
     private String bank_name;
+
+    private String bank_region;
+
+    private String currency_code;
 
     private Boolean isAdmin;
 
