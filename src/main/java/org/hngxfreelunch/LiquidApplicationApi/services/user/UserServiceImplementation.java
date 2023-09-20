@@ -1,4 +1,4 @@
-package org.hngxfreelunch.LiquidApplicationApi.services.staff;
+package org.hngxfreelunch.LiquidApplicationApi.services.user;
 
 import lombok.RequiredArgsConstructor;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;

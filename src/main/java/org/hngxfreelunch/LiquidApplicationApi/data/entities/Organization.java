@@ -37,5 +37,5 @@ public class Organization {
 
     private String email;
     @OneToMany(mappedBy = "organization", orphanRemoval = true)
-    private List<Staff> staff;
+    private List<User> staff;
 }
