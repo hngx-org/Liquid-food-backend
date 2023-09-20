@@ -10,6 +10,6 @@ import org.hngxfreelunch.LiquidApplicationApi.data.dtos.UserDto;
 @AllArgsConstructor
 public class UsersResponseDto {
 
-    private ApiResponseDto<W> apiResponseDto;
+    private ApiResponseDto apiResponseDto;
     private UserDto userDto;
 }
