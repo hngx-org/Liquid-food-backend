@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OrganizationInvitesRepository extends JpaRepository<OrganizationInvites, Long> {
+
+    OrganizationInvites findByToken(String token);
 }
