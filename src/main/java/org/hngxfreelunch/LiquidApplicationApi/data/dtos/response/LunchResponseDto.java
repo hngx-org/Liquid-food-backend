@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LunchResponseDto {
 
-    private ApiResponseDto apiResponseDto;
     private String profilePicture;
     private String role;
     private Integer quantity;
