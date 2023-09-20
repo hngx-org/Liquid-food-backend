@@ -10,9 +10,8 @@ import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organization;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.OrganizationInvites;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.OrganizationInvitesRepository;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.OrganizationRepository;
-import org.hngxfreelunch.LiquidApplicationApi.data.repositories.StaffRepository;
+import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
 import org.hngxfreelunch.LiquidApplicationApi.services.email.EmailService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -26,7 +25,6 @@ public class OrganizationServiceImplementation implements OrganizationService {
 
     private OrganizationRepository organizationRepository;
     private OrganizationInvitesRepository organizationInvitesRepository;
-    private StaffRepository staffRepository;
     private EmailService emailService;
 
     @Override
