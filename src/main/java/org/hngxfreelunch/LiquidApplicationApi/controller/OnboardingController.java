@@ -18,14 +18,10 @@ public class OnboardingController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponseDto<LoginResponseDto>> loginUser(@Valid @RequestBody LoginRequestDto request){
-        ApiResponseDto<LoginResponseDto> response = new ApiResponseDto<>(loginService.loginUser(request),
-                "User logged in successfully", 200);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(loginService.loginUser(request), HttpStatus.OK);
     }
     @PostMapping("/refresh-token")
     public ResponseEntity<ApiResponseDto<LoginResponseDto>> loginUser(@RequestHeader("Refresh-Token") String refreshToken){
-        ApiResponseDto<LoginResponseDto> response = new ApiResponseDto<>(loginService.refreshUserToken(refreshToken),
-                "User logged in successfully", 200);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(loginService.refreshUserToken(refreshToken), HttpStatus.OK);
     }
 }

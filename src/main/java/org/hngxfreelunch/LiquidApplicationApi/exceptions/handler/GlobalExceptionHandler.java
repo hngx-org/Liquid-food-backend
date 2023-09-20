@@ -1,6 +1,7 @@
 package org.hngxfreelunch.LiquidApplicationApi.exceptions.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.ExceptionResponse;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.InvalidCredentials;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.UserDisabledException;
@@ -20,18 +21,20 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> userNotFound(UserNotFoundException e,
-                                                          HttpServletRequest request){
+    public ResponseEntity<ApiResponseDto<ExceptionResponse>> userNotFound(UserNotFoundException e,
+                                                                         HttpServletRequest request){
         ExceptionResponse ex = ExceptionResponse.builder()
                 .message(e.getMessage())
                 .path(request.getRequestURI())
                 .time(DateUtils.convertDate(LocalDateTime.now()))
                 .statusCode(HttpStatus.NOT_FOUND.value())
                 .build();
-        return new ResponseEntity<>(ex, HttpStatus.NOT_FOUND);
+        ApiResponseDto<ExceptionResponse> responseDto = new ApiResponseDto<>
+                ("Error encountered",HttpStatus.NOT_FOUND.value(),ex);
+        return new ResponseEntity<>(responseDto, HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(UserDisabledException.class)
-    public ResponseEntity<ExceptionResponse> userDisabled(UserDisabledException e,
+    public ResponseEntity<ApiResponseDto<ExceptionResponse>> userDisabled(UserDisabledException e,
                                                           HttpServletRequest request){
         ExceptionResponse ex = ExceptionResponse.builder()
                 .message(e.getMessage())
@@ -39,11 +42,13 @@ public class GlobalExceptionHandler {
                 .time(DateUtils.convertDate(LocalDateTime.now()))
                 .statusCode(HttpStatus.UNAUTHORIZED.value())
                 .build();
-        return new ResponseEntity<>(ex, HttpStatus.UNAUTHORIZED);
+        ApiResponseDto<ExceptionResponse> responseDto = new ApiResponseDto<>
+                ("Error encountered",HttpStatus.NOT_FOUND.value(),ex);
+        return new ResponseEntity<>(responseDto, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(InvalidCredentials.class)
-    public ResponseEntity<ExceptionResponse> invalidCredentials(InvalidCredentials e,
+    public ResponseEntity<ApiResponseDto<ExceptionResponse>> invalidCredentials(InvalidCredentials e,
                                                           HttpServletRequest request){
         ExceptionResponse ex = ExceptionResponse.builder()
                 .message(e.getMessage())
@@ -51,11 +56,13 @@ public class GlobalExceptionHandler {
                 .time(DateUtils.convertDate(LocalDateTime.now()))
                 .statusCode(HttpStatus.CONFLICT.value())
                 .build();
-        return new ResponseEntity<>(ex, HttpStatus.CONFLICT);
+        ApiResponseDto<ExceptionResponse> responseDto = new ApiResponseDto<>
+                ("Error encountered",HttpStatus.NOT_FOUND.value(),ex);
+        return new ResponseEntity<>(responseDto, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> validationErrors(MethodArgumentNotValidException e){
+    public ResponseEntity<ApiResponseDto<Object>> validationErrors(MethodArgumentNotValidException e){
         Map<String, String> invalidErrors = new HashMap<>();
         e.getBindingResult().getAllErrors()
                 .forEach(error ->{
@@ -63,6 +70,8 @@ public class GlobalExceptionHandler {
                     String message = error.getDefaultMessage();
                     invalidErrors.put(fieldError, message);
                 });
-        return new ResponseEntity<>(invalidErrors, HttpStatus.BAD_REQUEST);
+        ApiResponseDto<Object> responseDto = new ApiResponseDto<>
+                ("Error encountered",HttpStatus.NOT_FOUND.value(),invalidErrors);
+        return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
     }
 }

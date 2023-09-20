@@ -13,9 +13,4 @@ public class ApiResponseDto<T> {
     private int statusCode;
     private T data;
 
-    public ApiResponseDto(T data, String message, Integer statusCode){
-        this.data = data;
-        this.message = message;
-        this.statusCode = statusCode;
-    }
 }
