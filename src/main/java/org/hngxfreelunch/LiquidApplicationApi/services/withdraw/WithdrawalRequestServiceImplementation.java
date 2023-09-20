@@ -44,22 +44,19 @@ public class WithdrawalRequestServiceImplementation implements WithdrawalService
         String bankName = withdrawalRequestDto.getBankName();
         BigInteger amount = withdrawalRequestDto.getAmount();
 
-        // Step 5: Set the withdrawal amount to the user's lunch credit balance
-        BigInteger withdrawalAmount = lunchCreditBalance;
-
-        // Step 6: Create a withdrawal entity and save it
+        // Step 5: Create a withdrawal entity and save it
         Withdrawals withdrawal = new Withdrawals();
         withdrawal.setUser(user);
         withdrawal.setStatus("Confirmed");
-        withdrawal.setAmount(withdrawalAmount);
+        withdrawal.setAmount(lunchCreditBalance);
         withdrawal.setCreated_at(LocalDateTime.now());
         Withdrawals savedWithdrawal = withdrawalRepository.save(withdrawal);
 
-        // Step 7: Update the user's lunch credit balance & save it
+        // Step 6: Update the user's lunch credit balance & save it
         user.setLunch_credit_balance(BigInteger.ZERO);
         userRepository.save(user);
 
-        // Step 8: Create a response DTO
+        // Step 7: Create a response DTO
         WithdrawalResponseDto withdrawalResponseDto = WithdrawalResponseDto.builder()
                 .id(String.valueOf(savedWithdrawal.getId()))
                 .userId(String.valueOf(savedWithdrawal.getUser().getId()))
@@ -68,7 +65,7 @@ public class WithdrawalRequestServiceImplementation implements WithdrawalService
                 .createdAt(savedWithdrawal.getCreated_at().toString())
                 .build();
 
-        // Step 9: Return the response with success status
+        // Step 8: Return the response with success status
         return new ApiResponseDto<>(withdrawalResponseDto, "Withdrawal request created successfully", HttpStatus.OK.value());
     }
 }
