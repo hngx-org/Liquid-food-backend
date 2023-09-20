@@ -25,7 +25,7 @@ public class organization_lunch_wallet {
 
     @OneToOne
     @JoinColumn(name = "org_id")
-    private organization organization;
+    private Organization organization;
 
 
 }

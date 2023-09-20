@@ -1,16 +1,14 @@
-package org.hngxfreelunch.LiquidApplicationApi.data.dtos;
+package org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigInteger;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class WithdrawalRequestDto {
+public class BankRequestDto {
 
     @NotBlank(message = "bank number is required")
     private String bankNumber;
@@ -18,6 +16,4 @@ public class WithdrawalRequestDto {
     private String bankCode;
     @NotBlank(message = "bank name is required")
     private String bankName;
-    @NotBlank(message = "amount is required")
-    private BigInteger amount;
 }

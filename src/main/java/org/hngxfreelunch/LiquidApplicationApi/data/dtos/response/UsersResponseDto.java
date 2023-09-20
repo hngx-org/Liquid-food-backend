@@ -3,7 +3,7 @@ package org.hngxfreelunch.LiquidApplicationApi.data.dtos.response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.UsersDtos;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.UserDto;
 
 @Data
 @NoArgsConstructor
@@ -11,5 +11,5 @@ import org.hngxfreelunch.LiquidApplicationApi.data.dtos.UsersDtos;
 public class UsersResponseDto {
 
     private ApiResponseDto apiResponseDto;
-    private UsersDtos usersDtos;
+    private UserDto userDto;
 }

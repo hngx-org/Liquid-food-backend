@@ -12,14 +12,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "users")
-public class users {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "org_id")
-    private organization organization;
+    private Organization organization;
 
     private String profile_picture;
 
@@ -52,7 +52,7 @@ public class users {
 
 
     @OneToMany(mappedBy = "user")
-    private List<withdrawals> withdrawals;
+    private List<Withdrawals> withdrawals;
 
 
 

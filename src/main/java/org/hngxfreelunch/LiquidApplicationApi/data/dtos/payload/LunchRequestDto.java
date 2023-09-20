@@ -1,4 +1,4 @@
-package org.hngxfreelunch.LiquidApplicationApi.data.dtos;
+package org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
