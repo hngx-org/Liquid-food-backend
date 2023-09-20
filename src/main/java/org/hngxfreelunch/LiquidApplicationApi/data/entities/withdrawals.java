@@ -6,21 +6,29 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.Instant;
+import java.math.BigInteger;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "organization_invites")
-public class OrganizationInvite {
+@Table(name = "withdrawals")
+public class withdrawals {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String email;
-    private String token;
-    private Instant TTL;
+
     @ManyToOne
-    private Organization organization;
+    @JoinColumn(name = "userId")
+    private users user;
+
+    private String status;
+
+    private BigInteger amount;
+
+    private LocalDateTime created_at;
+
 }

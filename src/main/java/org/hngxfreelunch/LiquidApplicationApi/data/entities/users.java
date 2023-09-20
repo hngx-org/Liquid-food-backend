@@ -1,13 +1,9 @@
 package org.hngxfreelunch.LiquidApplicationApi.data.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.math.BigInteger;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -16,31 +12,50 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "users")
-public class User {
+public class users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "org_id", referencedColumnName = "id")
-    private Organization organization;
+    @JoinColumn(name = "org_id")
+    private organization organization;
+
+    private String profile_picture;
 
     private String first_name;
-    private String last_name;
-    private String profile_picture;
-    private String email;
-    private String phonenumber;
-    private String password_hash;
-    private boolean isAdmin;
-    private BigInteger lunch_credit_balance;
-    private String refresh_token;
-    private Instant updated_at;
-    private String bank_number;
-    private String bank_code;
-    private String bank_name;
-    private Instant created_at;
 
-    @OneToMany
-    private List<Lunch> lunches;
+    private String last_name;
+
+    private String email;
+
+    private String phonenumber;
+
+    private String refresh_token;
+
+    private String password_hash;
+
+    private LocalDateTime updated_at;
+
+    private LocalDateTime created_at;
+
+    private String bank_number;
+
+    private String bank_code;
+
+    private String bank_name;
+
+    private Boolean isAdmin;
+
+    private String lunch_credit_balance;
+
+
+
+    @OneToMany(mappedBy = "user")
+    private List<withdrawals> withdrawals;
+
+
+
+
 
 }

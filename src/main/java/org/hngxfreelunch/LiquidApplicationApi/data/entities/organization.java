@@ -15,13 +15,26 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "organization")
-public class Organization {
+public class organization {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
     private BigInteger lunch_price;
+
     private String currency;
+
+    @OneToMany(mappedBy = "organization")
+    private List<users> users;
+
+    @OneToMany(mappedBy = "organization")
+    private List<organization_invites> invites;
+
+
+    @OneToOne
+    private organization_lunch_wallet wallet;
 
 }

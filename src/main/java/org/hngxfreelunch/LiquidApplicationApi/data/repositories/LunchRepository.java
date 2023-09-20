@@ -1,8 +1,9 @@
 package org.hngxfreelunch.LiquidApplicationApi.data.repositories;
 
-import org.hngxfreelunch.LiquidApplicationApi.data.entities.Lunch;
+import org.hngxfreelunch.LiquidApplicationApi.data.entities.lunches;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-
-public interface LunchRepository extends JpaRepository<Lunch, Long> {
+@Repository
+public interface LunchRepository extends JpaRepository<lunches, Long> {
 }
