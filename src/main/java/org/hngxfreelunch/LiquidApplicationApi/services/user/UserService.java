@@ -1,17 +1,15 @@
 package org.hngxfreelunch.LiquidApplicationApi.services.user;
 
 
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.StaffSignupDto;
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.UpdateStaffRequest;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.BankRequestDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.UserSignupDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
-import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
 
 public interface UserService {
-    // TODO: CREATE STAFF
-    ApiResponseDto<?> createStaff(StaffSignupDto signupRequest);
-    // TODO: GET STAFF DETAILS BY NAME OR EMAIL
-    User getStaffByNameOrEmail(String name, String email);
-
+    // TODO: CREATE USER
+    ApiResponseDto createUser(UserSignupDto signUpRequest);
+    // TODO: GET STAFF DETAILS BY NAME
+    ApiResponseDto getUserByName(String name);
     // TODO: ADD BANK DETAILS
-    // TODO: GET ALL USERS
+    ApiResponseDto addBankDetails(BankRequestDto bankRequestDto);
 }

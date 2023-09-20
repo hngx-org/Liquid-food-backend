@@ -19,6 +19,10 @@ public class Lunches {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "org_id")
+    private Organization organization;
+
     @OneToOne
     @JoinColumn(name = "senderId")
     private User sender;

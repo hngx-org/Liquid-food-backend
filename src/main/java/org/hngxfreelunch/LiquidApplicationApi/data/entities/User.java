@@ -44,6 +44,10 @@ public class User {
 
     private String bank_name;
 
+    private String bank_region;
+
+    private String currency_code;
+
     private Boolean isAdmin;
 
     private String lunch_credit_balance;
