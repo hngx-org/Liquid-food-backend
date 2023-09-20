@@ -10,8 +10,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class WithdrawalDto {
+public class BankRequestDto {
 
-    @NotBlank
-    private int amount;
+    @NotBlank(message = "bank number is required")
+    private String bankNumber;
+    @NotBlank(message = "bank code is required")
+    private String bankCode;
+    @NotBlank(message = "bank name is required")
+    private String bankName;
 }

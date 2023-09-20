@@ -4,17 +4,16 @@ import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponseDtos {
+public class LoginResponseDto {
 
     ApiResponseDto apiResponseDto;
     private String access_token;
     private String email;
-    private Long id;
+    private String id;
     private boolean isAdmin;
 }
