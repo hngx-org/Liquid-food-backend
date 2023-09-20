@@ -2,7 +2,9 @@ package org.hngxfreelunch.LiquidApplicationApi.services.staff;
 
 
 public interface StaffService {
-    // TODO: ADD NEW STAFF TO TEAM
-    // TODO: GET STAFF DETAILS
+    // TODO: CREATE STAFF
+    // TODO: GET STAFF DETAILS BY NAME OR EMAIL
     // TODO: UPDATE STAFF DETAILS
+    // TODO: ADD BANK DETAILS
+    // TODO: GET ALL USERS
 }
