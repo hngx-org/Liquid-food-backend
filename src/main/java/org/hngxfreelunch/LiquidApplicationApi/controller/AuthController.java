@@ -37,7 +37,7 @@ public class AuthController {
         return ResponseEntity.ok(new ApiResponse(null, true));
     }
     @PostMapping("/organization/invite")
-    public ResponseEntity<ApiResponse> inviteOrganization(@Valid @RequestBody OrganizationInvites organizationInvites){
+    public ResponseEntity<ApiResponse> inviteStaffToOrganization(@Valid @RequestBody OrganizationInvites organizationInvites){
         return ResponseEntity.ok(new ApiResponse(null, true));
     }
 }
