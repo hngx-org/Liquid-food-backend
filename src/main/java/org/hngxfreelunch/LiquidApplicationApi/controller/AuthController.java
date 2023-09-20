@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.AdminSignupDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.LoginRequestDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationRegistrationDto;
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.StaffSignupDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.UserSignupDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponse;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.OrganizationInvites;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ public class AuthController {
     }
 
     @PostMapping("/staff/signup")
-    public ResponseEntity<ApiResponse>  signUpForStaff(@Valid @RequestBody StaffSignupDto staffSignupDto){
+    public ResponseEntity<ApiResponse>  signUpForStaff(@Valid @RequestBody UserSignupDto userSignupDto){
         return ResponseEntity.ok(new ApiResponse(null, true));
     }
 
