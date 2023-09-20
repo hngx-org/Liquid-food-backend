@@ -3,6 +3,7 @@ package org.hngxfreelunch.LiquidApplicationApi.data.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Entity
@@ -11,13 +12,27 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "liquid_organization")
+@Table(name = "organization")
 public class Organization {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String organizationName;
-    private String organizationEmail;
-    private String password;
+
+    private String name;
+
+    private BigInteger lunch_price;
+
+    private String currency;
+
+    @OneToMany(mappedBy = "organization")
+    private List<User> User;
+
+    @OneToMany(mappedBy = "organization")
+    private List<OrganizationInvites> invites;
+
+
+    @OneToOne
+    private organization_lunch_wallet wallet;
+
 }

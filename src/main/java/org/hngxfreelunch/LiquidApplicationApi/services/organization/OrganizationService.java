@@ -1,15 +1,19 @@
 package org.hngxfreelunch.LiquidApplicationApi.services.organization;
 
 
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.CreateOrganizationRequest;
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.CreateOrganizationResponse;
-import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organization;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationInviteDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationRegistrationDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
 
 public interface OrganizationService {
     // TODO: CREATE ORGANIZATION
-    // TODO: UPDATE ORGANIZATION DETAILS
-CreateOrganizationResponse createOrganization(CreateOrganizationRequest organization);
+    ApiResponseDto createOrganization(OrganizationRegistrationDto request);
+
     // TODO: ADD STAFF
-    // TODO: REMOVE STAFF
-    // TODO: DELETE ORGANIZATION
+    ApiResponseDto sendOrganizationInviteToStaff(OrganizationInviteDto request);
+    // TODO: VERIFY STAFF
+    ApiResponseDto verifyOrganizationInvite(String token);
+    // TODO: SEND LUNCH CREDIT TO STAFF
+    ApiResponseDto sendLunchCredit(OrganizationInviteDto request);
+
 }
