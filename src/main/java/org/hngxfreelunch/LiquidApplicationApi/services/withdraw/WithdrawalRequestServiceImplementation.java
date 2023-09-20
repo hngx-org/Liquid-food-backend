@@ -28,10 +28,8 @@ public class WithdrawalRequestServiceImplementation implements WithdrawalRequest
         withdrawalRequest.setStaff(staff);
         withdrawalRequest.setLunchCredits(creditsToWithdraw);
 
-        // Save the withdrawal request
+        // Save the withdrawal request & return a response
         withdrawalRequestRepository.save(withdrawalRequest);
-
-        // Return a response
         return WithdrawalResponse
                 .builder()
                 .message("Withdrawal request created successfully with ID:" + withdrawalRequest.getId())
