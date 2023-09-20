@@ -6,35 +6,36 @@ import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.BankRequestDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImplementation implements UserService {
 
+    @Autowired
     private UserRepository userRepository;
 
     @Override
-    public ApiResponseDto addBankDetails(BankRequestDto bankRequestDto) {
+    public ApiResponseDto addBankDetails(Long id,BankRequestDto bankRequestDto) {
 
-        User user = new User();
-        user.setBank_number(bankRequestDto.getBankNumber());
-        user.setBank_code(bankRequestDto.getBankCode());
-        user.setBank_name(bankRequestDto.getBankName());
+        User existingUser = userRepository.findById(id).orElse(null);
 
-        userRepository.save(user);
-        return new ApiResponseDto(user, "successfully created bank account", 200);
-    }
+        if (existingUser != null){
+            existingUser.setBank_number(bankRequestDto.getBankNumber());
+            existingUser.setBank_name(bankRequestDto.getBankName());
+            existingUser.setBank_code(bankRequestDto.getBankCode());
 
-    @Override
-    public ApiResponseDto getAllUsers() {
-
-        List<User> users = userRepository.findAll();
-
-        return new ApiResponseDto(users, "all users", 200);
+            userRepository.save(existingUser);
+            return new ApiResponseDto(existingUser, "success created bank account", 200);
+        }else {
+            return new ApiResponseDto(null, "user not found", 400);
+        }
     }
 }
