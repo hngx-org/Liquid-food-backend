@@ -35,7 +35,7 @@ public class Organization {
 
 
     @OneToOne
-    private organization_lunch_wallet wallet;
+    private OrganizationLunchWallet wallet;
 
     private String email;
     @OneToMany(mappedBy = "organization", orphanRemoval = true)

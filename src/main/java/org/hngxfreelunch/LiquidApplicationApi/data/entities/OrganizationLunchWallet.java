@@ -15,7 +15,7 @@ import java.math.BigInteger;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "organization_lunch_wallet")
-public class organization_lunch_wallet {
+public class OrganizationLunchWallet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

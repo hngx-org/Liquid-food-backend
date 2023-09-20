@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class StaffServiceImplementation implements StaffService {
+public class UserServiceImplementation implements UserService {
 
     private UserRepository userRepository;
 
