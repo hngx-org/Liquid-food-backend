@@ -15,10 +15,18 @@ public class DateUtils {
 
     @Value("${jwt-expiration}")
     private static Integer expirationTime;
+    @Value("${jwt-refresh-expiration}")
+    private static Integer refreshExpirationTime;
     public static Date getExpirationDate(){
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(new Date().getTime());
         calendar.add(Calendar.MINUTE,expirationTime);
+        return new Date(calendar.getTime().getTime());
+    }
+    public static Date getRefreshedExpirationDate(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(new Date().getTime());
+        calendar.add(Calendar.MINUTE,refreshExpirationTime);
         return new Date(calendar.getTime().getTime());
     }
 }

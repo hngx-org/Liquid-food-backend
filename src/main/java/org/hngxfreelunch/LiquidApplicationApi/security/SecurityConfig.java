@@ -1,8 +1,6 @@
 package org.hngxfreelunch.LiquidApplicationApi.security;
 
 import lombok.RequiredArgsConstructor;
-import org.hngxfreelunch.LiquidApplicationApi.security.JwtAuthenticationFilter;
-import org.hngxfreelunch.LiquidApplicationApi.services.logout.LogoutServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,7 +16,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final JwtAuthenticationFilter authFilter;
     private final AuthenticationEntryPoint authEntryPoint;
-    private final LogoutServiceImpl logoutService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
@@ -40,8 +37,7 @@ public class SecurityConfig {
                 .sessionManagement(session ->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> {
-                    logout.logoutUrl("/auth/logout");
-                    logout.addLogoutHandler(logoutService);
+                    logout.logoutUrl("/logout");
                     logout.logoutSuccessHandler((((request, response, authentication) -> SecurityContextHolder.clearContext())));
                 });
         return http.build();

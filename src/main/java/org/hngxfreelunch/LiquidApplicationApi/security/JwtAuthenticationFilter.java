@@ -5,10 +5,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.hngxfreelunch.LiquidApplicationApi.data.entities.Staff;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -19,7 +19,6 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final CustomUserServiceImpl userService;
-    private final JwTokenRepository jwTokenRepository;
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
@@ -34,13 +33,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         accessToken = authHeader.substring(7);
         username = jwtService.extractUsername(accessToken);
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
-            Staff staff = userService.loadUserByUsername(username);
-            var isTokenValid = jwTokenRepository.findByAccessToken(accessToken)
-                    .map(t-> !t.isExpired() && !t.isRevoked())
-                    .orElse(false);
-            if(jwtService.isTokenValid(accessToken, staff) && isTokenValid){
+            User user = userService.loadUserByUsername(username);
+
+            if(jwtService.isTokenValid(accessToken, user)){
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
-                        = new UsernamePasswordAuthenticationToken(staff, null, staff.getAuthorities());
+                        = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }

@@ -7,7 +7,6 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.xml.bind.DatatypeConverter;
 import lombok.RequiredArgsConstructor;
-import org.hngxfreelunch.LiquidApplicationApi.data.entities.Staff;
 import org.hngxfreelunch.LiquidApplicationApi.utils.DateUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,13 +14,11 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.List;
 import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
 public class JwtService {
-    private final JwTokenRepository tokenRepository;
 
     private String generateSecret(){
         return DatatypeConverter.printBase64Binary(new byte[512/8]);
@@ -44,15 +41,16 @@ public class JwtService {
                 .compact();
     }
 
-    public void revokeTokens(Staff staff){
-        List<JwToken> tokens = tokenRepository.findAllByStaff(staff);
-        if(!tokens.isEmpty()){
-            tokens.forEach(t->{
-                t.setRevoked(true);
-                t.setExpired(true);
-            });
-            tokenRepository.deleteAll(tokens);
-        }
+    public String generateRefreshToken(Authentication authentication){
+        String userEmail = authentication.getName();
+        return Jwts
+                .builder()
+                .setSubject(userEmail)
+                .setIssuer("Team Liquid")
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(DateUtils.getRefreshedExpirationDate())
+                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+                .compact();
     }
 
     private Claims extractClaims(String token){
