@@ -8,19 +8,20 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsersDtos {
+public class UserDto {
+
     @NotNull(message = "Enter first name")
     private  String firstName;
     private String lastName;
-    private String profile_picture;
+    private String profilePicture;
     @NotNull(message = "Enter your email")
     private String email;
     private int phoneNumber;
     @NotNull(message = "Enter a password")
-    private String password_hash;
-    private String refresh_token;
-    private String bank_number;
-    private String bank_code;
-    private String bank_name;
+    private String passwordHash;
+    private String refreshToken;
+    private String bankNumber;
+    private String bankCode;
+    private String bankName;
 
 }

@@ -14,21 +14,27 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "withdrawals")
-public class withdrawals {
+@Table(name = "lunches")
+public class Lunches {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "userId")
-    private users user;
+    @OneToOne
+    @JoinColumn(name = "senderId")
+    private User sender;
 
-    private String status;
+    @OneToOne
+    @JoinColumn(name = "receiverId")
+    private User receiver;
 
-    private BigInteger amount;
+    private String note;
 
-    private LocalDateTime created_at;
+    private BigInteger quantity;
+
+    private Boolean redeemed;
+
+    private LocalDateTime createdAt;
 
 }

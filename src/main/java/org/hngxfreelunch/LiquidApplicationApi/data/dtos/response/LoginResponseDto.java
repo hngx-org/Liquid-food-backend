@@ -10,8 +10,9 @@ import lombok.NoArgsConstructor;
 public class LoginResponseDto {
 
     ApiResponseDto apiResponseDto;
-    private String access_token;
+    private String accessToken;
     private String email;
     private String id;
     private boolean isAdmin;
+
 }
