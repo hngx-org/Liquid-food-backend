@@ -1,8 +1,9 @@
 package org.hngxfreelunch.LiquidApplicationApi.data.repositories;
 
-import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organization;
+import org.hngxfreelunch.LiquidApplicationApi.data.entities.organization;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-
-public interface OrganizationRepository extends JpaRepository<Organization, Long> {
+@Repository
+public interface OrganizationRepository extends JpaRepository<organization, Long> {
 }

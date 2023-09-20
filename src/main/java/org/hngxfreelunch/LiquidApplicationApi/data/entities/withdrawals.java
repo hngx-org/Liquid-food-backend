@@ -6,19 +6,29 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigInteger;
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "liquid_withdrawal_request")
-public class WithdrawalRequest {
+@Table(name = "withdrawals")
+public class withdrawals {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne()
-    private Staff staff;
-    private Integer lunchCredits;
+
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    private users user;
+
+    private String status;
+
+    private BigInteger amount;
+
+    private LocalDateTime created_at;
 
 }
