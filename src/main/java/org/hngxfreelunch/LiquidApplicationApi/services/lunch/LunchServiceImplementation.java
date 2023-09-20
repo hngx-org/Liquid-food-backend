@@ -71,12 +71,4 @@ public class LunchServiceImplementation implements LunchService {
         return mapLunchToResponseDto(lunches);
     }
 
-    @Override
-    public LunchResponseDto redeemLunch(Long lunch_id) {
-        Lunches lunches= lunchRepository.findById(lunch_id).get();
-        lunches.setRedeemed(true);
-        Lunches redeemedLunch= lunchRepository.save(lunches);
-        return mapLunchToResponseDto(redeemedLunch);
-    }
-
 }
