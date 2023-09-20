@@ -10,6 +10,5 @@ import org.hngxfreelunch.LiquidApplicationApi.data.dtos.UserDto;
 @AllArgsConstructor
 public class ProfileResponseDto {
 
-    private ApiResponseDto apiResponseDto;
     private UserDto users;
 }
