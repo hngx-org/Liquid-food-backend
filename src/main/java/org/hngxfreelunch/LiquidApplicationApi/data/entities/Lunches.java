@@ -1,10 +1,7 @@
 package org.hngxfreelunch.LiquidApplicationApi.data.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
@@ -14,12 +11,17 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Table(name = "lunches")
 public class Lunches {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "org_id")
+    private Organization organization;
 
     @OneToOne
     @JoinColumn(name = "senderId")
