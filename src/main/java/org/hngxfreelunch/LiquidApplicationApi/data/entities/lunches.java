@@ -23,11 +23,11 @@ public class Lunches {
 
     @OneToOne
     @JoinColumn(name = "senderId")
-    private users sender;
+    private Users sender;
 
     @OneToOne
     @JoinColumn(name = "receiverId")
-    private users receiver;
+    private Users receiver;
 
     private String note;
 

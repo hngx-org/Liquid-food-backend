@@ -27,7 +27,7 @@ public class organization {
     private String currency;
 
     @OneToMany(mappedBy = "organization")
-    private List<users> users;
+    private List<Users> users;
 
     @OneToMany(mappedBy = "organization")
     private List<organization_invites> invites;

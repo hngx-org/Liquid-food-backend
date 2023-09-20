@@ -22,7 +22,7 @@ public class withdrawals {
 
     @ManyToOne
     @JoinColumn(name = "userId")
-    private users user;
+    private Users user;
 
     private String status;
 
