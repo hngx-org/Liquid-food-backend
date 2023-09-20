@@ -2,5 +2,5 @@ package org.hngxfreelunch.LiquidApplicationApi.services.withdraw;
 
 
 public interface WithdrawalRequestService {
-    // TODO: ADD NEW WITHDRAWAL REQUEST
+    // TODO: CREATE NEW WITHDRAWAL REQUEST
 }

@@ -6,7 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.math.BigInteger;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -18,7 +19,7 @@ import java.time.LocalDate;
 public class Lunches {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne
@@ -31,10 +32,10 @@ public class Lunches {
 
     private String note;
 
-    private Integer quantity;
+    private BigInteger quantity;
 
     private Boolean redeemed;
 
-    private LocalDate created_at;
+    private LocalDateTime created_at;
 
 }

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Entity
@@ -22,7 +23,7 @@ public class organization {
 
     private String name;
 
-    private Integer lunch_price;
+    private BigInteger lunch_price;
 
     private String currency;
 

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 @Entity
@@ -26,7 +27,7 @@ public class withdrawals {
 
     private String status;
 
-    private Long amount;
+    private BigInteger amount;
 
     private LocalDateTime created_at;
 

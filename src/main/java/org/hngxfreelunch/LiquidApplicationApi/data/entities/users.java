@@ -29,7 +29,7 @@ public class users {
 
     private String email;
 
-    private Integer phonenumber;
+    private String phonenumber;
 
     private String refresh_token;
 

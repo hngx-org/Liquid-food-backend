@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigInteger;
+
 @Entity
 @Getter
 @Setter
@@ -19,7 +21,7 @@ public class organization_lunch_wallet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long balance;
+    private BigInteger balance;
 
     @OneToOne
     @JoinColumn(name = "org_id")
