@@ -5,13 +5,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigInteger;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginRequestDto {
+public class OrganizationRegistrationDto {
 
-    @NotBlank(message = "email is required")
-    private String email;
-    @NotBlank(message = "password is required")
-    private String password;
+    @NotBlank(message = "Input your Organization name")
+    private String organizationName;
+
+    private BigInteger lunch_price;
 }

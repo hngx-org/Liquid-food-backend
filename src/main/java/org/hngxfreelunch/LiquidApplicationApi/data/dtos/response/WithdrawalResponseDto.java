@@ -1,11 +1,11 @@
 package org.hngxfreelunch.LiquidApplicationApi.data.dtos.response;
 
-import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
+import java.math.BigInteger;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,6 +15,6 @@ public class WithdrawalResponseDto {
     private String id;
     private String userId;
     private String status;
-    private int amount;
+    private BigInteger amount;
     private String createdAt;
 }
