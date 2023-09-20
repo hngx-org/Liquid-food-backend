@@ -7,34 +7,34 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigInteger;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "organization")
-public class Organization {
+@Table(name = "lunches")
+public class Lunches {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-
-    private BigInteger lunch_price;
-
-    private String currency;
-
-    @OneToMany(mappedBy = "organization")
-    private List<User> User;
-
-    @OneToMany(mappedBy = "organization")
-    private List<OrganizationInvites> invites;
-
+    @OneToOne
+    @JoinColumn(name = "senderId")
+    private User sender;
 
     @OneToOne
-    private OrganizationLunchWallet wallet;
+    @JoinColumn(name = "receiverId")
+    private User receiver;
+
+    private String note;
+
+    private BigInteger quantity;
+
+    private Boolean redeemed;
+
+    private LocalDateTime createdAt;
 
 }
