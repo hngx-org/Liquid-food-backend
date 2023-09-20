@@ -35,6 +35,6 @@ public class Organization {
 
 
     @OneToOne
-    private organization_lunch_wallet wallet;
+    private OrganizationLunchWallet wallet;
 
 }
