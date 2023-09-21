@@ -104,7 +104,7 @@ public class OrganizationServiceImplementation implements OrganizationService {
     @Override
     public ApiResponseDto getAllStaffInOrganization() {
         User loggedInUser = userUtils.getLoggedInUser();
-        List<User> users = loggedInUser.getOrganization().getStaff();
+        List<User> users = loggedInUser.getOrganization().getUsers();
         List<UsersResponseDto> usersResponseDtoList = users.stream().map(user -> mapToDto(user)).toList();
         return new ApiResponseDto<>(usersResponseDtoList,"All users in this Organization", HttpStatus.SC_OK);
     }
