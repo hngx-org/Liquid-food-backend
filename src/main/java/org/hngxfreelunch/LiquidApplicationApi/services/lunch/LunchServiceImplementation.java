@@ -1,5 +1,6 @@
 package org.hngxfreelunch.LiquidApplicationApi.services.lunch;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.LunchRequestDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.LunchResponseDto;
@@ -22,7 +23,8 @@ public class LunchServiceImplementation implements LunchService {
 
 
     @Override
-    public List<LunchResponseDto> sendLunch(LunchRequestDto lunchRequestDto, User sender) {
+    public List<LunchResponseDto> sendLunch(LunchRequestDto lunchRequestDto, HttpServletRequest request) {
+        User sender= getSender(request);
         List<User> user= staffRepository.findAllById(lunchRequestDto.getReceiverId());
         List<Lunches> lunchesList=user.stream()
                 .map(eachStaff->sendLunchToEachStaff(eachStaff,sender,lunchRequestDto))
@@ -30,6 +32,11 @@ public class LunchServiceImplementation implements LunchService {
         return lunchesList.stream()
                 .map(eachLunch->mapLunchToResponseDto(eachLunch))
                 .toList();
+    }
+
+    private User getSender(HttpServletRequest request) {
+        User user = (User) request.getAttribute("user");
+        return user;
     }
 
     private LunchResponseDto mapLunchToResponseDto(Lunches eachLunch) {
@@ -55,12 +62,10 @@ public class LunchServiceImplementation implements LunchService {
     }
 
     @Override
-    public List<LunchResponseDto> getAllLunch(Long staff_id) {
-        User user= staffRepository.findById(staff_id).get();
+    public List<LunchResponseDto> getAllLunch() {
         List<Lunches> lunchesList=lunchRepository.findAll();
         List<LunchResponseDto> staffLunch=lunchesList.stream()
-                .filter(p->p.getId().equals(user.getId()))
-                .map(o->mapLunchToResponseDto(o))
+                .map(eachLunch->mapLunchToResponseDto(eachLunch))
                 .toList();
         return staffLunch;
     }
