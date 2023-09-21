@@ -14,6 +14,7 @@ import org.hngxfreelunch.LiquidApplicationApi.data.repositories.OrganizationInvi
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.OrganizationRepository;
 import org.hngxfreelunch.LiquidApplicationApi.services.email.EmailService;
 import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -31,6 +32,9 @@ public class OrganizationServiceImplementation implements OrganizationService {
     private EmailService emailService;
     private UserUtils userUtils;
 
+    @Value("${url_prefix}")
+    private String url_prefix;
+
     @Override
     public ApiResponseDto createOrganization(OrganizationRegistrationDto request) {
         boolean isExists = organizationRepository.existsByOrganizationName(request.getOrganizationName());
@@ -39,7 +43,7 @@ public class OrganizationServiceImplementation implements OrganizationService {
         }
         Organization newOrganization = Organization.builder()
                 .name(request.getOrganizationName())
-                .lunch_price(BigInteger.valueOf(1000))
+                .lunchPrice(BigInteger.valueOf(1000))
                 .currency("NGN")
                 .build();
         organizationRepository.save(newOrganization);
@@ -63,7 +67,7 @@ public class OrganizationServiceImplementation implements OrganizationService {
                         "\nTime: " + LocalTime.now() +
                         "\n" +
                         "RSVP before " + expirationTime + " hours with this unique RSVP Token: " +
-                        "<p><a href=\"www.google.com?token=?" + token + "\">Accept Invitation<a/>";
+                        "<p><a href=\"" + url_prefix + "?token=?" + token + "\">Accept Invitation<a/>";
 
         emailService.sendEmail(request.getEmail(), subject, htmlContent);
         OrganizationInvites organizationInvites = new OrganizationInvites();
@@ -87,7 +91,8 @@ public class OrganizationServiceImplementation implements OrganizationService {
                             "\nDate: " + LocalDate.now() +
                             "\nTime: " + LocalTime.now() +
                             "\n" +
-                            "RSVP before " + expirationTime + " hours with this unique RSVP Token: " + token;
+                            "RSVP before " + expirationTime + " hours with this unique RSVP Token: " +
+                            "<p><a href=\"" + url_prefix + "?token=?" + token + "\">Accept Invitation<a/>";
 
             emailService.sendEmail(organizationInvites.getEmail(), subject, htmlContent);
             return new ApiResponseDto(null,"Invitation has expired new invitation email sent successfully", HttpStatus.SC_OK);
@@ -104,8 +109,8 @@ public class OrganizationServiceImplementation implements OrganizationService {
     @Override
     public ApiResponseDto getAllStaffInOrganization() {
         User loggedInUser = userUtils.getLoggedInUser();
-        List<User> users = loggedInUser.getOrganization().getStaff();
-        List<UsersResponseDto> usersResponseDtoList = users.stream().map(user -> mapToDto(user)).toList();
+        List<User> users = loggedInUser.getOrganization().getUsers();
+        List<UsersResponseDto> usersResponseDtoList = users.stream().map(this::mapToDto).toList();
         return new ApiResponseDto<>(usersResponseDtoList,"All users in this Organization", HttpStatus.SC_OK);
     }
 

@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -65,11 +67,27 @@ public class UserServiceImpl implements UserService{
 
             return new ApiResponseDto(usersResponseDto,"Successfully returned user profile", HttpStatus.OK.value());
         }
-//        Optional<User> userByEmail = userRepository.findByEmail(email);
-//        if (userByEmail.isPresent()){
-//            return userByEmail.get();
-//        }
-        throw  new UserNotFoundException("Staff with name '" + firstName + "' not found");
+        throw  new UserNotFoundException("Staff with name " + firstName + " not found");
+    }
+
+
+    @Override
+    public ApiResponseDto getUsersByName(String name) {
+        List<User> usersByName = userRepository.findByFirstNameContainsIgnoreCaseOrLastNameContainsIgnoreCase(name, name);
+        List<UsersResponseDto> usersResponseDtoList = new ArrayList<>();
+        if (!usersByName.isEmpty()){
+            for (User user: usersByName) {
+                UsersResponseDto usersResponseDto = new UsersResponseDto();
+                usersResponseDto.setEmail(user.getEmail());
+                usersResponseDto.setFullName(user.getFirstName()
+                        + " " + user.getLastName());
+                usersResponseDto.setOrganizationName(user.getOrganization().getName());
+                usersResponseDtoList.add(usersResponseDto);
+            }
+
+            return new ApiResponseDto(usersResponseDtoList,"Successfully returned users profile", HttpStatus.OK.value());
+        }
+        throw  new UserNotFoundException("Staff with name " + name + " not found");
     }
 
     @Override
@@ -79,6 +97,8 @@ public class UserServiceImpl implements UserService{
         loggedInUser.setBankName(bankRequestDto.getBankName());
         loggedInUser.setBankNumber(bankRequestDto.getBankNumber());
         loggedInUser.setBankRegion("NGN");
+        userRepository.save(loggedInUser);
+
         userRepository.save(loggedInUser);
 
         UsersResponseDto usersResponseDto = new UsersResponseDto();

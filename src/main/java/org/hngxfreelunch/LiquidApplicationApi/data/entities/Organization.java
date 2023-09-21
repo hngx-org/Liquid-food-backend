@@ -2,7 +2,6 @@ package org.hngxfreelunch.LiquidApplicationApi.data.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.math.BigInteger;
 import java.util.List;
 
@@ -12,7 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "organization")
 public class Organization {
 
     @Id
@@ -26,7 +24,7 @@ public class Organization {
     private String currency;
 
     @OneToMany(mappedBy = "organization")
-    private List<User> User;
+    private List<User> Users;
 
     @OneToMany(mappedBy = "organization")
     private List<OrganizationInvites> invites;
@@ -39,4 +37,5 @@ public class Organization {
 
     @OneToMany(mappedBy = "organization", orphanRemoval = true)
     private List<User> staff;
+
 }
