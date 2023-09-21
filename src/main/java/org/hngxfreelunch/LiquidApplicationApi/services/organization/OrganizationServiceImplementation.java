@@ -112,8 +112,8 @@ public class OrganizationServiceImplementation implements OrganizationService {
     private UsersResponseDto mapToDto(User user){
         UsersResponseDto usersResponseDto = new UsersResponseDto();
         usersResponseDto.setEmail(user.getEmail());
-        usersResponseDto.setFull_name(user.getFirst_name() + " " + user.getLast_name());
-        usersResponseDto.setOrganization_name(user.getOrganization().getName());
+        usersResponseDto.setFullName(user.getFirstName() + " " + user.getLastName());
+        usersResponseDto.setOrganizationName(user.getOrganization().getName());
         return usersResponseDto;
     }
 

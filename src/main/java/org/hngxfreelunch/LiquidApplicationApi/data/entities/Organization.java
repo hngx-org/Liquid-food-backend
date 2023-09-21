@@ -21,7 +21,7 @@ public class Organization {
 
     private String name;
 
-    private BigInteger lunch_price;
+    private BigInteger lunchPrice;
 
     private String currency;
 
@@ -36,6 +36,7 @@ public class Organization {
     private OrganizationLunchWallet wallet;
 
     private String email;
+
     @OneToMany(mappedBy = "organization", orphanRemoval = true)
     private List<User> staff;
 }

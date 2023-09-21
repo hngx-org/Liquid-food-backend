@@ -3,8 +3,6 @@ package org.hngxfreelunch.LiquidApplicationApi.controller;
 
 import jakarta.validation.Valid;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.BankRequestDto;
-
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponse;
 import org.hngxfreelunch.LiquidApplicationApi.services.organization.OrganizationService;
 import org.hngxfreelunch.LiquidApplicationApi.services.user.UserService;
 import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
@@ -26,7 +24,7 @@ public class UserController {
     private UserUtils userUtils;
     @GetMapping("user/profile")
     public ResponseEntity<?> getProfile(){
-        return ResponseEntity.ok(userService.getUserByName(userUtils.getLoggedInUser().getFirst_name()));
+        return ResponseEntity.ok(userService.getUserByName(userUtils.getLoggedInUser().getFirstName()));
     }
 
     @PostMapping("user/bank")

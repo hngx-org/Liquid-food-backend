@@ -2,10 +2,10 @@ package org.hngxfreelunch.LiquidApplicationApi.data.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name = "users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,43 +24,37 @@ public class User {
 
     private String profile_picture;
 
-    private String first_name;
+    private String firstName;
 
-    private String last_name;
+    private String lastName;
 
     private String email;
 
-    private String phonenumber;
+    private String phoneNumber;
 
-    private String refresh_token;
+    private String refreshToken;
 
-    private String password_hash;
+    private String passwordHash;
 
-    private LocalDateTime updated_at;
+    private LocalDateTime updatedAt;
 
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
-    private String bank_number;
+    private String bankNumber;
 
-    private String bank_code;
+    private String bankCode;
 
-    private String bank_name;
+    private String bankName;
 
-    private String bank_region;
+    private String bankRegion;
 
-    private String currency_code;
+    private String currencyCode;
 
     private Boolean isAdmin;
 
-    private BigInteger lunch_credit_balance;
-
-
+    private BigInteger lunchCreditBalance;
 
     @OneToMany(mappedBy = "user")
     private List<Withdrawals> withdrawals;
-
-
-
-
 
 }

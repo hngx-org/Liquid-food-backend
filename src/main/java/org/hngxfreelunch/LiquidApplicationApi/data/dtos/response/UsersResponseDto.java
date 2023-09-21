@@ -4,14 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.UserDto;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class UsersResponseDto {
 
+    private Long id;
     private String email;
-    private String full_name;
-    private String organization_name;
+    private String fullName;
+    private String organizationName;
+
 }

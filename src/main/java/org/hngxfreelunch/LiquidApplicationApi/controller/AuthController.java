@@ -1,10 +1,8 @@
 package org.hngxfreelunch.LiquidApplicationApi.controller;
 
 import jakarta.validation.Valid;
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.*;
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponse;
-import org.hngxfreelunch.LiquidApplicationApi.data.entities.OrganizationInvites;
-import org.hngxfreelunch.LiquidApplicationApi.services.organization.OrganizationService;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.AdminSignupDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.UserSignupDto;
 import org.hngxfreelunch.LiquidApplicationApi.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

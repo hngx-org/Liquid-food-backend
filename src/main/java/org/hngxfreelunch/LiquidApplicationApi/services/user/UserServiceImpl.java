@@ -38,12 +38,12 @@ public class UserServiceImpl implements UserService{
         }
         // create new user
         User staff = new User();
-        staff.setFirst_name(signUpRequest.getFirstName());
-        staff.setLast_name(signUpRequest.getLastName());
+        staff.setFirstName(signUpRequest.getFirstName());
+        staff.setLastName(signUpRequest.getLastName());
         staff.setEmail(signUpRequest.getEmail());
         //staff.setRefresh_token(signUpRequest.getOtpToken());
-        staff.setPhonenumber(signUpRequest.getPhoneNumber());
-        staff.setPassword_hash(passwordEncoder.encode(signUpRequest.getPassword())); // hash password
+        staff.setPhoneNumber(signUpRequest.getPhoneNumber());
+        staff.setPasswordHash(passwordEncoder.encode(signUpRequest.getPassword())); // hash password
         User savedStaff = userRepository.save(staff);
         return new ApiResponseDto<>(null, "Staff created successfully", HttpStatus.CREATED.value());
     }
@@ -54,14 +54,14 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public ApiResponseDto getUserByName(String name) {
-        Optional<User> userByName = userRepository.findByName(name);
+    public ApiResponseDto getUserByName(String firstName) {
+        Optional<User> userByName = userRepository.findByFirstName(firstName);
         UsersResponseDto usersResponseDto = new UsersResponseDto();
         if (userByName.isPresent()){
             usersResponseDto.setEmail(userByName.get().getEmail());
-            usersResponseDto.setFull_name(userByName.get().getFirst_name()
-                    + " " + userByName.get().getLast_name());
-            usersResponseDto.setOrganization_name(userByName.get().getOrganization().getName());
+            usersResponseDto.setFullName(userByName.get().getFirstName()
+                    + " " + userByName.get().getLastName());
+            usersResponseDto.setOrganizationName(userByName.get().getOrganization().getName());
 
             return new ApiResponseDto(usersResponseDto,"Successfully returned user profile", HttpStatus.OK.value());
         }
@@ -69,21 +69,22 @@ public class UserServiceImpl implements UserService{
 //        if (userByEmail.isPresent()){
 //            return userByEmail.get();
 //        }
-        throw  new UserNotFoundException("Staff with name '" + name + "' not found");
+        throw  new UserNotFoundException("Staff with name '" + firstName + "' not found");
     }
 
     @Override
     public ApiResponseDto addBankDetails(BankRequestDto bankRequestDto) {
         User loggedInUser = userUtils.getLoggedInUser();
-        loggedInUser.setBank_code(bankRequestDto.getBankCode());
-        loggedInUser.setBank_name(bankRequestDto.getBankName());
-        loggedInUser.setBank_number(bankRequestDto.getBankNumber());
-        loggedInUser.setBank_region("NGN");
+        loggedInUser.setBankCode(bankRequestDto.getBankCode());
+        loggedInUser.setBankName(bankRequestDto.getBankName());
+        loggedInUser.setBankNumber(bankRequestDto.getBankNumber());
+        loggedInUser.setBankRegion("NGN");
+        userRepository.save(loggedInUser);
 
         UsersResponseDto usersResponseDto = new UsersResponseDto();
         usersResponseDto.setEmail(loggedInUser.getEmail());
-        usersResponseDto.setFull_name(loggedInUser.getFirst_name() + " " + loggedInUser.getLast_name());
-        usersResponseDto.setOrganization_name(loggedInUser.getOrganization().getName());
+        usersResponseDto.setFullName(loggedInUser.getFirstName() + " " + loggedInUser.getLastName());
+        usersResponseDto.setOrganizationName(loggedInUser.getOrganization().getName());
 
         return new ApiResponseDto(usersResponseDto,"Successfully added user bank details", HttpStatus.OK.value());
     }

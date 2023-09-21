@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.AccountDetails;
-import org.hngxfreelunch.LiquidApplicationApi.data.entities.Lunch;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organization;
 
 import java.util.List;

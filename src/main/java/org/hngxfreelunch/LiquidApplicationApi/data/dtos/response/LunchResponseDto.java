@@ -16,11 +16,11 @@ import java.time.LocalDateTime;
 public class LunchResponseDto {
 
     private String profilePicture;
-    private User sender;
-    private User receiver;
+    private UsersResponseDto sender;
+    private UsersResponseDto receiver;
     private Boolean redeemed;
     private LocalDateTime createdAt;
     private String role;
     private BigInteger quantity;
-//    private lunches lunches;
+
 }
