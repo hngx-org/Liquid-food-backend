@@ -28,8 +28,8 @@ public class BeanStore {
         );
     }
 
-    @Bean
-    public WebClient.Builder getWebClientBuilder() {
-        return WebClient.builder();
-    }
+//    @Bean
+//    public WebClient.Builder getWebClientBuilder() {
+//        return WebClient.builder();
+//    }
 }

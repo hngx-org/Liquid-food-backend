@@ -54,14 +54,15 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public ApiResponseDto getUserByName(String name) {
-        Optional<User> userByName = userRepository.findByName(name);
+    public ApiResponseDto getUserByName(String email) {
+//        Optional<User> userByName = userRepository.findByName(name);
+        Optional<User> userByEmail = userRepository.findByEmail(email);
         UsersResponseDto usersResponseDto = new UsersResponseDto();
-        if (userByName.isPresent()){
-            usersResponseDto.setEmail(userByName.get().getEmail());
-            usersResponseDto.setFull_name(userByName.get().getFirst_name()
-                    + " " + userByName.get().getLast_name());
-            usersResponseDto.setOrganization_name(userByName.get().getOrganization().getName());
+        if (userByEmail.isPresent()){
+            usersResponseDto.setEmail(userByEmail.get().getEmail());
+            usersResponseDto.setFull_name(userByEmail.get().getFirst_name()
+                    + " " + userByEmail.get().getLast_name());
+            usersResponseDto.setOrganization_name(userByEmail.get().getOrganization().getName());
 
             return new ApiResponseDto(usersResponseDto,"Successfully returned user profile", HttpStatus.OK.value());
         }
@@ -69,7 +70,7 @@ public class UserServiceImpl implements UserService{
 //        if (userByEmail.isPresent()){
 //            return userByEmail.get();
 //        }
-        throw  new UserNotFoundException("Staff with name '" + name + "' not found");
+        throw  new UserNotFoundException("Staff with email '" + email + "' not found");
     }
 
     @Override
