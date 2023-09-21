@@ -62,7 +62,8 @@ public class OrganizationServiceImplementation implements OrganizationService {
                         "\nDate: " + LocalDate.now() +
                         "\nTime: " + LocalTime.now() +
                         "\n" +
-                        "RSVP before " + expirationTime + " hours with this unique RSVP Token: " + token;
+                        "RSVP before " + expirationTime + " hours with this unique RSVP Token: " +
+                        "<p><a href=\"www.google.com?token=?" + token + "\">Accept Invitation<a/>";
 
         emailService.sendEmail(request.getEmail(), subject, htmlContent);
         OrganizationInvites organizationInvites = new OrganizationInvites();

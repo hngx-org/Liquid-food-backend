@@ -1,12 +1,12 @@
 package org.hngxfreelunch.LiquidApplicationApi.controller;
 
 import jakarta.validation.Valid;
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.AdminSignupDto;
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.LoginRequestDto;
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationRegistrationDto;
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.UserSignupDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.*;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponse;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.OrganizationInvites;
+import org.hngxfreelunch.LiquidApplicationApi.services.organization.OrganizationService;
+import org.hngxfreelunch.LiquidApplicationApi.services.user.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,28 +15,21 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")
 public class AuthController {
 
+    @Autowired
+    private UserService userService;
 
-    @PostMapping("login")
-    public ResponseEntity<ApiResponse> login(@Valid @RequestBody LoginRequestDto loginRequestDto){
-        return ResponseEntity.ok(new ApiResponse(null, true));
-    }
 
     @PostMapping("/staff/signup")
-    public ResponseEntity<ApiResponse>  signUpForStaff(@Valid @RequestBody UserSignupDto userSignupDto){
-        return ResponseEntity.ok(new ApiResponse(null, true));
+    public ResponseEntity<?>  signUpForStaff(@Valid @RequestBody UserSignupDto userSignupDto){
+
+        return ResponseEntity.ok(userService.createUser(userSignupDto));
     }
 
     @PostMapping("/admin/signup")
-    public ResponseEntity<ApiResponse> signUpForAdmin(@Valid @RequestBody AdminSignupDto adminSignupDto){
-        return ResponseEntity.ok(new ApiResponse(null, true));
+    public ResponseEntity<?> signUpForAdmin(@Valid @RequestBody AdminSignupDto adminSignupDto){
+        return ResponseEntity.ok(null);
     }
-    @PostMapping("/organization/create")
-    public ResponseEntity<ApiResponse> createOrganization(@Valid @RequestBody OrganizationRegistrationDto organizationRegistrationDto){
-        return ResponseEntity.ok(new ApiResponse(null, true));
-    }
-    @PostMapping("/organization/invite")
-    public ResponseEntity<ApiResponse> inviteStaffToOrganization(@Valid @RequestBody OrganizationInvites organizationInvites){
-        return ResponseEntity.ok(new ApiResponse(null, true));
-    }
+
+
 }
 
