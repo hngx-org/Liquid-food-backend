@@ -26,10 +26,6 @@ public class Organization {
     @OneToMany(mappedBy = "organization")
     private List<User> Users;
 
-    @OneToMany(mappedBy = "organization")
-    private List<OrganizationInvites> invites;
-
-
     @OneToOne
     private OrganizationLunchWallet wallet;
 

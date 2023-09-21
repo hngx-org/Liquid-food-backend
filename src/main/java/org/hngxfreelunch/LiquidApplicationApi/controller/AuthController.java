@@ -23,11 +23,5 @@ public class AuthController {
         return ResponseEntity.ok(userService.createUser(userSignupDto));
     }
 
-    @PostMapping("/admin/signup")
-    public ResponseEntity<?> signUpForAdmin(@Valid @RequestBody AdminSignupDto adminSignupDto){
-        return ResponseEntity.ok(null);
-    }
-
-
 }
 

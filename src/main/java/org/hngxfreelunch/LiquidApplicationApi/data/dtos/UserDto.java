@@ -2,12 +2,14 @@ package org.hngxfreelunch.LiquidApplicationApi.data.dtos;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class UserDto {
 
     @NotNull(message = "Enter first name")
@@ -23,5 +25,6 @@ public class UserDto {
     private String bankNumber;
     private String bankCode;
     private String bankName;
+    private String organizationName;
 
 }

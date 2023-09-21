@@ -21,6 +21,8 @@ public class BeanConfig {
     @Value("${cloudinary_api_secret}")
     private String apiSecret;
 
+    public static final String ISSUER = "Team Liquid";
+
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();

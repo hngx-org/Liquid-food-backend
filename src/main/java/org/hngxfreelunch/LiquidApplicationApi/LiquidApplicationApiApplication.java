@@ -19,11 +19,11 @@ import org.springframework.scheduling.annotation.EnableAsync;
 		),
 		servers = {
 				@Server(
-						url = "http://localhost:7000",
+						url = "http://localhost:8000",
 						description = "DEV Server"
 				),
 				@Server(
-						url = "",
+						url = "https://liquid-food-backend-production.up.railway.app",
 						description = "PROD server"
 				)
 		},
@@ -37,6 +37,7 @@ public class LiquidApplicationApiApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(LiquidApplicationApiApplication.class, args);
+		log.info("::::::Server Running::::::");
 	}
 
 }

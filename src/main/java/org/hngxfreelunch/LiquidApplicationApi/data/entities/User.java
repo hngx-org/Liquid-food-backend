@@ -22,7 +22,7 @@ public class User {
     @JoinColumn(name = "org_id")
     private Organization organization;
 
-    private String profile_picture;
+    private String profilePicture;
 
     private String firstName;
 

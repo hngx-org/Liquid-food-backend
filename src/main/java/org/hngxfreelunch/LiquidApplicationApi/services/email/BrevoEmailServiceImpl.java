@@ -61,7 +61,7 @@ public class BrevoEmailServiceImpl implements EmailService {
                 .retrieve()
                 .toBodilessEntity()
                 .block();
-        log.info("Registration Email sent for user: " + to + "!");
+        log.info("Email sent to user: " + to + "!");
     }
 }
 

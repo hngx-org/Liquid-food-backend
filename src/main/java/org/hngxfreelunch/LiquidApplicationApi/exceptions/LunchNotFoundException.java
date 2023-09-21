@@ -1,12 +1,14 @@
 package org.hngxfreelunch.LiquidApplicationApi.exceptions;
 
-public class LunchNotFoundException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class LunchNotFoundException extends FreeLunchException {
 
     public LunchNotFoundException() {
         this("Lunch Not Found!");
     }
 
     public LunchNotFoundException(String message) {
-        super(message);
+        super(message, HttpStatus.NOT_FOUND);
     }
 }

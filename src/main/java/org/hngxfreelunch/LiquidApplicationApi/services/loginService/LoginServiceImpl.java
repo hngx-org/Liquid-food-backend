@@ -6,6 +6,7 @@ import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.LoginRequestDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.LoginResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
+import org.hngxfreelunch.LiquidApplicationApi.exceptions.FreeLunchException;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.InvalidCredentials;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.UserNotFoundException;
 import org.hngxfreelunch.LiquidApplicationApi.security.CustomUserServiceImpl;
@@ -63,6 +64,6 @@ public class LoginServiceImpl implements LoginService {
                         .build();
             }
         }
-        return null;
+        throw new FreeLunchException();
     }
 }

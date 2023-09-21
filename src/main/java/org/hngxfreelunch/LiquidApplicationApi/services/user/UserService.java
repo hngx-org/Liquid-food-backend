@@ -4,6 +4,7 @@ package org.hngxfreelunch.LiquidApplicationApi.services.user;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.BankRequestDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.UserSignupDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
     // TODO: CREATE USER
@@ -16,4 +17,6 @@ public interface UserService {
 
     // TODO: ADD BANK DETAILS
     ApiResponseDto addBankDetails(BankRequestDto bankRequestDto);
+
+    String uploadProfileImage(MultipartFile file);
 }

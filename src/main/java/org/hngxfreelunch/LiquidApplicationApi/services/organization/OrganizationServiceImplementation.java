@@ -1,6 +1,7 @@
 package org.hngxfreelunch.LiquidApplicationApi.services.organization;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.http.HttpStatus;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationInviteDto;
@@ -12,11 +13,12 @@ import org.hngxfreelunch.LiquidApplicationApi.data.entities.OrganizationInvites;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.OrganizationInvitesRepository;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.OrganizationRepository;
+import org.hngxfreelunch.LiquidApplicationApi.exceptions.InvalidCredentials;
+import org.hngxfreelunch.LiquidApplicationApi.exceptions.OrganizationNotFoundException;
 import org.hngxfreelunch.LiquidApplicationApi.services.email.EmailService;
 import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,31 +27,31 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrganizationServiceImplementation implements OrganizationService {
 
-    private OrganizationRepository organizationRepository;
-    private OrganizationInvitesRepository organizationInvitesRepository;
-    private EmailService emailService;
-    private UserUtils userUtils;
+    private final OrganizationRepository organizationRepository;
+    private final OrganizationInvitesRepository organizationInvitesRepository;
+    private final EmailService emailService;
+    private final UserUtils userUtils;
 
     @Value("${url_prefix}")
     private String url_prefix;
 
     @Override
     public ApiResponseDto createOrganization(OrganizationRegistrationDto request) {
-        boolean isExists = organizationRepository.existsByOrganizationName(request.getOrganizationName());
+        boolean isExists = organizationRepository.existsByName(request.getOrganizationName());
         if (isExists) {
             return new ApiResponseDto(null,"Organization name already exists", HttpStatus.SC_BAD_REQUEST);
         }
-        Organization newOrganization = Organization.builder()
+        Organization organization = Organization.builder()
                 .name(request.getOrganizationName())
                 .lunchPrice(BigInteger.valueOf(1000))
                 .currency("NGN")
                 .build();
-        organizationRepository.save(newOrganization);
+        Organization savedOrganization = organizationRepository.save(organization);
 
-        return new ApiResponseDto(newOrganization,"Organization Created successfully", HttpStatus.SC_CREATED);
-
+        return new ApiResponseDto(savedOrganization,"Organization Created successfully", HttpStatus.SC_CREATED);
     }
 
     @Override
@@ -57,8 +59,6 @@ public class OrganizationServiceImplementation implements OrganizationService {
         String token = RandomStringUtils.randomNumeric(5);
 
         LocalDateTime expirationTime = LocalDateTime.now().plusHours(24);
-        int expirationTimeInHours = expirationTime.getHour();
-
         String subject = "Lunch Invite";
         String htmlContent =
                 "We're delighted to invite you to a complimentary lunch as a token of our appreciation for your hard work and dedication.\n" +
@@ -75,15 +75,22 @@ public class OrganizationServiceImplementation implements OrganizationService {
         organizationInvites.setEmail(request.getEmail());
         organizationInvites.setTTL(expirationTime);
         organizationInvitesRepository.save(organizationInvites);
+        organizationInvites.setOrganization(organizationRepository.findById(request.getOrganizationId()).orElseThrow(OrganizationNotFoundException::new));
+        organizationInvitesRepository.save(organizationInvites);
         return new ApiResponseDto(organizationInvites,"Success", HttpStatus.SC_OK);
     }
 
     @Override
-    public ApiResponseDto verifyOrganizationInvite(String token) {
-        OrganizationInvites organizationInvites = organizationInvitesRepository.findByToken(token);
+    public Organization verifyOrganizationInvite(String token, String email) {
+        OrganizationInvites organizationInvites = organizationInvitesRepository.findByToken(token).orElseThrow(() -> new InvalidCredentials("Token not valid"));
+        if (!organizationInvites.getEmail().equals(email)) {
+            throw new InvalidCredentials("OTP not valid for user");
+        }
         LocalDateTime expirationTime = organizationInvites.getTTL();
         LocalDateTime currentTime = LocalDateTime.now();
-        if (currentTime.isAfter(expirationTime)) {
+        if (currentTime.isBefore(expirationTime)) {
+            Organization organization = organizationInvites.getOrganization();
+            log.info(String.valueOf(organization));
             String subject = "Lunch Invite";
             String htmlContent =
                     "We're delighted to invite you to a complimentary lunch as a token of our appreciation for your hard work and dedication.\n" +
@@ -93,12 +100,18 @@ public class OrganizationServiceImplementation implements OrganizationService {
                             "\n" +
                             "RSVP before " + expirationTime + " hours with this unique RSVP Token: " +
                             "<p><a href=\"" + url_prefix + "?token=?" + token + "\">Accept Invitation<a/>";
-
             emailService.sendEmail(organizationInvites.getEmail(), subject, htmlContent);
-            return new ApiResponseDto(null,"Invitation has expired new invitation email sent successfully", HttpStatus.SC_OK);
+            organizationInvitesRepository.delete(organizationInvites);
+            log.info(String.valueOf(organization));
+            return organization;
+        } else {
+            throw new InvalidCredentials("OTP is expired");
         }
+    }
 
-        return new ApiResponseDto(null,"Email successfully verified", HttpStatus.SC_OK);
+    @Override
+    public Organization findById(Long id) {
+        return organizationRepository.findById(id).orElseThrow(OrganizationNotFoundException::new);
     }
 
     @Override

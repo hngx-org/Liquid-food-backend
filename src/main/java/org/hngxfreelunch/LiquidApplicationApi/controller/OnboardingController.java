@@ -11,21 +11,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class OnboardingController {
     private final LoginService loginService;
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponseDto<LoginResponseDto>> loginUser(@Valid @RequestBody LoginRequestDto request){
-        ApiResponseDto<LoginResponseDto> response = new ApiResponseDto<>(loginService.loginUser(request),
-                "User logged in successfully", 200);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<?> loginUser(@Valid @RequestBody LoginRequestDto request){
+        return ResponseEntity.ok(new ApiResponseDto<>(loginService.loginUser(request),
+                "User logged in successfully", 200));
     }
     @PostMapping("/refresh-token")
-    public ResponseEntity<ApiResponseDto<LoginResponseDto>> loginUser(@RequestHeader("Refresh-Token") String refreshToken){
-        ApiResponseDto<LoginResponseDto> response = new ApiResponseDto<>(loginService.refreshUserToken(refreshToken),
-                "User logged in successfully", 200);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<?> loginUser(@RequestHeader("Refresh-Token") String refreshToken){
+        return ResponseEntity.ok(new ApiResponseDto<>(loginService.refreshUserToken(refreshToken),
+                "User logged in successfully", 200));
     }
 }
