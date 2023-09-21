@@ -17,13 +17,14 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter authFilter;
     private final AuthenticationEntryPoint authEntryPoint;
     private final String[] WHITE_LIST = {
-            "/api/auth/login", "/api/organization/**", "api/auth/staff/**", "/"
+            "/api/auth/login", "/api/organization/**", "api/auth/staff/**", "/",
+            "/swagger-ui.html", "/swagger-ui/**", "v3/api-docs", "v3/api-docs/**"
     };
     private final String[] SWAGGER = {"/swagger-ui.html", "/swagger-ui/**", "v3/api-docs", "v3/api-docs/**"};
 
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -36,7 +37,6 @@ public class SecurityConfig {
                 .requestMatchers(SWAGGER).permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(authEntryPoint))
                 .logout(logout -> {
                     logout.logoutUrl("/logout");
                     logout.logoutSuccessHandler((((request, response, authentication) -> SecurityContextHolder.clearContext())));
