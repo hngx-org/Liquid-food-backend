@@ -16,12 +16,13 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter authFilter;
     private final AuthenticationEntryPoint authEntryPoint;
-    private final String[] WHITE_LIST = {
-            "/api/auth/login", "/api/organization/**", "api/auth/staff/**", "/",
-            "/swagger-ui.html", "/swagger-ui/**", "v3/api-docs", "v3/api-docs/**"
-    };
-    private final String[] SWAGGER = {"/swagger-ui.html", "/swagger-ui/**", "v3/api-docs", "v3/api-docs/**"};
 
+    private final String[] WHITE_LIST = {
+            "/api/auth/login", "/api/organization/create", "api/auth/staff/**", "/api/organization/create",
+            "/swagger-ui.html", "/swagger-ui/**", "v3/api-docs", "v3/api-docs/**", "/"
+    };
+
+    private final String[] SWAGGER = {"/swagger-ui.html", "/swagger-ui/**", "v3/api-docs", "v3/api-docs/**"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
