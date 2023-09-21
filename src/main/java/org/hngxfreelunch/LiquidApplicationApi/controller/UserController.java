@@ -32,7 +32,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserByName(userUtils.getLoggedInUser().getFirstName()));
     }
 
-    @PostMapping("bank")
+    @PutMapping("bank")
     public ResponseEntity<?> addBankAccount(@Valid @RequestBody BankRequestDto bankRequestDto){
         return ResponseEntity.ok(userService.addBankDetails(bankRequestDto));
     }
