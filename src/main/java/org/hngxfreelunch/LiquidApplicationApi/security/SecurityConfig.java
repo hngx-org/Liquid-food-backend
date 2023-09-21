@@ -18,7 +18,7 @@ public class SecurityConfig {
     private final AuthenticationEntryPoint authEntryPoint;
 
     private final String[] WHITE_LIST = {
-            "/api/auth/login", "/api/organization/create", "api/auth/staff/**", "/api/organization/create",
+            "/api/auth/login", "api/auth/staff/**", "/api/organization/create",
             "/swagger-ui.html", "/swagger-ui/**", "v3/api-docs", "v3/api-docs/**", "/"
     };
 

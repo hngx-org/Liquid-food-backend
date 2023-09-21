@@ -6,6 +6,7 @@ import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationRegi
 import org.hngxfreelunch.LiquidApplicationApi.services.organization.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,12 +22,17 @@ public class OrganizationController {
         return ResponseEntity.ok(organizationService.createOrganization(organizationRegistrationDto));
     }
 
-
+    @PreAuthorize(
+            "hasAuthority('ADMIN')"
+    )
     @PostMapping("invite")
     public ResponseEntity<?> inviteStaffToOrganization(@Valid @RequestBody OrganizationInviteDto organizationInviteDto){
         return ResponseEntity.ok(organizationService.sendOrganizationInviteToStaff(organizationInviteDto));
     }
 
+    @PreAuthorize(
+            "hasAuthority('ADMIN')"
+    )
     @PostMapping("lunch")
     public ResponseEntity<?> sendLunchCredit(@Valid @RequestBody OrganizationInviteDto organizationInviteDto){
         return ResponseEntity.ok(organizationService.sendLunchCredit(organizationInviteDto));

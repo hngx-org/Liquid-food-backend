@@ -5,6 +5,7 @@ import org.hngxfreelunch.LiquidApplicationApi.services.withdraw.WithdrawalServic
 import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,6 +19,9 @@ public class WithdrawalController {
     @Autowired
     private UserUtils userUtils;
 
+    @PreAuthorize(
+            "hasAnyAuthority('ADMIN', 'USER')"
+    )
     @PostMapping("request")
     public ResponseEntity<?> makeANewWithDraw(@RequestBody WithdrawalRequestDto withdrawalRequestDto){
         return ResponseEntity.ok(withdrawalService.processWithdrawalRequest(withdrawalRequestDto,userUtils.getLoggedInUser().getId()));
