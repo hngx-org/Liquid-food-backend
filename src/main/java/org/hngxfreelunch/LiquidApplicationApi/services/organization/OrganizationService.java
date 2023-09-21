@@ -1,15 +1,3 @@
-<<<<<<< HEAD
-package org.hngxfreelunch.LiquidApplicationApi.services.organization;
-
-
-public interface OrganizationService {
-    // TODO: CREATE ORGANIZATION
-    // TODO: ADD STAFF
-    // TODO: REMOVE STAFF
-    // TODO: UPDATE ORGANIZATION DETAILS
-    // TODO: DELETE ORGANIZATION
-}
-=======
 package org.hngxfreelunch.LiquidApplicationApi.services.organization;
 
 
@@ -31,4 +19,3 @@ public interface OrganizationService {
     // TODO: GET ALL STAFF IN ORGANIZATION
     ApiResponseDto getAllStaffInOrganization();
 }
->>>>>>> 37617686d864be3d5717d47a2fb029fe19dd3361

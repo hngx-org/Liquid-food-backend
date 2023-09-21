@@ -1,18 +1,3 @@
-<<<<<<< HEAD
-package org.hngxfreelunch.LiquidApplicationApi.services.lunch;
-
-import lombok.RequiredArgsConstructor;
-import org.hngxfreelunch.LiquidApplicationApi.data.repositories.LunchRepository;
-import org.springframework.stereotype.Service;
-
-@Service
-@RequiredArgsConstructor
-public class LunchServiceImplementation implements LunchService {
-
-    private LunchRepository lunchRepository;
-
-}
-=======
 package org.hngxfreelunch.LiquidApplicationApi.services.lunch;
 
 import lombok.RequiredArgsConstructor;
@@ -87,4 +72,3 @@ public class LunchServiceImplementation implements LunchService {
     }
 
 }
->>>>>>> 37617686d864be3d5717d47a2fb029fe19dd3361

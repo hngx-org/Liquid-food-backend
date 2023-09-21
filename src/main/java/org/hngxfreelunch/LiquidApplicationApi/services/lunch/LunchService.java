@@ -1,13 +1,3 @@
-<<<<<<< HEAD
-package org.hngxfreelunch.LiquidApplicationApi.services.lunch;
-
-
-public interface LunchService {
-    // TODO: SEND LUNCH TO STAFF ID
-    // TODO: GET ALL LUNCHES RECEIVED BY STAFF ID
-    // TODO: GET ALL LUNCHES SENT BY STAFF ID
-}
-=======
 package org.hngxfreelunch.LiquidApplicationApi.services.lunch;
 
 
@@ -31,4 +21,3 @@ public interface LunchService {
 //    public LunchResponseDto redeemLunch(Long lunch_id);
 
 }
->>>>>>> 37617686d864be3d5717d47a2fb029fe19dd3361
