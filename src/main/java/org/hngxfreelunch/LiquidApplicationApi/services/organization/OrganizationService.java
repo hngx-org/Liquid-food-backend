@@ -12,10 +12,12 @@ public interface OrganizationService {
     // TODO: ADD STAFF
     ApiResponseDto sendOrganizationInviteToStaff(OrganizationInviteDto request);
     // TODO: VERIFY STAFF
-    ApiResponseDto verifyOrganizationInvite(String token);
+
     // TODO: SEND LUNCH CREDIT TO STAFF
     ApiResponseDto sendLunchCredit(OrganizationInviteDto request);
 
     // TODO: GET ALL STAFF IN ORGANIZATION
     ApiResponseDto getAllStaffInOrganization();
+
+    ApiResponseDto verifyOrganizationInvite(String otpToken);
 }

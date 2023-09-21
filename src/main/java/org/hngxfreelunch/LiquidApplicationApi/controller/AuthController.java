@@ -5,6 +5,7 @@ import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.*;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponse;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.OrganizationInvites;
 import org.hngxfreelunch.LiquidApplicationApi.services.organization.OrganizationService;
+import org.hngxfreelunch.LiquidApplicationApi.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,25 +16,19 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     @Autowired
-    private OrganizationService organizationService;
+    private UserService userService;
 
 
     @PostMapping("/staff/signup")
-    public ResponseEntity<ApiResponse>  signUpForStaff(@Valid @RequestBody UserSignupDto userSignupDto){
-        return ResponseEntity.ok(new ApiResponse(null, true));
+    public ResponseEntity<?>  signUpForStaff(@Valid @RequestBody UserSignupDto userSignupDto){
+        return ResponseEntity.ok(userService.createUser(userSignupDto));
     }
 
     @PostMapping("/admin/signup")
-    public ResponseEntity<ApiResponse> signUpForAdmin(@Valid @RequestBody AdminSignupDto adminSignupDto){
-        return ResponseEntity.ok(new ApiResponse(null, true));
+    public ResponseEntity<?> signUpForAdmin(@Valid @RequestBody AdminSignupDto adminSignupDto){
+        return ResponseEntity.ok(null);
     }
-    @PostMapping("/organization/create")
-    public ResponseEntity<ApiResponse> createOrganization(@Valid @RequestBody OrganizationRegistrationDto organizationRegistrationDto){
-        return ResponseEntity.ok(new ApiResponse(organizationService.createOrganization(organizationRegistrationDto), true));
-    }
-    @PostMapping("/organization/invite")
-    public ResponseEntity<ApiResponse> inviteStaffToOrganization(@Valid @RequestBody OrganizationInviteDto organizationInviteDto){
-        return ResponseEntity.ok(new ApiResponse(organizationService.sendOrganizationInviteToStaff(organizationInviteDto), true));
-    }
+
+
 }
 

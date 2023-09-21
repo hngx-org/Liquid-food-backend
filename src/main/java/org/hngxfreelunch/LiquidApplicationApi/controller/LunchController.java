@@ -20,19 +20,18 @@ public class LunchController {
     private UserUtils userUtils;
 
     @PostMapping("send")
-    public ResponseEntity<ApiResponse> sendLunch(@RequestBody LunchRequestDto lunchRequestDto) {
-
-        return ResponseEntity.ok(new ApiResponse(lunchService.sendLunch(lunchRequestDto, userUtils.getLoggedInUser()), true));
+    public ResponseEntity<?> sendLunch(@RequestBody LunchRequestDto lunchRequestDto) {
+        return ResponseEntity.ok(lunchService.sendLunch(lunchRequestDto, userUtils.getLoggedInUser()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse> getLunch(@PathVariable long id) {
-        return ResponseEntity.ok(new ApiResponse(lunchService.getLunch(id), true));
+    public ResponseEntity<?> getLunch(@PathVariable long id) {
+        return ResponseEntity.ok(lunchService.getLunch(id));
     }
 
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse> getAllLunch() {
-        return ResponseEntity.ok(new ApiResponse(lunchService.getAllLunch(userUtils.getLoggedInUser().getId()), true));
+    public ResponseEntity<?> getAllLunchForAStaff() {
+        return ResponseEntity.ok(lunchService.getAllLunch(userUtils.getLoggedInUser().getId()));
     }
 
 }

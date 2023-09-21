@@ -25,23 +25,23 @@ public class UserController {
     @Autowired
     private UserUtils userUtils;
     @GetMapping("user/profile")
-    public ResponseEntity<ApiResponse> getProfile(){
-        return ResponseEntity.ok(new ApiResponse(userService.getUserByName(userUtils.getLoggedInUser().getFirst_name()),true));
+    public ResponseEntity<?> getProfile(){
+        return ResponseEntity.ok(userService.getUserByName(userUtils.getLoggedInUser().getFirst_name()));
     }
 
     @PostMapping("user/bank")
-    public ResponseEntity<ApiResponse> addBankAccount(@Valid @RequestBody BankRequestDto bankRequestDto){
-        return ResponseEntity.ok(new ApiResponse(userService.addBankDetails(bankRequestDto),true));
+    public ResponseEntity<?> addBankAccount(@Valid @RequestBody BankRequestDto bankRequestDto){
+        return ResponseEntity.ok(userService.addBankDetails(bankRequestDto));
     }
 
     @GetMapping("users")
-    public ResponseEntity<ApiResponse> getAllUsers(){
-    return ResponseEntity.ok(new ApiResponse(organizationService.getAllStaffInOrganization(),true));
+    public ResponseEntity<?> getAllUsers(){
+    return ResponseEntity.ok(organizationService.getAllStaffInOrganization());
     }
 
     @GetMapping("/search/{nameOrEmail}")
-    public ResponseEntity<ApiResponse> searchForUser(@PathVariable String nameOrEmail){
-        return ResponseEntity.ok(new ApiResponse(null, true));
+    public ResponseEntity<?> searchForUser(@PathVariable String nameOrEmail){
+        return ResponseEntity.ok(null);
     }
 
 
