@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -65,10 +67,27 @@ public class UserServiceImpl implements UserService{
 
             return new ApiResponseDto(usersResponseDto,"Successfully returned user profile", HttpStatus.OK.value());
         }
-//        Optional<User> userByEmail = userRepository.findByEmail(email);
-//        if (userByEmail.isPresent()){
-//            return userByEmail.get();
-//        }
+
+        throw  new UserNotFoundException("Staff with name '" + name + "' not found");
+    }
+
+
+    @Override
+    public ApiResponseDto getUsersByName(String name) {
+        List<User> usersByName = userRepository.findByFirstNameOrLastName(name);
+        List<UsersResponseDto> usersResponseDtoList = new ArrayList<>();
+        if (!usersByName.isEmpty()){
+            for (User user: usersByName) {
+                UsersResponseDto usersResponseDto = new UsersResponseDto();
+                usersResponseDto.setEmail(user.getEmail());
+                usersResponseDto.setFull_name(user.getFirst_name()
+                        + " " + user.getLast_name());
+                usersResponseDto.setOrganization_name(user.getOrganization().getName());
+                usersResponseDtoList.add(usersResponseDto);
+            }
+
+            return new ApiResponseDto(usersResponseDtoList,"Successfully returned users profile", HttpStatus.OK.value());
+        }
         throw  new UserNotFoundException("Staff with name '" + name + "' not found");
     }
 
@@ -79,6 +98,8 @@ public class UserServiceImpl implements UserService{
         loggedInUser.setBank_name(bankRequestDto.getBankName());
         loggedInUser.setBank_number(bankRequestDto.getBankNumber());
         loggedInUser.setBank_region("NGN");
+
+        userRepository.save(loggedInUser);
 
         UsersResponseDto usersResponseDto = new UsersResponseDto();
         usersResponseDto.setEmail(loggedInUser.getEmail());

@@ -10,6 +10,10 @@ public interface UserService {
     ApiResponseDto createUser(UserSignupDto signUpRequest);
     // TODO: GET STAFF DETAILS BY NAME
     ApiResponseDto getUserByName(String name);
+
+    // TODO: RETURN ALL USERS WITH THIS NAME
+    ApiResponseDto getUsersByName(String name);
+
     // TODO: ADD BANK DETAILS
     ApiResponseDto addBankDetails(BankRequestDto bankRequestDto);
 }

@@ -26,7 +26,7 @@ public class Organization {
     private String currency;
 
     @OneToMany(mappedBy = "organization")
-    private List<User> User;
+    private List<User> Users;
 
     @OneToMany(mappedBy = "organization")
     private List<OrganizationInvites> invites;
@@ -34,8 +34,4 @@ public class Organization {
 
     @OneToOne
     private OrganizationLunchWallet wallet;
-
-    private String email;
-    @OneToMany(mappedBy = "organization", orphanRemoval = true)
-    private List<User> staff;
 }
