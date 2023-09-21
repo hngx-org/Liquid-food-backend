@@ -3,6 +3,7 @@ package org.hngxfreelunch.LiquidApplicationApi.data.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
 @Entity
@@ -50,7 +51,7 @@ public class User {
 
     private Boolean isAdmin;
 
-    private String lunch_credit_balance;
+    private BigInteger lunch_credit_balance;
 
 
 
