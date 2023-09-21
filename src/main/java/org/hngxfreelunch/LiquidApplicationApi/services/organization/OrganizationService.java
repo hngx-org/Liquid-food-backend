@@ -4,6 +4,7 @@ package org.hngxfreelunch.LiquidApplicationApi.services.organization;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationInviteDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationRegistrationDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organization;
 
 public interface OrganizationService {
     // TODO: CREATE ORGANIZATION
@@ -19,5 +20,7 @@ public interface OrganizationService {
     // TODO: GET ALL STAFF IN ORGANIZATION
     ApiResponseDto getAllStaffInOrganization();
 
-    ApiResponseDto verifyOrganizationInvite(String otpToken);
+    Organization verifyOrganizationInvite(String otpToken, String email);
+
+    Organization findById(Long id);
 }

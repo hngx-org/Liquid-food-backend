@@ -13,10 +13,10 @@ import java.math.BigInteger;
 @Builder
 public class WithdrawalResponseDto {
 
-    private ApiResponseDto apiResponseDto;
     private String id;
     private String userId;
     private String status;
     private BigInteger amount;
     private String createdAt;
+
 }

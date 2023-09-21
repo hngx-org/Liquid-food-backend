@@ -20,7 +20,7 @@ public class CustomUserServiceImpl implements UserDetailsService {
     public User loadUserByUsername(String email) throws UsernameNotFoundException {
         org.hngxfreelunch.LiquidApplicationApi.data.entities.User user = userRepository.findByEmail(email).orElseThrow(()->
                 new UsernameNotFoundException("Wrong user credentials"));
-        return new User(user.getEmail(), user.getPassword_hash(), getAuthorities(user));
+        return new User(user.getEmail(), user.getPasswordHash(), getAuthorities(user));
     }
 
     private Collection<? extends GrantedAuthority> getAuthorities(org.hngxfreelunch.LiquidApplicationApi.data.entities.User user){

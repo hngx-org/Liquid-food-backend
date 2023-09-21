@@ -29,6 +29,6 @@ public class Withdrawals {
 
     private BigInteger amount;
 
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
 }

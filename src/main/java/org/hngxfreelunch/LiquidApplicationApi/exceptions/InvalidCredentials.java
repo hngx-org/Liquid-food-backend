@@ -1,7 +1,9 @@
 package org.hngxfreelunch.LiquidApplicationApi.exceptions;
 
-public class InvalidCredentials extends RuntimeException{
+import org.springframework.http.HttpStatus;
+
+public class InvalidCredentials extends FreeLunchException {
     public InvalidCredentials(String message) {
-        super(message);
+        super(message, HttpStatus.UNAUTHORIZED);
     }
 }

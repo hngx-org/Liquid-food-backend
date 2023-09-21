@@ -7,12 +7,12 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.xml.bind.DatatypeConverter;
 import lombok.RequiredArgsConstructor;
-import org.hngxfreelunch.LiquidApplicationApi.utils.DateUtils;
+import org.hngxfreelunch.LiquidApplicationApi.utils.BeanConfig;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
 import java.security.Key;
+import java.time.Instant;
 import java.util.Date;
 import java.util.function.Function;
 
@@ -31,24 +31,26 @@ public class JwtService {
 
     public String generateToken(Authentication authentication){
         String userEmail = authentication.getName();
+        Date expiration = Date.from(Instant.now().plusSeconds(60 * 60));
         return Jwts
                 .builder()
                 .setSubject(userEmail)
-                .setIssuer("Team Liquid")
+                .setIssuer(BeanConfig.ISSUER)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(DateUtils.getExpirationDate())
+                .setExpiration(expiration)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
 
     public String generateRefreshToken(Authentication authentication){
         String userEmail = authentication.getName();
+        Date refreshExpiration = Date.from(Instant.now().plusSeconds(3600 * 24));
         return Jwts
                 .builder()
                 .setSubject(userEmail)
-                .setIssuer("Team Liquid")
+                .setIssuer(BeanConfig.ISSUER)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(DateUtils.getRefreshedExpirationDate())
+                .setExpiration(refreshExpiration)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS512)
                 .compact();
     }

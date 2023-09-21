@@ -31,9 +31,5 @@ public class OrganizationController {
     public ResponseEntity<?> sendLunchCredit(@Valid @RequestBody OrganizationInviteDto organizationInviteDto){
         return ResponseEntity.ok(organizationService.sendLunchCredit(organizationInviteDto));
     }
-    @PostMapping("invite")
-    public ResponseEntity<?> verifyOrganizationInvite(@RequestParam("token") String otp){
-        return ResponseEntity.ok(organizationService.verifyOrganizationInvite(otp));
-    }
 
 }

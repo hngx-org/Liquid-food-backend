@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "organization_invites")
 public class OrganizationInvites {
 
     @Id
@@ -27,9 +26,7 @@ public class OrganizationInvites {
 
     private LocalDateTime TTL;
 
-    @ManyToOne
-    @JoinColumn(name = "org_id")
+    @ManyToOne(fetch = FetchType.EAGER)
     private Organization organization;
-
 
 }
