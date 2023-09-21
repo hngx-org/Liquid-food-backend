@@ -11,4 +11,3 @@ public class MailInfo {
     private String name;
     private String email;
 }
-
