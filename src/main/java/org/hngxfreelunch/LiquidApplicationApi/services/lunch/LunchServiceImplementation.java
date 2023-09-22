@@ -10,6 +10,7 @@ import org.hngxfreelunch.LiquidApplicationApi.data.repositories.LunchRepository;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -49,14 +50,17 @@ public class LunchServiceImplementation implements LunchService {
     }
 
     private Lunches sendLunchToEachStaff(User eachStaff, User sender,LunchRequestDto lunchRequestDto) {
+        User receiver = staffRepository.findById(eachStaff.getId()).get();
         Lunches newLunch= Lunches.builder()
                 .sender(sender)
-                .receiver(staffRepository.findById(eachStaff.getId()).get())
+                .receiver(receiver)
                 .redeemed(false)
                 .note(lunchRequestDto.getNote())
                 .createdAt(LocalDateTime.now())
                 .quantity(lunchRequestDto.getQuantity())
                 .build();
+        receiver.setLunchCreditBalance(receiver.getLunchCreditBalance().add(BigInteger.valueOf(lunchRequestDto.getQuantity())));
+        staffRepository.save(receiver);
         return lunchRepository.save(newLunch);
     }
 
