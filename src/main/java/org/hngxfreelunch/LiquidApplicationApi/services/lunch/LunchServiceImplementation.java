@@ -10,6 +10,7 @@ import org.hngxfreelunch.LiquidApplicationApi.data.repositories.LunchRepository;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -58,16 +59,21 @@ public class LunchServiceImplementation implements LunchService {
                 .createdAt(LocalDateTime.now())
                 .quantity(lunchRequestDto.getQuantity())
                 .build();
+        BigInteger bigIntValue = new BigInteger(lunchRequestDto.getQuantity().toString());
+        eachStaff.setLunch_credit_balance(eachStaff.getLunch_credit_balance().add(bigIntValue));
         return lunchRepository.save(newLunch);
     }
 
     @Override
-    public List<LunchResponseDto> getAllLunch() {
+    public List<LunchResponseDto> getAllLunch(Long user_id) {
+        User user=staffRepository.findById(user_id).get();
         List<Lunches> lunchesList=lunchRepository.findAll();
-        List<LunchResponseDto> staffLunch=lunchesList.stream()
-                .map(eachLunch->mapLunchToResponseDto(eachLunch))
+        List<Lunches> userLunch= lunchesList.stream()
+                .filter(eachLunch->eachLunch.getSender().equals(user)
+                        && eachLunch.getSender().equals(user)).toList();
+        return userLunch.stream()
+                .map(this::mapLunchToResponseDto)
                 .toList();
-        return staffLunch;
     }
 
     @Override

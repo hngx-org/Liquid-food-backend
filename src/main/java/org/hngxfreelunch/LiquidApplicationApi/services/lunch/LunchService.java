@@ -16,7 +16,7 @@ public interface LunchService {
 
     public List<LunchResponseDto> sendLunch(LunchRequestDto lunchRequestDto, HttpServletRequest request);
 
-    public List<LunchResponseDto> getAllLunch();
+    public List<LunchResponseDto> getAllLunch(Long user_id);
 
     public LunchResponseDto getLunch(Long lunch_id);
 //    public LunchResponseDto redeemLunch(Long lunch_id);

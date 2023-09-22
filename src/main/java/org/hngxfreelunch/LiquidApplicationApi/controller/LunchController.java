@@ -31,8 +31,8 @@ public class LunchController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse> getAllLunch(){
-        List<LunchResponseDto> responseDtoList=lunchService.getAllLunch();
+    public ResponseEntity<ApiResponse> getAllLunch(Long user_id){
+        List<LunchResponseDto> responseDtoList=lunchService.getAllLunch(user_id);
         return ResponseEntity.ok(new ApiResponse(responseDtoList, true));
     }
 }
