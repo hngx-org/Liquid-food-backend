@@ -27,5 +27,6 @@ public class UserDto {
     private String bankName;
     private String organizationName;
     private Long id;
+    private Boolean isAdmin;
 
 }
