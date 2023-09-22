@@ -24,7 +24,6 @@ public class OrganizationController {
 
     @PostMapping("lunch")
     public ResponseEntity<?> sendLunchCredit(@Valid @RequestBody OrganizationInviteDto organizationInviteDto){
-
         return ResponseEntity.ok(organizationService.sendLunchCredit(organizationInviteDto));
     }
 

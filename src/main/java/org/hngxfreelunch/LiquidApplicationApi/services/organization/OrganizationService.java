@@ -8,7 +8,7 @@ import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organizations;
 
 public interface OrganizationService {
     // TODO: CREATE ORGANIZATION
-    ApiResponseDto createOrganization(OrganizationRegistrationDto request);
+    Organizations createOrganization(OrganizationRegistrationDto request);
 
     // TODO: ADD STAFF
     ApiResponseDto sendOrganizationInviteToStaff(OrganizationInviteDto request);
