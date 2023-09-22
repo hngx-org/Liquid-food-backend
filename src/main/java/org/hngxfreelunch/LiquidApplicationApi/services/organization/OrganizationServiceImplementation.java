@@ -14,13 +14,16 @@ import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.OrganizationInvitesRepository;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.OrganizationRepository;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
+import org.hngxfreelunch.LiquidApplicationApi.exceptions.FreeLunchException;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.InvalidCredentials;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.OrganizationNotFoundException;
+import org.hngxfreelunch.LiquidApplicationApi.exceptions.UserNotFoundException;
 import org.hngxfreelunch.LiquidApplicationApi.services.email.EmailService;
 import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -41,19 +44,18 @@ public class OrganizationServiceImplementation implements OrganizationService {
     private String url_prefix;
 
     @Override
-    public ApiResponseDto createOrganization(OrganizationRegistrationDto request) {
+    public Organizations createOrganization(OrganizationRegistrationDto request) {
         boolean isExists = organizationRepository.existsByName(request.getOrganizationName());
         if (isExists) {
-            return new ApiResponseDto(null,"Organization name already exists", HttpStatus.SC_BAD_REQUEST);
+            throw new FreeLunchException();
         }
         Organizations organizations = Organizations.builder()
                 .name(request.getOrganizationName())
                 .lunchPrice(1000.00)
                 .currencyCode("NGN")
                 .build();
-        Organizations savedOrganizations = organizationRepository.save(organizations);
 
-        return new ApiResponseDto(savedOrganizations,"Organization Created successfully", HttpStatus.SC_CREATED);
+        return organizationRepository.save(organizations);
     }
 
     @Override
@@ -118,7 +120,10 @@ public class OrganizationServiceImplementation implements OrganizationService {
 
     @Override
     public ApiResponseDto sendLunchCredit(OrganizationInviteDto request) {
-        return null;
+        User foundUser = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new UserNotFoundException("User  with email address not found"));
+        foundUser.setLunchCreditBalance(foundUser.getLunchCreditBalance().and(BigInteger.valueOf(4)));
+        userRepository.save(foundUser);
+        return new ApiResponseDto<>(null, "SUCCESSFUL",HttpStatus.SC_OK);
     }
 
     @Override
