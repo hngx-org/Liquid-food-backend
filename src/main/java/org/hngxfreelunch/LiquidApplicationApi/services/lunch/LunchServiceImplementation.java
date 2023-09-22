@@ -30,13 +30,12 @@ public class LunchServiceImplementation implements LunchService {
                 .map(eachStaff->sendLunchToEachStaff(eachStaff,sender,lunchRequestDto))
                 .toList();
         return lunchesList.stream()
-                .map(eachLunch->mapLunchToResponseDto(eachLunch))
+                .map(this::mapLunchToResponseDto)
                 .toList();
     }
 
     private User getSender(HttpServletRequest request) {
-        User user = (User) request.getAttribute("user");
-        return user;
+        return (User) request.getAttribute("user");
     }
 
     private LunchResponseDto mapLunchToResponseDto(Lunches eachLunch) {
@@ -64,10 +63,9 @@ public class LunchServiceImplementation implements LunchService {
     @Override
     public List<LunchResponseDto> getAllLunch() {
         List<Lunches> lunchesList=lunchRepository.findAll();
-        List<LunchResponseDto> staffLunch=lunchesList.stream()
-                .map(eachLunch->mapLunchToResponseDto(eachLunch))
+        return lunchesList.stream()
+                .map(this::mapLunchToResponseDto)
                 .toList();
-        return staffLunch;
     }
 
     @Override
