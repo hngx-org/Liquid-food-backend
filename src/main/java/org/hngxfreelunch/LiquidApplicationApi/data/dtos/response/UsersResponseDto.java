@@ -1,15 +1,19 @@
 package org.hngxfreelunch.LiquidApplicationApi.data.dtos.response;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.UserDto;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class UsersResponseDto {
 
-    private ApiResponseDto apiResponseDto;
-    private UserDto userDto;
+    private Long id;
+    private String email;
+    private String fullName;
+    private String organizationName;
+
 }

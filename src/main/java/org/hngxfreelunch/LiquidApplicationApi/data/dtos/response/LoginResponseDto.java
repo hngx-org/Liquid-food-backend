@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class LoginResponseDto {
     private String accessToken;
+    private String refreshToken;
     private String email;
     private Long id;
     private boolean isAdmin;

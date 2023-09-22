@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "organization_invites")
 public class OrganizationInvites {
 
     @Id
@@ -27,9 +26,14 @@ public class OrganizationInvites {
 
     private LocalDateTime TTL;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "org_id")
-    private Organization organization;
+    private Organizations organizations;
 
+    private final LocalDateTime createdAt = LocalDateTime.now();
+
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+    private final Boolean isDeleted = false;
 
 }

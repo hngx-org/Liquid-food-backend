@@ -1,6 +1,7 @@
 package org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,10 +15,11 @@ public class AdminSignupDto {
     private String email;
     @NotBlank(message = "password is required")
     private String password;
-    @NotBlank(message = "firstname is required")
-    private String firstName;
-    @NotBlank(message = "lastname is required")
-    private String lastName;
+    @NotBlank(message = "fullName is required")
+    private String fullName;
     @NotBlank(message = "phone number is required")
     private String phoneNumber;
+    @NotBlank(message = "organization name is required")
+    private String organizationName;
+
 }

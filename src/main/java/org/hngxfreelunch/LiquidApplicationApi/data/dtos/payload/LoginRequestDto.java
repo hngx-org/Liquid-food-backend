@@ -17,7 +17,5 @@ public class LoginRequestDto {
     private String email;
 
     @NotBlank(message = "password is required")
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[!@#$%^&*+=/,.;:|?])(?=.*[0-9]).{8,}$",
-            message = "Password must be minimum 8 characters, and must contain a number and special character")
     private String password;
 }

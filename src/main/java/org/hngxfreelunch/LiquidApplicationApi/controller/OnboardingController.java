@@ -1,5 +1,7 @@
 package org.hngxfreelunch.LiquidApplicationApi.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.LoginRequestDto;
@@ -11,17 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class OnboardingController {
-    private final LoginService loginService;
 
-    @PostMapping("/login")
-    public ResponseEntity<ApiResponseDto<LoginResponseDto>> loginUser(@Valid @RequestBody LoginRequestDto request){
-        return new ResponseEntity<>(loginService.loginUser(request), HttpStatus.OK);
-    }
-    @PostMapping("/refresh-token")
-    public ResponseEntity<ApiResponseDto<LoginResponseDto>> loginUser(@RequestHeader("Refresh-Token") String refreshToken){
-        return new ResponseEntity<>(loginService.refreshUserToken(refreshToken), HttpStatus.OK);
-    }
 }

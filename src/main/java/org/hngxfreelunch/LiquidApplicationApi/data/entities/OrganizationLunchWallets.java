@@ -8,14 +8,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "organization_lunch_wallet")
-public class OrganizationLunchWallet {
+public class OrganizationLunchWallets {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +25,13 @@ public class OrganizationLunchWallet {
 
     @OneToOne
     @JoinColumn(name = "org_id")
-    private Organization organization;
+    private Organizations organizations;
+
+    private final LocalDateTime createdAt = LocalDateTime.now();
+
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+    private final Boolean isDeleted = false;
 
 
 }

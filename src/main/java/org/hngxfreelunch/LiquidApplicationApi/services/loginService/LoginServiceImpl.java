@@ -1,73 +1,84 @@
 package org.hngxfreelunch.LiquidApplicationApi.services.loginService;
 
 import lombok.RequiredArgsConstructor;
-
+import lombok.extern.slf4j.Slf4j;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.LoginRequestDto;
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.LoginResponseDto;
-import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.TokenResponse;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.InvalidCredentials;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.UserNotFoundException;
-import org.hngxfreelunch.LiquidApplicationApi.security.CustomUserServiceImpl;
+import org.hngxfreelunch.LiquidApplicationApi.security.AuthenticatedUser;
 import org.hngxfreelunch.LiquidApplicationApi.security.JwtService;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LoginServiceImpl implements LoginService {
+
     private final UserRepository userRepository;
-    private final JwtService jwtService;
-    private final PasswordEncoder passwordEncoder;
-    private final CustomUserServiceImpl userService;
+    private final JwtService jwtUtils;
+    private final AuthenticationManager authenticationManager;
 
     @Override
-    public ApiResponseDto<LoginResponseDto> loginUser(LoginRequestDto loginRequest){
-        User user = userRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(()-> new UserNotFoundException("Invalid Credentials"));
-        if(passwordEncoder.matches(loginRequest.getPassword(), user.getPassword_hash())){
-            Authentication authentication = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword_hash());
-            String accessToken = jwtService.generateToken(authentication);
-            String refreshToken = jwtService.generateRefreshToken(authentication);
-            user.setRefresh_token(refreshToken);
-            userRepository.save(user);
-            LoginResponseDto loginResponseDto = LoginResponseDto.builder()
-                    .accessToken(accessToken)
-                    .isAdmin((user.getIsAdmin()))
-                    .email(user.getEmail())
-                    .id(user.getId())
-                    .build();
-            return new ApiResponseDto<>("User logged in successfully", HttpStatus.OK.value(),loginResponseDto);
+    public LoginResponseDto loginUser(LoginRequestDto loginRequest){
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),
+                            loginRequest.getPassword())
+            );
 
-        }else{
-            throw new InvalidCredentials("Invalid Credentials");
+            Map<String, Object> claims = authentication.getAuthorities().stream()
+                    .collect(Collectors.toMap(authority -> "claim", Function.identity()));
+            AuthenticatedUser user = (AuthenticatedUser) authentication.getPrincipal();
+            String email = user.getUser().getEmail();
+            TokenResponse response = this.generateTokens(claims, email);
+            return LoginResponseDto.builder()
+                    .accessToken(response.getAccessToken())
+                    .refreshToken(response.getRefreshToken())
+                    .isAdmin(false)
+                    .email(user.getUsername())
+                    .id(user.getUser().getId())
+                    .build();
+
+        } catch (Exception e) {
+            log.info(Arrays.toString(e.getStackTrace()));
+            throw new InvalidCredentials("Invalid login details");
         }
     }
 
     @Override
-    public ApiResponseDto<LoginResponseDto> refreshUserToken(String refreshToken){
-        String userEmail = jwtService.extractUsername(refreshToken);
-        if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null){
-            org.springframework.security.core.userdetails.User user = userService.loadUserByUsername(userEmail);
-            if(jwtService.isTokenValid(refreshToken, user)){
-                User theUser = userRepository.findByEmail(userEmail)
-                        .orElseThrow(()-> new UserNotFoundException("Invalid Credentials"));
-                Authentication authentication = new UsernamePasswordAuthenticationToken(theUser.getEmail(), theUser.getPassword_hash());
-                String accessToken = jwtService.generateToken(authentication);
-                LoginResponseDto loginResponseDto = LoginResponseDto.builder()
-                        .accessToken(accessToken)
-                        .isAdmin((theUser.getIsAdmin()))
-                        .email(theUser.getEmail())
-                        .id(theUser.getId())
-                        .build();
-                return new ApiResponseDto<>("User logged in successfully", HttpStatus.OK.value(),loginResponseDto);
-            }
+    public LoginResponseDto refreshUserToken(String refreshToken){
+        String userEmail = jwtUtils.extractUsername(refreshToken);
+        try {
+            return LoginResponseDto.builder()
+                    .accessToken("")
+                    .refreshToken(jwtUtils.generateRefreshToken(userEmail))
+                    .isAdmin(userRepository.findByEmail(userEmail).orElseThrow(() -> new UserNotFoundException("User not found!")).getIsAdmin())
+                    .email(userEmail)
+                    .id(userRepository.findByEmail(userEmail).orElseThrow(() -> new UserNotFoundException("User not found")).getId())
+                    .build();
+        } catch (Exception e) {
+            log.info(Arrays.toString(e.getStackTrace()));
+            throw new InvalidCredentials("Invalid login details");
         }
-        return null;
+    }
+
+    private TokenResponse generateTokens(Map<String, Object> claims, String email) {
+        String accessToken = jwtUtils.generateAccessToken(claims, email);
+        String refreshToken = jwtUtils.generateRefreshToken(email);
+
+        return TokenResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 }
