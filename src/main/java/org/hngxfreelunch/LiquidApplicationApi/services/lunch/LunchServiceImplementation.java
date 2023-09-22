@@ -39,13 +39,13 @@ public class LunchServiceImplementation implements LunchService {
                 .sender(UsersResponseDto.builder()
                         .id(eachLunch.getSender().getId())
                         .email(eachLunch.getSender().getEmail())
-                        .organizationName(eachLunch.getSender().getOrganization().getName())
+                        .organizationName(eachLunch.getSender().getOrganizations().getName())
                         .fullName(eachLunch.getSender().getFirstName() + " " + eachLunch.getSender().getLastName())
                         .build())
                 .receiver(UsersResponseDto.builder()
                         .id(eachLunch.getReceiver().getId())
                         .email(eachLunch.getReceiver().getEmail())
-                        .organizationName(eachLunch.getReceiver().getOrganization().getName())
+                        .organizationName(eachLunch.getReceiver().getOrganizations().getName())
                         .fullName(eachLunch.getReceiver().getFirstName() + " " + eachLunch.getReceiver().getLastName())
                         .build())
                 .quantity(eachLunch.getQuantity())
@@ -60,7 +60,6 @@ public class LunchServiceImplementation implements LunchService {
                 .receiver(staffRepository.findById(eachStaff.getId()).orElseThrow(() -> new UserNotFoundException("User with id " + eachStaff.getId() + " not found")))
                 .redeemed(false)
                 .note(lunchRequestDto.getNote())
-                .createdAt(LocalDateTime.now())
                 .quantity(lunchRequestDto.getQuantity())
                 .build();
         return lunchRepository.save(newLunch);

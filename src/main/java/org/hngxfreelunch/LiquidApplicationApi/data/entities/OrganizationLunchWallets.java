@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrganizationLunchWallet {
+public class OrganizationLunchWallets {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,13 +25,13 @@ public class OrganizationLunchWallet {
 
     @OneToOne
     @JoinColumn(name = "org_id")
-    private Organization organization;
+    private Organizations organizations;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private final LocalDateTime createdAt = LocalDateTime.now();
 
-    private LocalDateTime updatedAt = createdAt;
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
-    private Boolean isDeleted = false;
+    private final Boolean isDeleted = false;
 
 
 }

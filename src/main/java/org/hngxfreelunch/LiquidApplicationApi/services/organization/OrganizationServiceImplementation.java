@@ -8,7 +8,7 @@ import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationInvi
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationRegistrationDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.UsersResponseDto;
-import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organization;
+import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organizations;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.OrganizationInvites;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.OrganizationInvitesRepository;
@@ -20,7 +20,7 @@ import org.hngxfreelunch.LiquidApplicationApi.services.email.EmailService;
 import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import java.math.BigInteger;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -46,14 +46,14 @@ public class OrganizationServiceImplementation implements OrganizationService {
         if (isExists) {
             return new ApiResponseDto(null,"Organization name already exists", HttpStatus.SC_BAD_REQUEST);
         }
-        Organization organization = Organization.builder()
+        Organizations organizations = Organizations.builder()
                 .name(request.getOrganizationName())
-                .email("")
                 .lunchPrice(1000.00)
+                .currencyCode("NGN")
                 .build();
-        Organization savedOrganization = organizationRepository.save(organization);
+        Organizations savedOrganizations = organizationRepository.save(organizations);
 
-        return new ApiResponseDto(savedOrganization,"Organization Created successfully", HttpStatus.SC_CREATED);
+        return new ApiResponseDto(savedOrganizations,"Organization Created successfully", HttpStatus.SC_CREATED);
     }
 
     @Override
@@ -77,13 +77,13 @@ public class OrganizationServiceImplementation implements OrganizationService {
         organizationInvites.setEmail(request.getEmail());
         organizationInvites.setTTL(expirationTime);
         organizationInvitesRepository.save(organizationInvites);
-        organizationInvites.setOrganization(organizationRepository.findById(request.getOrganizationId()).orElseThrow(OrganizationNotFoundException::new));
+        organizationInvites.setOrganizations(organizationRepository.findById(request.getOrganizationId()).orElseThrow(OrganizationNotFoundException::new));
         organizationInvitesRepository.save(organizationInvites);
         return new ApiResponseDto(organizationInvites,"Success", HttpStatus.SC_OK);
     }
 
     @Override
-    public Organization verifyOrganizationInvite(String token, String email) {
+    public Organizations verifyOrganizationInvite(String token, String email) {
         OrganizationInvites organizationInvites = organizationInvitesRepository.findByToken(token).orElseThrow(() -> new InvalidCredentials("Token not valid"));
         if (!organizationInvites.getEmail().equals(email)) {
             throw new InvalidCredentials("OTP not valid for user");
@@ -91,8 +91,8 @@ public class OrganizationServiceImplementation implements OrganizationService {
         LocalDateTime expirationTime = organizationInvites.getTTL();
         LocalDateTime currentTime = LocalDateTime.now();
         if (currentTime.isBefore(expirationTime)) {
-            Organization organization = organizationInvites.getOrganization();
-            log.info(String.valueOf(organization));
+            Organizations organizations = organizationInvites.getOrganizations();
+            log.info(String.valueOf(organizations));
             String subject = "Lunch Invite";
             String htmlContent =
                     "We're delighted to invite you to a complimentary lunch as a token of our appreciation for your hard work and dedication.\n" +
@@ -104,15 +104,15 @@ public class OrganizationServiceImplementation implements OrganizationService {
                             "<p><a href=\"" + url_prefix + "?token=?" + token + "\">Accept Invitation<a/>";
             emailService.sendEmail(organizationInvites.getEmail(), subject, htmlContent);
             organizationInvitesRepository.delete(organizationInvites);
-            log.info(String.valueOf(organization));
-            return organization;
+            log.info(String.valueOf(organizations));
+            return organizations;
         } else {
             throw new InvalidCredentials("OTP is expired");
         }
     }
 
     @Override
-    public Organization findById(Long id) {
+    public Organizations findById(Long id) {
         return organizationRepository.findById(id).orElseThrow(OrganizationNotFoundException::new);
     }
 
@@ -124,7 +124,7 @@ public class OrganizationServiceImplementation implements OrganizationService {
     @Override
     public ApiResponseDto getAllStaffInOrganization() {
         User loggedInUser = userUtils.getLoggedInUser();
-        List<User> users = userRepository.findAllByOrganization_Id(loggedInUser.getOrganization().getId());
+        List<User> users = userRepository.findAllByOrganizations_Id(loggedInUser.getOrganizations().getId());
         List<UsersResponseDto> usersResponseDtoList = users.stream().map(this::mapToDto).toList();
         return new ApiResponseDto<>(usersResponseDtoList,"All users in this Organization", HttpStatus.SC_OK);
     }
@@ -133,7 +133,7 @@ public class OrganizationServiceImplementation implements OrganizationService {
         UsersResponseDto usersResponseDto = new UsersResponseDto();
         usersResponseDto.setEmail(user.getEmail());
         usersResponseDto.setFullName(user.getFirstName() + " " + user.getLastName());
-        usersResponseDto.setOrganizationName(user.getOrganization().getName());
+        usersResponseDto.setOrganizationName(user.getOrganizations().getName());
         return usersResponseDto;
     }
 

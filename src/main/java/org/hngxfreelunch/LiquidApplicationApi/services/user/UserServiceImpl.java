@@ -6,12 +6,13 @@ import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.BankRequestDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.UserSignupDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.UsersResponseDto;
-import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organization;
+import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organizations;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.OrganizationInvitesRepository;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.InvalidCredentials;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.UserNotFoundException;
+import org.hngxfreelunch.LiquidApplicationApi.security.JwtService;
 import org.hngxfreelunch.LiquidApplicationApi.services.cloud.CloudService;
 import org.hngxfreelunch.LiquidApplicationApi.services.organization.OrganizationService;
 import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
@@ -21,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigInteger;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,12 +35,12 @@ public class UserServiceImpl implements UserService{
     private final PasswordEncoder passwordEncoder;
     private final UserUtils userUtils;
     private final CloudService cloudService;
-    private final OrganizationInvitesRepository organizationInvitesRepository;
+    private final JwtService jwtService;
 
     @Override
     public ApiResponseDto createUser(UserSignupDto signUpRequest) {
         // verify the invite otp
-        Organization inviteResponse = organizationService
+        Organizations inviteResponse = organizationService
                 .verifyOrganizationInvite(signUpRequest.getOtpToken(), signUpRequest.getEmail());
         if(inviteResponse == null){throw new InvalidCredentials("Organization not found");}
 
@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService{
             return new ApiResponseDto<>(null, "Staff already exists", HttpStatus.BAD_REQUEST.value());
         }
 
-        Organization foundOrganization = organizationService.findById(inviteResponse.getId());
+        Organizations foundOrganizations = organizationService.findById(inviteResponse.getId());
         // create new user
         User staff = new User();
         staff.setFirstName(signUpRequest.getFirstName());
@@ -59,12 +59,23 @@ public class UserServiceImpl implements UserService{
         staff.setPhone(signUpRequest.getPhoneNumber());
         staff.setPasswordHash(passwordEncoder.encode(signUpRequest.getPassword())); // hash password
         staff.setIsAdmin(false);
-        staff.setOrganization(foundOrganization);
+        staff.setOrganizations(foundOrganizations);
         staff.setLunchCreditBalance(BigInteger.ZERO);
         staff.setCurrencyCode("NGN");
         staff.setBankRegion("NGN");
-        userRepository.save(staff);
-        return new ApiResponseDto<>(null, "Staff created successfully", HttpStatus.CREATED.value());
+        User savedUser = userRepository.save(staff);
+
+        UserDto userDto = UserDto.builder()
+                .id(savedUser.getId())
+                .firstName(savedUser.getFirstName())
+                .lastName(savedUser.getLastName())
+                .organizationName(savedUser.getOrganizations().getName())
+                .email(savedUser.getEmail())
+                .refreshToken(savedUser.getRefreshToken())
+                .phoneNumber(savedUser.getPhone())
+                .profilePicture(savedUser.getProfilePic())
+                .build();
+        return new ApiResponseDto<>(userDto, "Staff created successfully", HttpStatus.CREATED.value());
     }
 
     private boolean checkIfStaffAlreadyExists(String email) {
@@ -73,8 +84,8 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public ApiResponseDto getUserByName(String firstName) {
-        Optional<User> userByName = userRepository.findByFirstName(firstName);
+    public ApiResponseDto getUserByEmail(String email) {
+        Optional<User> userByName = userRepository.findByEmail(email);
         UsersResponseDto usersResponseDto = new UsersResponseDto();
         if (userByName.isPresent()){
             User user = userByName.get();
@@ -86,11 +97,12 @@ public class UserServiceImpl implements UserService{
                     .bankCode(user.getBankCode())
                     .bankNumber(user.getBankNumber())
                     .profilePicture(user.getProfilePic())
-                    .organizationName(user.getOrganization().getName())
+                    .refreshToken(user.getRefreshToken())
+                    .organizationName(user.getOrganizations().getName())
                     .build();
             return new ApiResponseDto(userDto,"Successfully returned user profile", HttpStatus.OK.value());
         }
-        throw  new UserNotFoundException("Staff with name " + firstName + " not found");
+        throw  new UserNotFoundException("Staff with name " + email + " not found");
     }
 
 
@@ -104,7 +116,7 @@ public class UserServiceImpl implements UserService{
                 usersResponseDto.setEmail(user.getEmail());
                 usersResponseDto.setFullName(user.getFirstName()
                         + " " + user.getLastName());
-                usersResponseDto.setOrganizationName(user.getOrganization().getName());
+                usersResponseDto.setOrganizationName(user.getOrganizations().getName());
                 usersResponseDtoList.add(usersResponseDto);
             }
 
@@ -132,7 +144,7 @@ public class UserServiceImpl implements UserService{
                 .bankCode(user.getBankCode())
                 .bankNumber(user.getBankNumber())
                 .profilePicture(user.getProfilePic())
-                .organizationName(user.getOrganization().getName())
+                .organizationName(user.getOrganizations().getName())
                 .build();
 
         return new ApiResponseDto(userDto,"Successfully added user bank details", HttpStatus.OK.value());
