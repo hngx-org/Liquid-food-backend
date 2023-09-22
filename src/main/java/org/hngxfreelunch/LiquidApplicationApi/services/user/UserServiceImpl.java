@@ -61,6 +61,10 @@ public class UserServiceImpl implements UserService{
         staff.setPhone(signUpRequest.getPhoneNumber());
         staff.setPasswordHash(passwordEncoder.encode(signUpRequest.getPassword())); // hash password
         staff.setIsAdmin(false);
+        return getApiResponseDto(foundOrganizations, staff);
+    }
+
+    private ApiResponseDto getApiResponseDto(Organizations foundOrganizations, User staff) {
         staff.setOrganizations(foundOrganizations);
         staff.setLunchCreditBalance(BigInteger.ZERO);
         staff.setCurrencyCode("NGN");
@@ -179,22 +183,6 @@ public class UserServiceImpl implements UserService{
         staff.setPhone(signUpRequest.getPhoneNumber());
         staff.setPasswordHash(passwordEncoder.encode(signUpRequest.getPassword())); // hash password
         staff.setIsAdmin(true);
-        staff.setOrganizations(foundOrganizations);
-        staff.setLunchCreditBalance(BigInteger.ZERO);
-        staff.setCurrencyCode("NGN");
-        staff.setBankRegion("NGN");
-        User savedUser = userRepository.save(staff);
-
-        UserDto userDto = UserDto.builder()
-                .id(savedUser.getId())
-                .firstName(savedUser.getFirstName())
-                .lastName(savedUser.getLastName())
-                .organizationName(savedUser.getOrganizations().getName())
-                .email(savedUser.getEmail())
-                .refreshToken(savedUser.getRefreshToken())
-                .phoneNumber(savedUser.getPhone())
-                .profilePicture(savedUser.getProfilePic())
-                .build();
-        return new ApiResponseDto<>(userDto, "Staff created successfully", HttpStatus.CREATED.value());
+        return getApiResponseDto(foundOrganizations, staff);
     }
 }
