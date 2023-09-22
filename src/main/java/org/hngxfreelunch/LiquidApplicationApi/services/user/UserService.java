@@ -5,6 +5,7 @@ import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.AdminSignupDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.BankRequestDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.UserSignupDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
+import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
@@ -22,4 +23,6 @@ public interface UserService {
     String uploadProfileImage(MultipartFile file);
 
     ApiResponseDto createAdmin(AdminSignupDto adminSignupDto);
+
+    ApiResponseDto getUserBankDetails(UserUtils userUtils);
 }
