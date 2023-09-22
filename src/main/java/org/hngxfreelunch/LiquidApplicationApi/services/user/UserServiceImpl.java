@@ -37,7 +37,6 @@ public class UserServiceImpl implements UserService{
     private final PasswordEncoder passwordEncoder;
     private final UserUtils userUtils;
     private final CloudService cloudService;
-    private final JwtService jwtService;
 
     @Override
     public ApiResponseDto createUser(UserSignupDto signUpRequest) {
@@ -80,6 +79,7 @@ public class UserServiceImpl implements UserService{
                 .refreshToken(savedUser.getRefreshToken())
                 .phoneNumber(savedUser.getPhone())
                 .profilePicture(savedUser.getProfilePic())
+                .isAdmin(savedUser.getIsAdmin())
                 .build();
         return new ApiResponseDto<>(userDto, "Staff created successfully", HttpStatus.CREATED.value());
     }

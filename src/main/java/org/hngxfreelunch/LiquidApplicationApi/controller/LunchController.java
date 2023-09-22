@@ -9,6 +9,7 @@ import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.LunchRequestDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponse;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.LunchResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.services.lunch.LunchService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,25 +17,28 @@ import java.math.BigInteger;
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
-@RequestMapping("/api/lunch/")
+@RequestMapping("/api/lunch")
+@CrossOrigin(origins = "*")
 public class LunchController {
-    private final LunchService lunchService;
 
+    @Autowired
+    private LunchService lunchService;
 
     @Operation(summary = "Send lunch to staff")
-    @PostMapping("send")
-    public ResponseEntity<ApiResponse> sendLunch(
+    @PostMapping("/send")
+    public ResponseEntity<List<LunchResponseDto>> sendLunch(
             @Parameter(description = "Quantity of lunch & Staff Id are required while Note is optional")
-            @RequestBody LunchRequestDto lunchRequestDto, HttpServletRequest request) {
-        List<LunchResponseDto> responseDto= lunchService.sendLunch(lunchRequestDto,request);
-        return ResponseEntity.ok(new ApiResponse(responseDto, true));
+            @RequestBody LunchRequestDto lunchRequestDto) {
+        System.out.println("1");
+        List<LunchResponseDto> responseDto= lunchService.sendLunch(lunchRequestDto);
+        System.out.println("end");
+        return ResponseEntity.ok(responseDto);
     }
 
     @Operation(summary = "Staff attempts to fetch lunch by id")
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> getLunch(
-            @Parameter(required = true, description = "Lunch Id") @PathVariable long id ) {
+            @Parameter(required = true, description = "Lunch Id") @PathVariable Long id ) {
         LunchResponseDto responseDto= lunchService.getLunch(id);
         return ResponseEntity.ok(new ApiResponse(responseDto, true));
     }

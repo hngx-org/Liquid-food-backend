@@ -14,11 +14,11 @@ public interface LunchService {
     // TODO: GET LUNCH BY ID
     // TODO: REDEEM A LUNCH
 
-    public List<LunchResponseDto> sendLunch(LunchRequestDto lunchRequestDto, HttpServletRequest request);
+    List<LunchResponseDto> sendLunch(LunchRequestDto lunchRequestDto);
 
-    public List<LunchResponseDto> getAllLunch();
+    List<LunchResponseDto> getAllLunch();
 
-    public LunchResponseDto getLunch(Long lunch_id);
-//    public LunchResponseDto redeemLunch(Long lunch_id);
+    LunchResponseDto getLunch(Long lunch_id);
+
 
 }
