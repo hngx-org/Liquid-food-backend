@@ -29,7 +29,7 @@ public class UserController {
 
     @GetMapping("profile")
     public ResponseEntity<?> getProfile(){
-        return ResponseEntity.ok(userService.getUserByName(userUtils.getLoggedInUser().getFirstName()));
+        return ResponseEntity.ok(userService.getUserByEmail(userUtils.getLoggedInUser().getEmail()));
     }
 
     @PutMapping("bank")

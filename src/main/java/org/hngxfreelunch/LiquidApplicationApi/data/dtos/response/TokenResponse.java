@@ -1,19 +1,17 @@
 package org.hngxfreelunch.LiquidApplicationApi.data.dtos.response;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class LoginResponseDto {
+@AllArgsConstructor
+@NoArgsConstructor
+public class TokenResponse {
+
     private String accessToken;
     private String refreshToken;
-    private String email;
-    private Long id;
-    private boolean isAdmin;
-
 }

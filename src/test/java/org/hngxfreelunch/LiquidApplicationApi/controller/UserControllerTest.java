@@ -1,6 +1,5 @@
 package org.hngxfreelunch.LiquidApplicationApi.controller;
 
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.UserDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.UserSignupDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
@@ -74,7 +73,7 @@ public class UserControllerTest {
     public void findUserByName() throws Exception{
         String staffName = "ifeanyichukwu";
 
-        Mockito.when(userService.getUserByName("Ifeanyichukwu")).thenReturn(new ApiResponseDto<>(staffName, "Staff created successfully", HttpStatus.CREATED.value()));
+        Mockito.when(userService.getUserByEmail("Ifeanyichukwu")).thenReturn(new ApiResponseDto<>(staffName, "Staff created successfully", HttpStatus.CREATED.value()));
 
         mockmvc.perform(get("/search/${staffName}")
                         .contentType(MediaType.APPLICATION_JSON))

@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Getter
@@ -20,7 +19,7 @@ public class User {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "org_id")
-    private Organization organization;
+    private Organizations organizations;
 
     private String profilePic;
 
@@ -28,6 +27,7 @@ public class User {
 
     private String lastName;
 
+    @Column(unique = true)
     private String email;
 
     private String phone;

@@ -18,7 +18,7 @@ public class Lunches {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "org_id")
-    private Organization organization;
+    private Organizations organizations;
 
     @OneToOne
     @JoinColumn(name = "sender_id")
@@ -34,10 +34,10 @@ public class Lunches {
 
     private Boolean redeemed;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private final LocalDateTime createdAt = LocalDateTime.now();
 
-    private LocalDateTime updatedAt = createdAt;
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
-    private Boolean isDeleted = false;
+    private final Boolean isDeleted = false;
 
 }

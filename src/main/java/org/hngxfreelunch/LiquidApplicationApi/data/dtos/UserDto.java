@@ -18,7 +18,7 @@ public class UserDto {
     private String profilePicture;
     @NotNull(message = "Enter your email")
     private String email;
-    private int phoneNumber;
+    private String phoneNumber;
     @NotNull(message = "Enter a password")
     private String passwordHash;
     private String refreshToken;
@@ -26,5 +26,6 @@ public class UserDto {
     private String bankCode;
     private String bankName;
     private String organizationName;
+    private Long id;
 
 }
