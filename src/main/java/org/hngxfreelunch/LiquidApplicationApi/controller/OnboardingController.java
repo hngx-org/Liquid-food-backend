@@ -27,11 +27,11 @@ public class OnboardingController {
                 "User logged in successfully", 200));
     }
     @PostMapping("/refresh-token")
-    @Operation(summary = "User attempts to login")
-    public ResponseEntity<?> loginUser(@RequestHeader("Refresh-Token")
+    @Operation(summary = "User wants to update the refresh token")
+    public ResponseEntity<?> loginUser(@RequestHeader("refresh-token")
             @Parameter(description = "Refresh token to be activated")
                                            String refreshToken){
         return ResponseEntity.ok(new ApiResponseDto<>(loginService.refreshUserToken(refreshToken),
-                "User logged in successfully", 200));
-    }
+                "User logged in successfully", 200));
+    }
 }

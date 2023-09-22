@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.WithdrawalRequestDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.WithdrawalResponseDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.entities.Status;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.Withdrawals;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
@@ -47,8 +48,8 @@ public class WithdrawalRequestServiceImplementation implements WithdrawalService
         // Step 5: Create a withdrawal entity and save it
         Withdrawals withdrawal = new Withdrawals();
         withdrawal.setUser(user);
-        withdrawal.setStatus("Confirmed");
-        withdrawal.setAmount(lunchCreditBalance);
+        withdrawal.setStatus(Status.PENDING);
+        withdrawal.setAmount(lunchCreditBalance.doubleValue());
         withdrawal.setCreatedAt(LocalDateTime.now());
         Withdrawals savedWithdrawal = withdrawalRepository.save(withdrawal);
 

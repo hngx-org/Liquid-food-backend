@@ -22,7 +22,7 @@ public class User {
     @JoinColumn(name = "org_id")
     private Organization organization;
 
-    private String profilePicture;
+    private String profilePic;
 
     private String firstName;
 
@@ -30,15 +30,15 @@ public class User {
 
     private String email;
 
-    private String phoneNumber;
+    private String phone;
 
     private String refreshToken;
 
     private String passwordHash;
 
-    private LocalDateTime updatedAt;
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     private String bankNumber;
 
@@ -50,11 +50,10 @@ public class User {
 
     private String currencyCode;
 
+    private String currency = "NGN";
+
     private Boolean isAdmin;
 
     private BigInteger lunchCreditBalance;
-
-    @OneToMany(mappedBy = "user")
-    private List<Withdrawals> withdrawals;
 
 }

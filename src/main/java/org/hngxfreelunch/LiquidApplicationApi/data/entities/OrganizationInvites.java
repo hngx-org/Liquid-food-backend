@@ -27,6 +27,13 @@ public class OrganizationInvites {
     private LocalDateTime TTL;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "org_id")
     private Organization organization;
+
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    private LocalDateTime updatedAt = createdAt;
+
+    private Boolean isDeleted = false;
 
 }

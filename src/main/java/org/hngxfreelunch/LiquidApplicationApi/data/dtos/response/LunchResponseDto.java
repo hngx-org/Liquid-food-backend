@@ -21,6 +21,6 @@ public class LunchResponseDto {
     private Boolean redeemed;
     private LocalDateTime createdAt;
     private String role;
-    private BigInteger quantity;
+    private Integer quantity;
 
 }

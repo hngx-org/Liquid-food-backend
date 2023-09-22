@@ -13,6 +13,7 @@ import org.hngxfreelunch.LiquidApplicationApi.data.entities.OrganizationInvites;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.OrganizationInvitesRepository;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.OrganizationRepository;
+import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.InvalidCredentials;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.OrganizationNotFoundException;
 import org.hngxfreelunch.LiquidApplicationApi.services.email.EmailService;
@@ -34,6 +35,7 @@ public class OrganizationServiceImplementation implements OrganizationService {
     private final OrganizationInvitesRepository organizationInvitesRepository;
     private final EmailService emailService;
     private final UserUtils userUtils;
+    private final UserRepository userRepository;
 
     @Value("${url_prefix}")
     private String url_prefix;
@@ -46,8 +48,8 @@ public class OrganizationServiceImplementation implements OrganizationService {
         }
         Organization organization = Organization.builder()
                 .name(request.getOrganizationName())
-                .lunchPrice(BigInteger.valueOf(1000))
-                .currency("NGN")
+                .email("")
+                .lunchPrice(1000.00)
                 .build();
         Organization savedOrganization = organizationRepository.save(organization);
 
@@ -122,7 +124,7 @@ public class OrganizationServiceImplementation implements OrganizationService {
     @Override
     public ApiResponseDto getAllStaffInOrganization() {
         User loggedInUser = userUtils.getLoggedInUser();
-        List<User> users = loggedInUser.getOrganization().getUsers();
+        List<User> users = userRepository.findAllByOrganization_Id(loggedInUser.getOrganization().getId());
         List<UsersResponseDto> usersResponseDtoList = users.stream().map(this::mapToDto).toList();
         return new ApiResponseDto<>(usersResponseDtoList,"All users in this Organization", HttpStatus.SC_OK);
     }

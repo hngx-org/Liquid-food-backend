@@ -2,8 +2,6 @@ package org.hngxfreelunch.LiquidApplicationApi.data.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.math.BigInteger;
-import java.util.List;
 
 @Entity
 @Getter
@@ -19,19 +17,12 @@ public class Organization {
 
     private String name;
 
-    private BigInteger lunchPrice;
-
-    private String currency;
-
-    @OneToMany(mappedBy = "organization")
-    private List<User> Users;
-
-    @OneToOne
-    private OrganizationLunchWallet wallet;
-
     private String email;
 
-    @OneToMany(mappedBy = "organization", orphanRemoval = true)
-    private List<User> staff;
+    private Double lunchPrice;
+
+    private String currencyCode;
+
+    private Double isDeleted;
 
 }

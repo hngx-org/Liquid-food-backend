@@ -2,8 +2,6 @@ package org.hngxfreelunch.LiquidApplicationApi.data.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 @Entity
@@ -12,31 +10,34 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "lunches")
 public class Lunches {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "org_id")
     private Organization organization;
 
     @OneToOne
-    @JoinColumn(name = "senderId")
+    @JoinColumn(name = "sender_id")
     private User sender;
 
     @OneToOne
-    @JoinColumn(name = "receiverId")
+    @JoinColumn(name = "receiver_id")
     private User receiver;
 
     private String note;
 
-    private BigInteger quantity;
+    private Integer quantity;
 
     private Boolean redeemed;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    private LocalDateTime updatedAt = createdAt;
+
+    private Boolean isDeleted = false;
 
 }
