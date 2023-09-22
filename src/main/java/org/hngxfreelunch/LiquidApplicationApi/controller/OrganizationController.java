@@ -16,11 +16,6 @@ public class OrganizationController {
     @Autowired
     private OrganizationService organizationService;
 
-    @PostMapping("create")
-    public ResponseEntity<?> createOrganization(@Valid @RequestBody OrganizationRegistrationDto organizationRegistrationDto){
-        return ResponseEntity.ok(organizationService.createOrganization(organizationRegistrationDto));
-    }
-
 
     @PostMapping("invite")
     public ResponseEntity<?> inviteStaffToOrganization(@Valid @RequestBody OrganizationInviteDto organizationInviteDto){

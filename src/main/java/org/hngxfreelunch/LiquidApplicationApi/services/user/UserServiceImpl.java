@@ -2,7 +2,9 @@ package org.hngxfreelunch.LiquidApplicationApi.services.user;
 
 import lombok.RequiredArgsConstructor;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.UserDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.AdminSignupDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.BankRequestDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationRegistrationDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.UserSignupDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.UsersResponseDto;
@@ -157,5 +159,42 @@ public class UserServiceImpl implements UserService{
         foundUser.setProfilePic(imageUrl);
         userRepository.save(foundUser);
         return imageUrl;
+    }
+
+    @Override
+    public ApiResponseDto createAdmin(AdminSignupDto signUpRequest) {
+        boolean isExists = checkIfStaffAlreadyExists(signUpRequest.getEmail());
+        if (isExists){
+            return new ApiResponseDto<>(null, "Staff already exists", HttpStatus.BAD_REQUEST.value());
+        }
+
+        ApiResponseDto<Organizations> organization = organizationService.createOrganization(new OrganizationRegistrationDto(signUpRequest.getOrganizationName(), BigInteger.valueOf(1000)));
+        Organizations foundOrganizations = organizationService.findById(organization.getData().getId());
+
+        // create new user
+        User staff = new User();
+        staff.setFirstName(signUpRequest.getFirstName());
+        staff.setLastName(signUpRequest.getLastName());
+        staff.setEmail(signUpRequest.getEmail());
+        staff.setPhone(signUpRequest.getPhoneNumber());
+        staff.setPasswordHash(passwordEncoder.encode(signUpRequest.getPassword())); // hash password
+        staff.setIsAdmin(true);
+        staff.setOrganizations(foundOrganizations);
+        staff.setLunchCreditBalance(BigInteger.ZERO);
+        staff.setCurrencyCode("NGN");
+        staff.setBankRegion("NGN");
+        User savedUser = userRepository.save(staff);
+
+        UserDto userDto = UserDto.builder()
+                .id(savedUser.getId())
+                .firstName(savedUser.getFirstName())
+                .lastName(savedUser.getLastName())
+                .organizationName(savedUser.getOrganizations().getName())
+                .email(savedUser.getEmail())
+                .refreshToken(savedUser.getRefreshToken())
+                .phoneNumber(savedUser.getPhone())
+                .profilePicture(savedUser.getProfilePic())
+                .build();
+        return new ApiResponseDto<>(userDto, "Staff created successfully", HttpStatus.CREATED.value());
     }
 }

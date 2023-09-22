@@ -20,4 +20,7 @@ public class AdminSignupDto {
     private String lastName;
     @NotBlank(message = "phone number is required")
     private String phoneNumber;
+    @NotBlank(message = "organization name is required")
+    private String organizationName;
+
 }
