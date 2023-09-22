@@ -1,6 +1,7 @@
 package org.hngxfreelunch.LiquidApplicationApi.services.user;
 
 
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.AdminSignupDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.BankRequestDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.UserSignupDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
@@ -19,4 +20,6 @@ public interface UserService {
     ApiResponseDto addBankDetails(BankRequestDto bankRequestDto);
 
     String uploadProfileImage(MultipartFile file);
+
+    ApiResponseDto createAdmin(AdminSignupDto adminSignupDto);
 }

@@ -25,5 +25,11 @@ public class AuthController {
         return ResponseEntity.ok(userService.createUser(userSignupDto));
     }
 
+    @Operation(summary = "Staff member tries to sign up with token")
+    @PostMapping("/admin/signup")
+    public ResponseEntity<?>  signUpForAdmin(@Valid @RequestBody @Parameter(required = true, description = "An admin tries to signup for the organization") AdminSignupDto adminSignupDto) {
+        return ResponseEntity.ok(userService.createAdmin(adminSignupDto));
+    }
+
 }
 
