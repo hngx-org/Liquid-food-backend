@@ -12,4 +12,6 @@ public class ExceptionResponse {
     private String path;
     private String time;
     private int statusCode;
+
+    private int your;
 }
