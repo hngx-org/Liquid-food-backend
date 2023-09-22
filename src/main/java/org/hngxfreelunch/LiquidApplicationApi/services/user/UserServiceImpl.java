@@ -7,6 +7,7 @@ import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.BankRequestDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationRegistrationDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.UserSignupDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.BankResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.UsersResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organizations;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
@@ -26,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -186,4 +188,22 @@ public class UserServiceImpl implements UserService{
         staff.setIsAdmin(true);
         return getApiResponseDto(foundOrganizations, staff);
     }
+
+    @Override
+    public ApiResponseDto getUserBankDetails() {
+        User user = userUtils.getLoggedInUser();
+        if (Objects.isNull(user)){
+            return new ApiResponseDto(null, "No bank details",HttpStatus.BAD_REQUEST.value() );
+        }
+
+        BankResponseDto bankResponseDto = BankResponseDto.builder()
+                .bankCode(user.getBankCode())
+                .bankName(user.getBankName())
+                .bankNumber(user.getBankNumber())
+                .email(user.getEmail())
+                .user_id(user.getId().toString())
+                .org_id(user.getOrganizations().getId().toString())
+                .build();
+
+        return new ApiResponseDto(bankResponseDto, "successfully got bank details",HttpStatus.OK.value() );    }
 }

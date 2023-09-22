@@ -2,18 +2,15 @@ package org.hngxfreelunch.LiquidApplicationApi.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.constraints.NotBlank;
-import lombok.RequiredArgsConstructor;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.LunchRequestDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponse;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.LunchResponseDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
 import org.hngxfreelunch.LiquidApplicationApi.services.lunch.LunchService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.math.BigInteger;
 import java.util.List;
 
 @RestController
@@ -21,8 +18,13 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class LunchController {
 
+
     @Autowired
     private LunchService lunchService;
+
+    @Autowired
+    private UserUtils userUtils;
+
 
     @Operation(summary = "Send lunch to staff")
     @PostMapping("/send")
@@ -48,5 +50,12 @@ public class LunchController {
     public ResponseEntity<ApiResponse> getAllLunch(){
         List<LunchResponseDto> responseDtoList=lunchService.getAllLunch();
         return ResponseEntity.ok(new ApiResponse(responseDtoList, true));
+    }
+
+    @Operation(summary = "Staff attempts to get lunch credit balance")
+    @GetMapping("/balance")
+    public ResponseEntity<ApiResponse> getLunchBalance(){
+        User loggedInUser = userUtils.getLoggedInUser();
+        return ResponseEntity.ok(new ApiResponse(loggedInUser.getLunchCreditBalance(), true));
     }
 }
