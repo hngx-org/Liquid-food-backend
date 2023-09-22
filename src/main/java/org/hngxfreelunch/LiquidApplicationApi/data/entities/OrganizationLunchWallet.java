@@ -8,13 +8,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "organization_lunch_wallet")
 public class OrganizationLunchWallet {
 
     @Id
@@ -26,6 +26,12 @@ public class OrganizationLunchWallet {
     @OneToOne
     @JoinColumn(name = "org_id")
     private Organization organization;
+
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    private LocalDateTime updatedAt = createdAt;
+
+    private Boolean isDeleted = false;
 
 
 }

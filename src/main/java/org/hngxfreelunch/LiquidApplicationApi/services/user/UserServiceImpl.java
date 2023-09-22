@@ -7,7 +7,6 @@ import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.UserSignupDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.UsersResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organization;
-import org.hngxfreelunch.LiquidApplicationApi.data.entities.OrganizationInvites;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.OrganizationInvitesRepository;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
@@ -30,6 +29,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService{
+
     private final UserRepository userRepository;
     private final OrganizationService organizationService;
     private final PasswordEncoder passwordEncoder;
@@ -56,12 +56,10 @@ public class UserServiceImpl implements UserService{
         staff.setFirstName(signUpRequest.getFirstName());
         staff.setLastName(signUpRequest.getLastName());
         staff.setEmail(signUpRequest.getEmail());
-        staff.setPhoneNumber(signUpRequest.getPhoneNumber());
+        staff.setPhone(signUpRequest.getPhoneNumber());
         staff.setPasswordHash(passwordEncoder.encode(signUpRequest.getPassword())); // hash password
         staff.setIsAdmin(false);
         staff.setOrganization(foundOrganization);
-        staff.setCreatedAt(LocalDateTime.now());
-        staff.setUpdatedAt(LocalDateTime.now());
         staff.setLunchCreditBalance(BigInteger.ZERO);
         staff.setCurrencyCode("NGN");
         staff.setBankRegion("NGN");
@@ -87,7 +85,7 @@ public class UserServiceImpl implements UserService{
                     .bankName(user.getBankName())
                     .bankCode(user.getBankCode())
                     .bankNumber(user.getBankNumber())
-                    .profilePicture(user.getProfilePicture())
+                    .profilePicture(user.getProfilePic())
                     .organizationName(user.getOrganization().getName())
                     .build();
             return new ApiResponseDto(userDto,"Successfully returned user profile", HttpStatus.OK.value());
@@ -133,7 +131,7 @@ public class UserServiceImpl implements UserService{
                 .bankName(user.getBankName())
                 .bankCode(user.getBankCode())
                 .bankNumber(user.getBankNumber())
-                .profilePicture(user.getProfilePicture())
+                .profilePicture(user.getProfilePic())
                 .organizationName(user.getOrganization().getName())
                 .build();
 
@@ -144,7 +142,7 @@ public class UserServiceImpl implements UserService{
     public String uploadProfileImage(MultipartFile profileImage) {
         User foundUser = userUtils.getLoggedInUser();
         String imageUrl = cloudService.upload(profileImage);
-        foundUser.setProfilePicture(imageUrl);
+        foundUser.setProfilePic(imageUrl);
         userRepository.save(foundUser);
         return imageUrl;
     }

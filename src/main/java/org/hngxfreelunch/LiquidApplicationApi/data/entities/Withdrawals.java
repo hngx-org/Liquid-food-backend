@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "withdrawals")
 public class Withdrawals {
 
     @Id
@@ -22,13 +21,17 @@ public class Withdrawals {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "userId")
     private User user;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
-    private BigInteger amount;
+    private Double amount;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    private LocalDateTime updatedAt = createdAt;
+
+    private Boolean isDeleted = false;
 
 }
