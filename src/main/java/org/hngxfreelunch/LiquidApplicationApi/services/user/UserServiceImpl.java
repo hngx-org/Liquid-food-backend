@@ -177,8 +177,9 @@ public class UserServiceImpl implements UserService{
 
         // create new user
         User staff = new User();
-        staff.setFirstName(signUpRequest.getFirstName());
-        staff.setLastName(signUpRequest.getLastName());
+        String[] names = signUpRequest.getFullName().split(" ");
+        staff.setFirstName(names[0]);
+        staff.setLastName(names[1]);
         staff.setEmail(signUpRequest.getEmail());
         staff.setPhone(signUpRequest.getPhoneNumber());
         staff.setPasswordHash(passwordEncoder.encode(signUpRequest.getPassword())); // hash password

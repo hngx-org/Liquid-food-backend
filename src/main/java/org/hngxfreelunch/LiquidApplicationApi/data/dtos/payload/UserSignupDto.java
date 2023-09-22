@@ -14,8 +14,6 @@ public class UserSignupDto {
     @NotBlank(message = "email is required")
     private String email;
     @NotBlank(message = "password is required")
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[!@#$%^&*+=/,.;:|?])(?=.*[0-9]).{8,}$",
-            message = "Password must be minimum 8 characters, and must contain a number and special character")
     private String password;
     @NotBlank(message = "otp is required")
     private String otpToken;

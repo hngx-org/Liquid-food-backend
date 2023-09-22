@@ -1,10 +1,8 @@
-
 package org.hngxfreelunch.LiquidApplicationApi.services.email;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.EmailRequest;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.MailInfo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -17,15 +15,6 @@ import java.util.List;
 @Service
 @Slf4j
 public class BrevoEmailServiceImpl implements EmailService {
-
-    @Autowired
-    private WebClient.Builder webClient;
-
-    @Value("${sendinblue.mail.url}")
-    private String mailUrl;
-
-    @Value("${mail.api.key}")
-    private String mailApiKey;
 
     @Value("${sendinblue.mail.name}")
     private String senderName;
