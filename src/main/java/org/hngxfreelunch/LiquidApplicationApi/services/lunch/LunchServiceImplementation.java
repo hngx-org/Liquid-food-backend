@@ -24,6 +24,7 @@ public class LunchServiceImplementation implements LunchService {
 
     @Override
     public List<LunchResponseDto> sendLunch(LunchRequestDto lunchRequestDto, HttpServletRequest request) {
+
         User sender= getSender(request);
         List<User> user= staffRepository.findAllById(lunchRequestDto.getReceiverId());
         List<Lunches> lunchesList=user.stream()
