@@ -24,5 +24,5 @@ public interface UserService {
 
     ApiResponseDto createAdmin(AdminSignupDto adminSignupDto);
 
-    ApiResponseDto getUserBankDetails(UserUtils userUtils);
+    ApiResponseDto getUserBankDetails();
 }

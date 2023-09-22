@@ -42,6 +42,13 @@ public class UserController {
     return ResponseEntity.ok(organizationService.getAllStaffInOrganization());
     }
 
+    @Operation(summary = "Get the logged in User's bank details",
+            description = "Returns an ApiResponse Response entity containing the user's bank details")
+    @GetMapping("bank-details")
+    public ResponseEntity<?> getUserBankDetails(){
+        return ResponseEntity.ok(userService.getUserBankDetails());
+    }
+
 
     @Operation(summary = "Update A Particular User's profile picture",
             description = "Returns an ApiResponse Response entity containing the operation details")
@@ -55,10 +62,10 @@ public class UserController {
         }
     }
 
-    @Operation(summary = "Search for user by name or email")
-    @GetMapping("search/{nameOrEmail}")
-    public ResponseEntity<?> searchForUser(@PathVariable String nameOrEmail){
-        return ResponseEntity.ok(userService.getUserByEmail(nameOrEmail));
+    @Operation(summary = "Search for user by email")
+    @GetMapping("search/{Email}")
+    public ResponseEntity<?> searchForUser(@PathVariable String Email){
+        return ResponseEntity.ok(userService.getUserByEmail(Email));
     }
 
     @Operation(summary = "Search for user by first name or last name",

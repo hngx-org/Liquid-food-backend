@@ -190,8 +190,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public ApiResponseDto getUserBankDetails(UserUtils userUtils) {
-
+    public ApiResponseDto getUserBankDetails() {
         User user = userUtils.getLoggedInUser();
         if (Objects.isNull(user)){
             return new ApiResponseDto(null, "No bank details",HttpStatus.BAD_REQUEST.value() );
