@@ -57,7 +57,14 @@ public class UserController {
 
     @GetMapping("search/{nameOrEmail}")
     public ResponseEntity<?> searchForUser(@PathVariable String nameOrEmail){
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(userService.getUserByEmail(nameOrEmail));
+    }
+
+    @Operation(summary = "Search for user by first name or last name",
+    description = "Search for user by firstname or lastname and return a List of users with that name.")
+    @GetMapping("search/{firstNameOrLastName}")
+    public ResponseEntity<?> searchForUserByName(@PathVariable String firstNameOrLastName){
+        return ResponseEntity.ok(userService.getUsersByName(firstNameOrLastName));
     }
 
 
