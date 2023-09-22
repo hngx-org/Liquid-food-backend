@@ -13,5 +13,4 @@ public class ExceptionResponse {
     private String time;
     private int statusCode;
 
-    private int your;
 }
