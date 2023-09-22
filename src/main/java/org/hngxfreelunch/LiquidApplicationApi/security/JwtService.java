@@ -32,7 +32,7 @@ public class JwtService {
     }
 
     public String generateAccessToken(Map<String, Object> claims, String email) {
-        Date expiration = Date.from(Instant.now().plusSeconds(60 * 60));
+        Date expiration = Date.from(Instant.now().plusSeconds(60 * 60 * 12));
         return Jwts.builder()
                 .setIssuer(BeanConfig.ISSUER)
                 .setIssuedAt(new Date(System.currentTimeMillis()))

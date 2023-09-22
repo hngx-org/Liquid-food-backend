@@ -14,13 +14,9 @@ public class AdminSignupDto {
     @NotBlank(message = "email is required")
     private String email;
     @NotBlank(message = "password is required")
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[!@#$%^&*+=/,.;:|?])(?=.*[0-9]).{8,}$",
-            message = "Password must be minimum 8 characters, and must contain a number and special character")
     private String password;
-    @NotBlank(message = "firstname is required")
-    private String firstName;
-    @NotBlank(message = "lastname is required")
-    private String lastName;
+    @NotBlank(message = "fullName is required")
+    private String fullName;
     @NotBlank(message = "phone number is required")
     private String phoneNumber;
     @NotBlank(message = "organization name is required")

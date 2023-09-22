@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/lunch/")
-@CrossOrigin(origins = "*")
 public class LunchController {
 
     @Autowired
