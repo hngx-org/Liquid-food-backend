@@ -19,24 +19,59 @@ public class Lunches {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "org_id")
-    private Organization organization;
+    private Organizations organizations;
 
     @OneToOne
-    @JoinColumn(name = "senderId")
+    @JoinColumn(name = "sender_id")
     private User sender;
 
     @OneToOne
-    @JoinColumn(name = "receiverId")
+    @JoinColumn(name = "receiver_id")
     private User receiver;
 
     private String note;
 
-    private BigInteger quantity;
+    private Integer quantity;
 
     private Boolean redeemed;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+    private final Boolean isDeleted = false;
 
 }
+
+
+
+//public class Lunches {
+//
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
+//
+//    @ManyToOne
+//    @JoinColumn(name = "org_id")
+//    private Organization organization;
+//
+//    @OneToOne
+//    @JoinColumn(name = "senderId")
+//    private User sender;
+//
+//    @OneToOne
+//    @JoinColumn(name = "receiverId")
+//    private User receiver;
+//
+//    private String note;
+//
+//    private BigInteger quantity;
+//
+//    private Boolean redeemed;
+//
+//    private LocalDateTime createdAt;
+//
+//}
+//

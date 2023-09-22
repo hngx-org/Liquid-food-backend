@@ -16,4 +16,5 @@ public class OrganizationRegistrationDto {
     private String organizationName;
 
     private BigInteger lunchPrice;
+
 }

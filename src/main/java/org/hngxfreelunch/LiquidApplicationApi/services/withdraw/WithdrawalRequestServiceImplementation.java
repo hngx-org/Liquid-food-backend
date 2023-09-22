@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.WithdrawalRequestDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.WithdrawalResponseDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.entities.Status;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.Withdrawals;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
@@ -31,7 +32,7 @@ public class WithdrawalRequestServiceImplementation implements WithdrawalService
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
 
         // Step 2: Get the user's lunch credit balance
-        BigInteger lunchCreditBalance = user.getLunch_credit_balance();
+        BigInteger lunchCreditBalance = user.getLunchCreditBalance();
 
         // Step 3: Validate that the user has sufficient lunch credits balance
         if (lunchCreditBalance.compareTo(BigInteger.ZERO) <= 0) {
@@ -47,13 +48,13 @@ public class WithdrawalRequestServiceImplementation implements WithdrawalService
         // Step 5: Create a withdrawal entity and save it
         Withdrawals withdrawal = new Withdrawals();
         withdrawal.setUser(user);
-        withdrawal.setStatus("Confirmed");
-        withdrawal.setAmount(lunchCreditBalance);
-        withdrawal.setCreated_at(LocalDateTime.now());
+        withdrawal.setStatus(Status.PENDING);
+        withdrawal.setAmount(lunchCreditBalance.doubleValue());
+        withdrawal.setCreatedAt(LocalDateTime.now());
         Withdrawals savedWithdrawal = withdrawalRepository.save(withdrawal);
 
         // Step 6: Update the user's lunch credit balance & save it
-        user.setLunch_credit_balance(BigInteger.ZERO);
+        user.setLunchCreditBalance(BigInteger.ZERO);
         userRepository.save(user);
 
         // Step 7: Create a response DTO
@@ -62,7 +63,7 @@ public class WithdrawalRequestServiceImplementation implements WithdrawalService
                 .userId(String.valueOf(savedWithdrawal.getUser().getId()))
                 .status(savedWithdrawal.getStatus())
                 .amount(savedWithdrawal.getAmount())
-                .createdAt(savedWithdrawal.getCreated_at().toString())
+                .createdAt(savedWithdrawal.getCreatedAt().toString())
                 .build();
 
         // Step 8: Return the response with success status

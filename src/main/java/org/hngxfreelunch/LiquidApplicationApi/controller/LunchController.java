@@ -37,7 +37,7 @@ public class LunchController {
     public ResponseEntity<ApiResponse> getLunch(
             @Parameter(required = true, description = "Lunch Id") @PathVariable long id ) {
         LunchResponseDto responseDto= lunchService.getLunch(id);
-        return ResponseEntity.ok(new ApiResponse(null, true));
+        return ResponseEntity.ok(new ApiResponse(responseDto, true));
     }
 
     @Operation(summary = "Staff attempts to fetch all lunch history")

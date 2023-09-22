@@ -17,6 +17,6 @@ public class LunchRequestDto {
 
     private List<Long> receiverId;
     @NotBlank(message = "Please input a quantity")
-    private BigInteger quantity;
+    private Integer quantity;
     private String note;
 }

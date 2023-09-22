@@ -1,3 +1,4 @@
+
 package org.hngxfreelunch.LiquidApplicationApi.services.email;
 
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +61,7 @@ public class BrevoEmailServiceImpl implements EmailService {
                 .retrieve()
                 .toBodilessEntity()
                 .block();
-        log.info("Registration Email sent for user: " + to + "!");
+        log.info("Email sent to user: " + to + "!");
     }
-
 }
+

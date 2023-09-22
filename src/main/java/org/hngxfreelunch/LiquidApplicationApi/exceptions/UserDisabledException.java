@@ -1,7 +1,9 @@
 package org.hngxfreelunch.LiquidApplicationApi.exceptions;
 
-public class UserDisabledException extends RuntimeException{
+import org.springframework.http.HttpStatus;
+
+public class UserDisabledException extends FreeLunchException {
     public UserDisabledException(String message) {
-        super(message);
+        super(message, HttpStatus.FORBIDDEN);
     }
 }

@@ -27,7 +27,7 @@ public class LunchServiceImplementation implements LunchService {
         User sender= getSender(request);
         List<User> user= staffRepository.findAllById(lunchRequestDto.getReceiverId());
         List<Lunches> lunchesList=user.stream()
-                .map(eachStaff->sendLunchToEachStaff(eachStaff,sender,lunchRequestDto))
+                .map(eachStaff->sendLunchToEachStaff(eachStaff, sender,lunchRequestDto))
                 .toList();
         return lunchesList.stream()
                 .map(this::mapLunchToResponseDto)
