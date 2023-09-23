@@ -23,5 +23,4 @@ public class WithdrawalController {
         return ResponseEntity.ok(withdrawalService.processWithdrawalRequest(withdrawalRequestDto,userUtils.getLoggedInUser().getId()));
     }
 
-
 }
