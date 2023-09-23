@@ -6,6 +6,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.http.HttpStatus;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationInviteDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationRegistrationDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.SendLunchCreditToAllStaffRequest;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponse;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.UsersResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organizations;
@@ -19,6 +21,7 @@ import org.hngxfreelunch.LiquidApplicationApi.exceptions.InvalidCredentials;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.OrganizationNotFoundException;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.UserNotFoundException;
 import org.hngxfreelunch.LiquidApplicationApi.services.email.EmailService;
+import org.hngxfreelunch.LiquidApplicationApi.services.lunch.LunchService;
 import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -37,6 +40,8 @@ public class OrganizationServiceImplementation implements OrganizationService {
     private final OrganizationRepository organizationRepository;
     private final OrganizationInvitesRepository organizationInvitesRepository;
     private final EmailService emailService;
+
+    private final LunchService lunchService;
     private final UserUtils userUtils;
     private final UserRepository userRepository;
 
@@ -116,6 +121,14 @@ public class OrganizationServiceImplementation implements OrganizationService {
     @Override
     public Organizations findById(Long id) {
         return organizationRepository.findById(id).orElseThrow(OrganizationNotFoundException::new);
+    }
+
+    @Override
+    public ApiResponse sendLunchCreditToAllStaffs(SendLunchCreditToAllStaffRequest sendLunchCreditToAllStaffRequest) {
+        User sender = userUtils.getLoggedInUser();
+        if(!sender.getIsAdmin()) throw new InvalidCredentials("Can't make this request");
+        return new ApiResponse(
+                lunchService.sendLunch(sendLunchCreditToAllStaffRequest.getNote(),sendLunchCreditToAllStaffRequest.getQuantity(), sender), true);
     }
 
     @Override

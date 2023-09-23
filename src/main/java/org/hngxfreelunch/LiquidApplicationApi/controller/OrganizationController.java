@@ -3,6 +3,7 @@ package org.hngxfreelunch.LiquidApplicationApi.controller;
 import jakarta.validation.Valid;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationInviteDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationRegistrationDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.SendLunchCreditToAllStaffRequest;
 import org.hngxfreelunch.LiquidApplicationApi.services.organization.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,12 @@ public class OrganizationController {
     @PostMapping("lunch")
     public ResponseEntity<?> sendLunchCredit(@Valid @RequestBody OrganizationInviteDto organizationInviteDto){
         return ResponseEntity.ok(organizationService.sendLunchCredit(organizationInviteDto));
+    }
+
+    @PostMapping("lunch/staffs")
+    public ResponseEntity<?>
+    sendLunchCreditToAllStaffInOrganization(@Valid @RequestBody SendLunchCreditToAllStaffRequest sendLunchCreditToAllStaffRequest){
+        return ResponseEntity.ok(organizationService.sendLunchCreditToAllStaffs(sendLunchCreditToAllStaffRequest));
     }
 
 }

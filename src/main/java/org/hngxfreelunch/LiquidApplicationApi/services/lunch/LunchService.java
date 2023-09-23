@@ -16,6 +16,8 @@ public interface LunchService {
 
     List<LunchResponseDto> sendLunch(LunchRequestDto lunchRequestDto);
 
+    List<LunchResponseDto> sendLunch(String note, Integer quantity, User sender);
+
     List<LunchResponseDto> getAllLunch();
 
     LunchResponseDto getLunch(Long lunch_id);
