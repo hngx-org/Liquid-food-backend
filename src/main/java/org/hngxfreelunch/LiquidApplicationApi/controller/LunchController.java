@@ -36,7 +36,7 @@ public class LunchController {
         System.out.println("1");
         List<LunchResponseDto> responseDto= lunchService.sendLunch(lunchRequestDto);
         System.out.println("end");
-        return ResponseEntity.ok(new ApiResponseDto<>(responseDto,"Sent Lunch to Staff", HttpStatus.OK.value()));
+        return ResponseEntity.ok(new ApiResponseDto<>("Sent Lunch to Staff", HttpStatus.OK.value(),responseDto));
     }
 
     @Operation(summary = "Staff attempts to fetch lunch by id")
@@ -44,20 +44,20 @@ public class LunchController {
     public ResponseEntity<?> getLunch(
             @Parameter(required = true, description = "Lunch Id") @PathVariable Long id ) {
         LunchResponseDto responseDto= lunchService.getLunch(id);
-        return ResponseEntity.ok(new ApiResponseDto<>(responseDto,"Fetched Lunch", HttpStatus.OK.value()));
+        return ResponseEntity.ok(new ApiResponseDto<>("Fetched Lunch", HttpStatus.OK.value(),responseDto));
     }
 
     @Operation(summary = "Staff attempts to fetch all lunch history")
     @GetMapping("/all")
     public ResponseEntity<?> getAllLunch(){
         List<LunchResponseDto> responseDtoList=lunchService.getAllLunch();
-        return ResponseEntity.ok(new ApiResponseDto(responseDtoList,"Staff Lunch History" , HttpStatus.OK.value()));
+        return ResponseEntity.ok(new ApiResponseDto("Staff Lunch History" , HttpStatus.OK.value(),responseDtoList));
     }
 
     @Operation(summary = "Staff attempts to get lunch credit balance")
     @GetMapping("/balance")
     public ResponseEntity<?> getLunchBalance(){
         User loggedInUser = userUtils.getLoggedInUser();
-        return ResponseEntity.ok(new ApiResponseDto(loggedInUser.getLunchCreditBalance(),"User's Lunch Credits", HttpStatus.OK.value()));
+        return ResponseEntity.ok(new ApiResponseDto("User's Lunch Credits", HttpStatus.OK.value(),loggedInUser.getLunchCreditBalance()));
     }
 }
