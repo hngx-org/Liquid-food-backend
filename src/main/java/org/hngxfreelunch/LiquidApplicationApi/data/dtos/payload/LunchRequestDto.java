@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 public class LunchRequestDto {
 
-    private List<Long> receiverId;
+    private Long receiverId;
     @NotBlank(message = "Please input a quantity")
     private Integer quantity;
     private String note;

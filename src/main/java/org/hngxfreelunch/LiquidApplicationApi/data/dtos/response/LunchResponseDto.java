@@ -15,12 +15,9 @@ import java.time.LocalDateTime;
 @Builder
 public class LunchResponseDto {
 
-    private String profilePicture;
-    private User sender;
-    private User receiver;
-    private Boolean redeemed;
+    private UsersResponseDto sender;
+    private UsersResponseDto receiver;
     private LocalDateTime createdAt;
-    private String role;
     private Integer quantity;
-
+    private String note;
 }
