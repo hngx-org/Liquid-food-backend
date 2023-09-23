@@ -12,6 +12,7 @@ import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.UsersResponseDt
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organizations;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
+import org.hngxfreelunch.LiquidApplicationApi.exceptions.FreeLunchException;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.InvalidCredentials;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.UserNotFoundException;
 import org.hngxfreelunch.LiquidApplicationApi.services.cloud.CloudService;
@@ -43,15 +44,14 @@ public class UserServiceImpl implements UserService{
         // verify the invite otp
         Organizations inviteResponse = organizationService
                 .verifyOrganizationInvite(signUpRequest.getOtpToken(), signUpRequest.getEmail());
-        if(inviteResponse == null){throw new InvalidCredentials("Organization not found");}
-
+        if(inviteResponse == null){
+            throw new FreeLunchException("Invalid Credentials Passed, Check your token and email");
+        }
         // check if user has already signed up
         boolean isExists = checkIfStaffAlreadyExists(signUpRequest.getEmail());
         if (isExists){
             return new ApiResponseDto<>("Staff already exists", HttpStatus.BAD_REQUEST.value(),null);
         }
-
-        Organizations foundOrganizations = organizationService.findById(inviteResponse.getId());
         // create new user
         User staff = new User();
         staff.setFirstName(signUpRequest.getFirstName());
@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService{
         staff.setPhone(signUpRequest.getPhoneNumber());
         staff.setPasswordHash(passwordEncoder.encode(signUpRequest.getPassword())); // hash password
         staff.setIsAdmin(false);
-        return getApiResponseDto(foundOrganizations, staff);
+        return getApiResponseDto(inviteResponse, staff);
     }
 
     private ApiResponseDto<UserDto> getApiResponseDto(Organizations foundOrganizations, User staff) {
@@ -175,7 +175,10 @@ public class UserServiceImpl implements UserService{
 
         // create new user
         User staff = new User();
-        String[] names = signUpRequest.getFullName().split(" ");
+        String[] names= signUpRequest.getFullName().split(" ");
+        if(names.length < 2) {
+            throw new FreeLunchException("Please enter your first name and last name");
+        }
         staff.setFirstName(names[0]);
         staff.setLastName(names[1] == null ? "" : names[1]);
         staff.setEmail(signUpRequest.getEmail());

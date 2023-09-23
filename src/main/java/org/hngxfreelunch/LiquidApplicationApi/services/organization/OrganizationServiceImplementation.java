@@ -49,9 +49,8 @@ public class OrganizationServiceImplementation implements OrganizationService {
 
     @Override
     public Organizations createOrganization(OrganizationRegistrationDto request) {
-        boolean isExists = organizationRepository.existsByName(request.getOrganizationName());
-        if (isExists) {
-            throw new FreeLunchException();
+        if (organizationRepository.existsByName(request.getOrganizationName())) {
+            throw new FreeLunchException("Organization Already Exists");
         }
         Organizations organizations = Organizations.builder()
                 .name(request.getOrganizationName())
@@ -63,7 +62,7 @@ public class OrganizationServiceImplementation implements OrganizationService {
     }
 
     @Override
-    public ApiResponseDto sendOrganizationInviteToStaff(OrganizationInviteDto request) {
+    public ApiResponseDto<?> sendOrganizationInviteToStaff(OrganizationInviteDto request) {
         User sender = userUtils.getLoggedInUser();
         if(!sender.getIsAdmin()){
             throw new InvalidCredentials("Can't make this request");
@@ -89,36 +88,17 @@ public class OrganizationServiceImplementation implements OrganizationService {
         organizationInvitesRepository.save(organizationInvites);
         organizationInvites.setOrganizations(organizationRepository.findById(request.getOrganizationId()).orElseThrow(OrganizationNotFoundException::new));
         organizationInvitesRepository.save(organizationInvites);
-        return new ApiResponseDto("Success", HttpStatus.SC_OK,organizationInvites);
+        return new ApiResponseDto<>("Success", HttpStatus.SC_OK,organizationInvites);
     }
 
     @Override
     public Organizations verifyOrganizationInvite(String token, String email) {
-        OrganizationInvites organizationInvites = organizationInvitesRepository.findByToken(token).orElseThrow(() -> new InvalidCredentials("Token not valid"));
-        if (!organizationInvites.getEmail().equals(email)) {
-            throw new InvalidCredentials("OTP not valid for user");
+        OrganizationInvites organizationInvites = organizationInvitesRepository.findByTokenAndEmail(token, email)
+                .orElseThrow(()-> new FreeLunchException("Invalid Credentials"));
+        if(organizationInvites.getTTL().isAfter(LocalDateTime.now())){
+            return organizationInvites.getOrganizations();
         }
-        LocalDateTime expirationTime = organizationInvites.getTTL();
-        LocalDateTime currentTime = LocalDateTime.now();
-        if (currentTime.isBefore(expirationTime)) {
-            Organizations organizations = organizationInvites.getOrganizations();
-            log.info(String.valueOf(organizations));
-            String subject = "Lunch Invite";
-            String htmlContent =
-                    "We're delighted to invite you to a complimentary lunch as a token of our appreciation for your hard work and dedication.\n" +
-                            "\n" +
-                            "\nDate: " + LocalDate.now() +
-                            "\nTime: " + LocalTime.now() +
-                            "\n" +
-                            "RSVP before " + expirationTime + " hours with this unique RSVP Token: " +
-                            "<p><a href=\"" + url_prefix + "?token=?" + token + "\">Accept Invitation<a/>";
-            emailService.sendEmail(organizationInvites.getEmail(), subject, htmlContent);
-            organizationInvitesRepository.delete(organizationInvites);
-            log.info(String.valueOf(organizations));
-            return organizations;
-        } else {
-            throw new InvalidCredentials("OTP is expired");
-        }
+        return null;
     }
 
     @Override

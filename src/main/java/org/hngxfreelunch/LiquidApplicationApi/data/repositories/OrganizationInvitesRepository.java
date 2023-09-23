@@ -11,4 +11,10 @@ public interface OrganizationInvitesRepository extends JpaRepository<Organizatio
 
     Optional<OrganizationInvites> findByToken(String token);
 
+    OrganizationInvites findByEmail(String email);
+
+    boolean existsByEmail(String email);
+
+    Optional<OrganizationInvites> findByTokenAndEmail(String token, String email);
+
 }
