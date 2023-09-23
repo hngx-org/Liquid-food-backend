@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.LunchRequestDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.LunchResponseDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.UsersResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.Lunches;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.LunchRepository;
@@ -24,15 +25,12 @@ public class LunchServiceImplementation implements LunchService {
 
 
     @Override
-    public List<LunchResponseDto> sendLunch(LunchRequestDto lunchRequestDto) {
+    public LunchResponseDto sendLunch(LunchRequestDto lunchRequestDto) {
         User sender = userUtils.getLoggedInUser();
-        List<User> user= staffRepository.findAllById(lunchRequestDto.getReceiverId());
-        List<Lunches> lunchesList=user.stream()
-                .map(eachStaff->sendLunchToEachStaff(eachStaff, sender,lunchRequestDto))
-                .toList();
-        return lunchesList.stream()
-                .map(this::mapLunchToResponseDto)
-                .toList();
+        User receiver= staffRepository.findById(lunchRequestDto.getReceiverId()).get();
+        Lunches sentLunch= sendingLunch(sender,receiver,lunchRequestDto);
+        LunchResponseDto sentLunchResponse= mapLunchToResponseDto(sentLunch);
+        return sentLunchResponse;
     }
 
     @Override
@@ -44,50 +42,45 @@ public class LunchServiceImplementation implements LunchService {
         return lunchesList.stream()
                 .map(this::mapLunchToResponseDto)
                 .toList();
+
     }
+
+    private Lunches sendingLunch(User sender, User receiver, LunchRequestDto lunchRequestDto) {
+        Integer receiverLunchBalance= receiver.getLunchCreditBalance().intValue();
+       Lunches sentLunch= Lunches.builder()
+                .sender(sender)
+                .receiver(receiver)
+                .createdAt(LocalDateTime.now())
+                .note(lunchRequestDto.getNote())
+                .quantity(receiverLunchBalance+lunchRequestDto.getQuantity())
+                .build();
+        return lunchRepository.save(sentLunch);
+    }
+
 
     private LunchResponseDto mapLunchToResponseDto(Lunches eachLunch) {
         return LunchResponseDto.builder()
-                .sender(eachLunch.getSender())
-                .receiver(eachLunch.getReceiver())
+                .sender(mapUserToDTO(eachLunch.getSender()))
+                .receiver(mapUserToDTO(eachLunch.getReceiver()))
                 .quantity(eachLunch.getQuantity())
-                .redeemed(eachLunch.getRedeemed())
                 .createdAt(eachLunch.getCreatedAt())
                 .build();
-    }
 
-    private Lunches sendLunchToEachStaff(User eachStaff, User sender,LunchRequestDto lunchRequestDto) {
-        User receiver = staffRepository.findById(eachStaff.getId()).get();
-        Lunches newLunch= Lunches.builder()
-                .sender(sender)
-                .receiver(receiver)
-                .redeemed(false)
-                .note(lunchRequestDto.getNote())
-                .createdAt(LocalDateTime.now())
-                .quantity(lunchRequestDto.getQuantity())
-                .build();
-        receiver.setLunchCreditBalance(receiver.getLunchCreditBalance().add(BigInteger.valueOf(lunchRequestDto.getQuantity())));
-        staffRepository.save(receiver);
-        return lunchRepository.save(newLunch);
     }
-
-    private Lunches sendLunchToEachStaff(User eachStaff, User sender,String note, Integer quantity) {
-        Lunches newLunch= Lunches.builder()
-                .sender(sender)
-                .receiver(staffRepository.findById(eachStaff.getId()).get())
-                .redeemed(false)
-                .note(note)
-                .createdAt(LocalDateTime.now())
-                .quantity(quantity)
-                .build();
-        return lunchRepository.save(newLunch);
+    private UsersResponseDto mapUserToDTO(User user){
+        return UsersResponseDto.builder().build();
     }
 
     @Override
     public List<LunchResponseDto> getAllLunch() {
+        User user = userUtils.getLoggedInUser();
         List<Lunches> lunchesList=lunchRepository.findAll();
-        return lunchesList.stream()
-                .map(this::mapLunchToResponseDto)
+        List<Lunches> userLunch=lunchesList.stream()
+                .filter(eachLunch->eachLunch.getSender().equals(user)
+                        && eachLunch.getReceiver().equals(user))
+                .toList();
+        return userLunch.stream()
+                .map(lunch->mapLunchToResponseDto(lunch))
                 .toList();
     }
 

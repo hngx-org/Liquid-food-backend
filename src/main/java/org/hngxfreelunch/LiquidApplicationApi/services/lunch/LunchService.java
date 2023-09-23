@@ -14,7 +14,7 @@ public interface LunchService {
     // TODO: GET LUNCH BY ID
     // TODO: REDEEM A LUNCH
 
-    List<LunchResponseDto> sendLunch(LunchRequestDto lunchRequestDto);
+    LunchResponseDto sendLunch(LunchRequestDto lunchRequestDto);
 
     List<LunchResponseDto> sendLunch(String note, Integer quantity, User sender);
 
