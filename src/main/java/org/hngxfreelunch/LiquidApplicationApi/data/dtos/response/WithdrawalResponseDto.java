@@ -16,7 +16,7 @@ public class WithdrawalResponseDto {
 
     private String id;
     private String userId;
-    private Status status;
+    private String status;
     private Double amount;
     private String createdAt;
 

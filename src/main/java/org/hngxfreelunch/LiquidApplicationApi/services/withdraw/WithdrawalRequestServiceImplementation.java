@@ -9,6 +9,7 @@ import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.Withdrawals;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.WithdrawalRepository;
+import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,13 +24,15 @@ public class WithdrawalRequestServiceImplementation implements WithdrawalService
     private final WithdrawalRepository withdrawalRepository;
 
     private final UserRepository userRepository;
+    private UserUtils userUtils;
 
     @Transactional
-    public ApiResponseDto<?> processWithdrawalRequest(WithdrawalRequestDto withdrawalRequestDto, Long userId) {
+    public ApiResponseDto<?> processWithdrawalRequest(WithdrawalRequestDto withdrawalRequestDto) {
 
         // Step 1: Find the user by userId
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
+        User user = userUtils.getLoggedInUser();
+//                userRepository.findById(userId)
+//                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
 
         // Step 2: Get the user's lunch credit balance
         BigInteger lunchCreditBalance = user.getLunchCreditBalance();
@@ -48,7 +51,7 @@ public class WithdrawalRequestServiceImplementation implements WithdrawalService
         // Step 5: Create a withdrawal entity and save it
         Withdrawals withdrawal = new Withdrawals();
         withdrawal.setUser(user);
-        withdrawal.setStatus(Status.PENDING);
+        withdrawal.setStatus(String.valueOf(Status.PENDING));
         withdrawal.setAmount(lunchCreditBalance.doubleValue());
         withdrawal.setCreatedAt(LocalDateTime.now());
         Withdrawals savedWithdrawal = withdrawalRepository.save(withdrawal);
