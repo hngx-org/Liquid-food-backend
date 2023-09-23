@@ -44,14 +44,17 @@ public class LunchServiceImplementation implements LunchService {
     }
 
 private Lunches sendLunchToEachStaff(User eachStaff, User sender,String note, Integer quantity) {
+    User receiver = staffRepository.findById(eachStaff.getId()).get();
     Lunches newLunch= Lunches.builder()
             .sender(sender)
-            .receiver(staffRepository.findById(eachStaff.getId()).get())
+            .receiver(receiver)
             .redeemed(false)
             .note(note)
             .createdAt(LocalDateTime.now())
             .quantity(quantity)
             .build();
+    receiver.setLunchCreditBalance(receiver.getLunchCreditBalance().add(BigInteger.valueOf(quantity)));
+    staffRepository.save(receiver);
     return lunchRepository.save(newLunch);
 }
     private Lunches sendLunchToEachStaff(User eachStaff, User sender,LunchRequestDto lunchRequestDto) {
@@ -70,17 +73,20 @@ private Lunches sendLunchToEachStaff(User eachStaff, User sender,String note, In
     }
 
     private Lunches sendingLunch(User sender, User receiver, LunchRequestDto lunchRequestDto) {
-        Integer receiverLunchBalance= receiver.getLunchCreditBalance().intValue();
+        BigInteger receiverLunchBalance= receiver.getLunchCreditBalance();
        Lunches sentLunch= Lunches.builder()
                 .sender(sender)
                 .receiver(receiver)
                 .createdAt(LocalDateTime.now())
                 .note(lunchRequestDto.getNote())
-                .quantity(receiverLunchBalance+lunchRequestDto.getQuantity())
+                .quantity(lunchRequestDto.getQuantity())
                 .build();
+//        receiver.setLunchCreditBalance(receiver.getLunchCreditBalance().add(BigInteger.valueOf(lunchRequestDto.getQuantity())));
+       receiver.setLunchCreditBalance(new BigInteger(receiverLunchBalance+String.valueOf(lunchRequestDto.getQuantity())));
+
+       staffRepository.save(receiver);
         return lunchRepository.save(sentLunch);
     }
-
 
     private LunchResponseDto mapLunchToResponseDto(Lunches eachLunch) {
         return LunchResponseDto.builder()
@@ -92,6 +98,12 @@ private Lunches sendLunchToEachStaff(User eachStaff, User sender,String note, In
 
     }
     private UsersResponseDto mapUserToDTO(User user){
+        UsersResponseDto.builder()
+                .id(user.getId())
+                .organizationName(user.getOrganizations().getName())
+                .fullName(user.getFirstName()+" "+user.getLastName())
+                .email(user.getEmail())
+                .build();
         return UsersResponseDto.builder().build();
     }
 
@@ -113,36 +125,4 @@ private Lunches sendLunchToEachStaff(User eachStaff, User sender,String note, In
         Lunches lunches= lunchRepository.findById(lunch_id).get();
         return mapLunchToResponseDto(lunches);
     }
-
-    //    @Override
-//    public List<LunchResponseDto> sendLunch(LunchRequestDto lunchRequestDto, User sender) {
-//        List<User> user= staffRepository.findAllById(lunchRequestDto.getReceiverId());
-//        List<Lunches> lunchesList=user.stream()
-//                .map(eachStaff->sendLunchToEachStaff(eachStaff,sender,lunchRequestDto))
-//                .toList();
-//        return lunchesList.stream()
-//                .map(this::mapLunchToResponseDto)
-//                .toList();
-//    }
-
-//    private LunchResponseDto mapLunchToResponseDto(Lunches eachLunch) {
-//        return LunchResponseDto.builder()
-//                .sender(UsersResponseDto.builder()
-//                        .id(eachLunch.getSender().getId())
-//                        .email(eachLunch.getSender().getEmail())
-//                        .organizationName(eachLunch.getSender().getOrganization().getName())
-//                        .fullName(eachLunch.getSender().getFirstName() + " " + eachLunch.getSender().getLastName())
-//                        .build())
-//                .receiver(UsersResponseDto.builder()
-//                        .id(eachLunch.getReceiver().getId())
-//                        .email(eachLunch.getReceiver().getEmail())
-//                        .organizationName(eachLunch.getReceiver().getOrganization().getName())
-//                        .fullName(eachLunch.getReceiver().getFirstName() + " " + eachLunch.getReceiver().getLastName())
-//                        .build())
-//                .quantity(eachLunch.getQuantity())
-//                .redeemed(eachLunch.getRedeemed())
-//                .createdAt(eachLunch.getCreatedAt())
-//                .build();
-//    }
-
 }
