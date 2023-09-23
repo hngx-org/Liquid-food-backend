@@ -26,7 +26,7 @@ public class LunchServiceImplementation implements LunchService {
 
 
     @Override
-    public LunchResponseDto sendLunch(LunchRequestDto lunchRequestDto) {
+    public LunchResponseDto sendLunchToStaff(LunchRequestDto lunchRequestDto) {
         User sender = userUtils.getLoggedInUser();
         User receiver= staffRepository.findById(lunchRequestDto.getReceiverId()).get();
         Lunches sentLunch= sendingLunch(sender,receiver,lunchRequestDto);

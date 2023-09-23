@@ -34,7 +34,7 @@ public class LunchController {
             @Parameter(description = "Quantity of lunch & Staff Id are required while Note is optional")
             @RequestBody LunchRequestDto lunchRequestDto) {
         System.out.println("1");
-        LunchResponseDto responseDto= lunchService.sendLunch(lunchRequestDto);
+        LunchResponseDto responseDto= lunchService.sendLunchToStaff(lunchRequestDto);
         System.out.println("end");
         return ResponseEntity.ok(new ApiResponseDto<>("Sent Lunch to Staff", HttpStatus.OK.value(),responseDto));
     }
