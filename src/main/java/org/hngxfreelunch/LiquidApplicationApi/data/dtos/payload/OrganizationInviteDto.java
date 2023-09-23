@@ -13,6 +13,6 @@ public class OrganizationInviteDto {
     @NotBlank(message = "email is required")
     private String email;
 
-    private Long organizationId;
+//    private Long organizationId;
 
 }
