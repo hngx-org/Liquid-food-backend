@@ -67,6 +67,6 @@ public class WithdrawalRequestServiceImplementation implements WithdrawalService
                 .build();
 
         // Step 8: Return the response with success status
-        return new ApiResponseDto<>(withdrawalResponseDto, "Withdrawal request created successfully", HttpStatus.OK.value());
+        return new ApiResponseDto<>("Withdrawal request created successfully", HttpStatus.OK.value(),withdrawalResponseDto);
     }
 }
