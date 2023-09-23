@@ -23,8 +23,8 @@ public class Withdrawals {
     @ManyToOne
     private User user;
 
-    @Enumerated(EnumType.STRING)
-    private Status status;
+    //@Enumerated(EnumType.STRING)
+    private String status;
 
     private Double amount;
 

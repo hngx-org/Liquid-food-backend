@@ -27,16 +27,22 @@ public class UserController {
     @Autowired
     private UserUtils userUtils;
 
+    @Operation(summary = "Get the logged in User",
+            description = "Returns an ApiResponse Response entity containing the user's details")
     @GetMapping("profile")
     public ResponseEntity<?> getProfile(){
         return ResponseEntity.ok(userService.getUserByEmail(userUtils.getLoggedInUser().getEmail()));
     }
 
+    @Operation(summary = "Update User's bank details",
+            description = "Returns an ApiResponse Response entity containing the user's bank details")
     @PutMapping("bank")
     public ResponseEntity<?> addBankAccount(@Valid @RequestBody BankRequestDto bankRequestDto){
         return ResponseEntity.ok(userService.addBankDetails(bankRequestDto));
     }
 
+    @Operation(summary = "Get all staff in this User's organization",
+            description = "Returns an ApiResponse Response entity containing a list of the user's in this org")
     @GetMapping("all")
     public ResponseEntity<?> getAllUsers(){
     return ResponseEntity.ok(organizationService.getAllStaffInOrganization());
@@ -63,14 +69,14 @@ public class UserController {
     }
 
     @Operation(summary = "Search for user by email")
-    @GetMapping("search/{Email}")
+    @GetMapping("search/email/{Email}")
     public ResponseEntity<?> searchForUser(@PathVariable String Email){
         return ResponseEntity.ok(userService.getUserByEmail(Email));
     }
 
     @Operation(summary = "Search for user by first name or last name",
     description = "Search for user by firstname or lastname and return a List of users with that name.")
-    @GetMapping("search/{firstNameOrLastName}")
+    @GetMapping("search/name/{firstNameOrLastName}")
     public ResponseEntity<?> searchForUserByName(@PathVariable String firstNameOrLastName){
         return ResponseEntity.ok(userService.getUsersByName(firstNameOrLastName));
     }

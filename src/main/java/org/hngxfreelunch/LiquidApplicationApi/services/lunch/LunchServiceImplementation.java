@@ -35,6 +35,17 @@ public class LunchServiceImplementation implements LunchService {
                 .toList();
     }
 
+    @Override
+    public List<LunchResponseDto> sendLunch(String note, Integer quantity, User sender) {
+        List<User> user= staffRepository.findAllByOrganizations_Id(sender.getOrganizations().getId());
+        List<Lunches> lunchesList=user.stream()
+                .map(eachStaff->sendLunchToEachStaff(eachStaff, sender,note,quantity))
+                .toList();
+        return lunchesList.stream()
+                .map(this::mapLunchToResponseDto)
+                .toList();
+    }
+
     private LunchResponseDto mapLunchToResponseDto(Lunches eachLunch) {
         return LunchResponseDto.builder()
                 .sender(eachLunch.getSender())
@@ -57,6 +68,18 @@ public class LunchServiceImplementation implements LunchService {
                 .build();
         receiver.setLunchCreditBalance(receiver.getLunchCreditBalance().add(BigInteger.valueOf(lunchRequestDto.getQuantity())));
         staffRepository.save(receiver);
+        return lunchRepository.save(newLunch);
+    }
+
+    private Lunches sendLunchToEachStaff(User eachStaff, User sender,String note, Integer quantity) {
+        Lunches newLunch= Lunches.builder()
+                .sender(sender)
+                .receiver(staffRepository.findById(eachStaff.getId()).get())
+                .redeemed(false)
+                .note(note)
+                .createdAt(LocalDateTime.now())
+                .quantity(quantity)
+                .build();
         return lunchRepository.save(newLunch);
     }
 
