@@ -64,6 +64,10 @@ public class OrganizationServiceImplementation implements OrganizationService {
 
     @Override
     public ApiResponseDto sendOrganizationInviteToStaff(OrganizationInviteDto request) {
+        User sender = userUtils.getLoggedInUser();
+        if(!sender.getIsAdmin()){
+            throw new InvalidCredentials("Can't make this request");
+        }
         String token = RandomStringUtils.randomNumeric(5);
 
         LocalDateTime expirationTime = LocalDateTime.now().plusHours(24);
@@ -125,7 +129,9 @@ public class OrganizationServiceImplementation implements OrganizationService {
     @Override
     public ApiResponseDto sendLunchCreditToAllStaffs(SendLunchCreditToAllStaffRequest sendLunchCreditToAllStaffRequest) {
         User sender = userUtils.getLoggedInUser();
-        if(!sender.getIsAdmin()) throw new InvalidCredentials("Can't make this request");
+        if(!sender.getIsAdmin()){
+            throw new InvalidCredentials("Can't make this request");
+        }
         return new ApiResponseDto<>("Sent Lunch credit to all staff in this Org", HttpStatus.SC_OK,
                 lunchService.sendLunch(sendLunchCreditToAllStaffRequest.getNote(),sendLunchCreditToAllStaffRequest.getQuantity(), sender));
     }

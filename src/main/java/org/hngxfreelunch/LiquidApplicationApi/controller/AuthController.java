@@ -6,8 +6,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.AdminSignupDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.LoginRequestDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.PasswordResetDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.UserSignupDto;
 import org.hngxfreelunch.LiquidApplicationApi.services.loginService.LoginService;
+import org.hngxfreelunch.LiquidApplicationApi.services.password.PasswordService;
 import org.hngxfreelunch.LiquidApplicationApi.services.user.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,7 @@ public class AuthController {
 
     private final LoginService loginService;
 
+    private final PasswordService passwordService;
 
     @Operation(summary = "User attempts to login")
     @PostMapping("/login")
@@ -48,6 +51,16 @@ public class AuthController {
     @PostMapping("/admin/signup")
     public ResponseEntity<?>  signUpForAdmin(@Valid @RequestBody @Parameter(required = true, description = "An admin tries to signup for the organization") AdminSignupDto adminSignupDto) {
         return ResponseEntity.ok(userService.createAdmin(adminSignupDto));
+    }
+    @Operation(summary = "Member tries to send a request to reset password")
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestParam("email") String email){
+        return ResponseEntity.ok(passwordService.forgotPassword(email));
+    }
+    @Operation(summary = "Member tries to reset password")
+    @PatchMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody PasswordResetDto passwordResetDto){
+        return ResponseEntity.ok(passwordService.resetPassword(passwordResetDto));
     }
 
 }
