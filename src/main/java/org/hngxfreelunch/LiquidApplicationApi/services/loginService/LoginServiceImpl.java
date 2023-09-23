@@ -3,6 +3,7 @@ package org.hngxfreelunch.LiquidApplicationApi.services.loginService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.LoginRequestDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.LoginResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.TokenResponse;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
@@ -29,7 +30,7 @@ public class LoginServiceImpl implements LoginService {
     private final AuthenticationManager authenticationManager;
 
     @Override
-    public LoginResponseDto loginUser(LoginRequestDto loginRequest){
+    public ApiResponseDto<LoginResponseDto> loginUser(LoginRequestDto loginRequest){
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),
@@ -41,13 +42,13 @@ public class LoginServiceImpl implements LoginService {
             AuthenticatedUser user = (AuthenticatedUser) authentication.getPrincipal();
             String email = user.getUser().getEmail();
             TokenResponse response = this.generateTokens(claims, email);
-            return LoginResponseDto.builder()
+            return new ApiResponseDto<>("User Logged in successfully",200, LoginResponseDto.builder()
                     .accessToken(response.getAccessToken())
                     .refreshToken(response.getRefreshToken())
                     .isAdmin(false)
                     .email(user.getUsername())
                     .id(user.getUser().getId())
-                    .build();
+                    .build());
 
         } catch (Exception e) {
             log.info(Arrays.toString(e.getStackTrace()));
@@ -56,7 +57,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public LoginResponseDto refreshUserToken(String refreshToken){
+    public ApiResponseDto<LoginResponseDto> refreshUserToken(String refreshToken){
         String userEmail = jwtUtils.extractUsername(refreshToken);
         try {
             return LoginResponseDto.builder()
