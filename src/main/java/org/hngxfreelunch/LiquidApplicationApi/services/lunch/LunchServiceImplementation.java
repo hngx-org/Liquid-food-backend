@@ -9,6 +9,7 @@ import org.hngxfreelunch.LiquidApplicationApi.data.entities.Lunches;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.LunchRepository;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
+import org.hngxfreelunch.LiquidApplicationApi.exceptions.UserNotFoundException;
 import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
 import org.springframework.stereotype.Service;
 import java.math.BigInteger;
@@ -32,8 +33,6 @@ public class LunchServiceImplementation implements LunchService {
         LunchResponseDto sentLunchResponse= mapLunchToResponseDto(sentLunch);
         return sentLunchResponse;
     }
-
-    @Override
     public List<LunchResponseDto> sendLunch(String note, Integer quantity, User sender) {
         List<User> user= staffRepository.findAllByOrganizations_Id(sender.getOrganizations().getId());
         List<Lunches> lunchesList=user.stream()
@@ -42,7 +41,32 @@ public class LunchServiceImplementation implements LunchService {
         return lunchesList.stream()
                 .map(this::mapLunchToResponseDto)
                 .toList();
+    }
 
+private Lunches sendLunchToEachStaff(User eachStaff, User sender,String note, Integer quantity) {
+    Lunches newLunch= Lunches.builder()
+            .sender(sender)
+            .receiver(staffRepository.findById(eachStaff.getId()).get())
+            .redeemed(false)
+            .note(note)
+            .createdAt(LocalDateTime.now())
+            .quantity(quantity)
+            .build();
+    return lunchRepository.save(newLunch);
+}
+    private Lunches sendLunchToEachStaff(User eachStaff, User sender,LunchRequestDto lunchRequestDto) {
+        User receiver = staffRepository.findById(eachStaff.getId()).get();
+        Lunches newLunch= Lunches.builder()
+                .sender(sender)
+                .receiver(receiver)
+                .redeemed(false)
+                .note(lunchRequestDto.getNote())
+                .createdAt(LocalDateTime.now())
+                .quantity(lunchRequestDto.getQuantity())
+                .build();
+        receiver.setLunchCreditBalance(receiver.getLunchCreditBalance().add(BigInteger.valueOf(lunchRequestDto.getQuantity())));
+        staffRepository.save(receiver);
+        return lunchRepository.save(newLunch);
     }
 
     private Lunches sendingLunch(User sender, User receiver, LunchRequestDto lunchRequestDto) {
@@ -89,5 +113,36 @@ public class LunchServiceImplementation implements LunchService {
         Lunches lunches= lunchRepository.findById(lunch_id).get();
         return mapLunchToResponseDto(lunches);
     }
+
+    //    @Override
+//    public List<LunchResponseDto> sendLunch(LunchRequestDto lunchRequestDto, User sender) {
+//        List<User> user= staffRepository.findAllById(lunchRequestDto.getReceiverId());
+//        List<Lunches> lunchesList=user.stream()
+//                .map(eachStaff->sendLunchToEachStaff(eachStaff,sender,lunchRequestDto))
+//                .toList();
+//        return lunchesList.stream()
+//                .map(this::mapLunchToResponseDto)
+//                .toList();
+//    }
+
+//    private LunchResponseDto mapLunchToResponseDto(Lunches eachLunch) {
+//        return LunchResponseDto.builder()
+//                .sender(UsersResponseDto.builder()
+//                        .id(eachLunch.getSender().getId())
+//                        .email(eachLunch.getSender().getEmail())
+//                        .organizationName(eachLunch.getSender().getOrganization().getName())
+//                        .fullName(eachLunch.getSender().getFirstName() + " " + eachLunch.getSender().getLastName())
+//                        .build())
+//                .receiver(UsersResponseDto.builder()
+//                        .id(eachLunch.getReceiver().getId())
+//                        .email(eachLunch.getReceiver().getEmail())
+//                        .organizationName(eachLunch.getReceiver().getOrganization().getName())
+//                        .fullName(eachLunch.getReceiver().getFirstName() + " " + eachLunch.getReceiver().getLastName())
+//                        .build())
+//                .quantity(eachLunch.getQuantity())
+//                .redeemed(eachLunch.getRedeemed())
+//                .createdAt(eachLunch.getCreatedAt())
+//                .build();
+//    }
 
 }
