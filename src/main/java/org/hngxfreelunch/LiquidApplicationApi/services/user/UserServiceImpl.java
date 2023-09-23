@@ -11,11 +11,9 @@ import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.BankResponseDto
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.UsersResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organizations;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
-import org.hngxfreelunch.LiquidApplicationApi.data.repositories.OrganizationInvitesRepository;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.InvalidCredentials;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.UserNotFoundException;
-import org.hngxfreelunch.LiquidApplicationApi.security.JwtService;
 import org.hngxfreelunch.LiquidApplicationApi.services.cloud.CloudService;
 import org.hngxfreelunch.LiquidApplicationApi.services.organization.OrganizationService;
 import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
@@ -41,7 +39,7 @@ public class UserServiceImpl implements UserService{
     private final CloudService cloudService;
 
     @Override
-    public ApiResponseDto createUser(UserSignupDto signUpRequest) {
+    public ApiResponseDto<UserDto> createUser(UserSignupDto signUpRequest) {
         // verify the invite otp
         Organizations inviteResponse = organizationService
                 .verifyOrganizationInvite(signUpRequest.getOtpToken(), signUpRequest.getEmail());
@@ -50,7 +48,7 @@ public class UserServiceImpl implements UserService{
         // check if user has already signed up
         boolean isExists = checkIfStaffAlreadyExists(signUpRequest.getEmail());
         if (isExists){
-            return new ApiResponseDto<>(null, "Staff already exists", HttpStatus.BAD_REQUEST.value());
+            return new ApiResponseDto<>("Staff already exists", HttpStatus.BAD_REQUEST.value(),null);
         }
 
         Organizations foundOrganizations = organizationService.findById(inviteResponse.getId());
@@ -65,7 +63,7 @@ public class UserServiceImpl implements UserService{
         return getApiResponseDto(foundOrganizations, staff);
     }
 
-    private ApiResponseDto getApiResponseDto(Organizations foundOrganizations, User staff) {
+    private ApiResponseDto<UserDto> getApiResponseDto(Organizations foundOrganizations, User staff) {
         staff.setOrganizations(foundOrganizations);
         staff.setLunchCreditBalance(BigInteger.ZERO);
         staff.setCurrencyCode("NGN");
@@ -83,7 +81,7 @@ public class UserServiceImpl implements UserService{
                 .profilePicture(savedUser.getProfilePic())
                 .isAdmin(savedUser.getIsAdmin())
                 .build();
-        return new ApiResponseDto<>(userDto, "Staff created successfully", HttpStatus.CREATED.value());
+        return new ApiResponseDto<>("Staff created successfully", HttpStatus.CREATED.value(), userDto);
     }
 
     private boolean checkIfStaffAlreadyExists(String email) {
@@ -92,9 +90,8 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public ApiResponseDto getUserByEmail(String email) {
+    public ApiResponseDto<?> getUserByEmail(String email) {
         Optional<User> userByName = userRepository.findByEmail(email);
-        UsersResponseDto usersResponseDto = new UsersResponseDto();
         if (userByName.isPresent()){
             User user = userByName.get();
             UserDto userDto = UserDto.builder()
@@ -108,14 +105,14 @@ public class UserServiceImpl implements UserService{
                     .refreshToken(user.getRefreshToken())
                     .organizationName(user.getOrganizations().getName())
                     .build();
-            return new ApiResponseDto(userDto,"Successfully returned user profile", HttpStatus.OK.value());
+            return new ApiResponseDto<>("Successfully returned user profile", HttpStatus.OK.value(), userDto);
         }
         throw  new UserNotFoundException("Staff with name " + email + " not found");
     }
 
 
     @Override
-    public ApiResponseDto getUsersByName(String name) {
+    public ApiResponseDto<?> getUsersByName(String name) {
         List<User> usersByName = userRepository.findByFirstNameContainsIgnoreCaseOrLastNameContainsIgnoreCase(name, name);
         List<UsersResponseDto> usersResponseDtoList = new ArrayList<>();
         if (!usersByName.isEmpty()){
@@ -128,13 +125,13 @@ public class UserServiceImpl implements UserService{
                 usersResponseDtoList.add(usersResponseDto);
             }
 
-            return new ApiResponseDto(usersResponseDtoList,"Successfully returned users profile", HttpStatus.OK.value());
+            return new ApiResponseDto<>("Successfully returned users profile", HttpStatus.OK.value(), usersResponseDtoList);
         }
         throw  new UserNotFoundException("Staff with name " + name + " not found");
     }
 
     @Override
-    public ApiResponseDto addBankDetails(BankRequestDto bankRequestDto) {
+    public ApiResponseDto<UserDto> addBankDetails(BankRequestDto bankRequestDto) {
         User user = userUtils.getLoggedInUser();
         user.setBankCode(bankRequestDto.getBankCode());
         user.setBankName(bankRequestDto.getBankName());
@@ -155,7 +152,7 @@ public class UserServiceImpl implements UserService{
                 .organizationName(user.getOrganizations().getName())
                 .build();
 
-        return new ApiResponseDto(userDto,"Successfully added user bank details", HttpStatus.OK.value());
+        return new ApiResponseDto<>("Successfully added user bank details", HttpStatus.OK.value(), userDto);
     }
 
     @Override
@@ -168,10 +165,10 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public ApiResponseDto createAdmin(AdminSignupDto signUpRequest) {
+    public ApiResponseDto<?> createAdmin(AdminSignupDto signUpRequest) {
         boolean isExists = checkIfStaffAlreadyExists(signUpRequest.getEmail());
         if (isExists){
-            return new ApiResponseDto<>(null, "Staff already exists", HttpStatus.BAD_REQUEST.value());
+            return new ApiResponseDto<>("Staff already exists", HttpStatus.BAD_REQUEST.value(), null);
         }
 
         Organizations organization = organizationService.createOrganization(new OrganizationRegistrationDto(signUpRequest.getOrganizationName(), BigInteger.valueOf(1000)));
@@ -189,10 +186,10 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public ApiResponseDto getUserBankDetails() {
+    public ApiResponseDto<BankResponseDto> getUserBankDetails() {
         User user = userUtils.getLoggedInUser();
         if (Objects.isNull(user)){
-            return new ApiResponseDto(null, "No bank details",HttpStatus.BAD_REQUEST.value() );
+            return new ApiResponseDto<>( "No bank details",HttpStatus.BAD_REQUEST.value(), null);
         }
 
         BankResponseDto bankResponseDto = BankResponseDto.builder()
@@ -204,5 +201,5 @@ public class UserServiceImpl implements UserService{
                 .org_id(user.getOrganizations().getId().toString())
                 .build();
 
-        return new ApiResponseDto(bankResponseDto, "successfully got bank details",HttpStatus.OK.value() );    }
+        return new ApiResponseDto<>("successfully got bank details",HttpStatus.OK.value(),bankResponseDto);    }
 }

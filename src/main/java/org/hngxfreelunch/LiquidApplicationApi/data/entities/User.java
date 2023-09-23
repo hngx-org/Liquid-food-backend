@@ -54,6 +54,6 @@ public class User {
 
     private Boolean isAdmin;
 
-    private final BigInteger lunchCreditBalance = BigInteger.ZERO;
+    private BigInteger lunchCreditBalance = BigInteger.ZERO;
 
 }
