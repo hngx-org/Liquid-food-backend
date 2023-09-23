@@ -3,8 +3,11 @@ package org.hngxfreelunch.LiquidApplicationApi.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.BankRequestDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.ChangePasswordDto;
 import org.hngxfreelunch.LiquidApplicationApi.services.organization.OrganizationService;
+import org.hngxfreelunch.LiquidApplicationApi.services.password.PasswordService;
 import org.hngxfreelunch.LiquidApplicationApi.services.user.UserService;
 import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +20,14 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/user/")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private OrganizationService organizationService;
 
-    @Autowired
-    private UserUtils userUtils;
+    private final UserService userService;
+    private final OrganizationService organizationService;
+    private final UserUtils userUtils;
+    private final PasswordService passwordService;
 
     @Operation(summary = "Get the logged in User",
             description = "Returns an ApiResponse Response entity containing the user's details")
@@ -79,6 +81,11 @@ public class UserController {
     @GetMapping("search/name/{firstNameOrLastName}")
     public ResponseEntity<?> searchForUserByName(@PathVariable String firstNameOrLastName){
         return ResponseEntity.ok(userService.getUsersByName(firstNameOrLastName));
+    }
+    @Operation(summary = "A logged in user tries to change his password from the app")
+    @PatchMapping("change-password")
+    public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordDto changePasswordDto){
+        return ResponseEntity.ok(passwordService.changePassword(changePasswordDto));
     }
 
 

@@ -2,6 +2,7 @@ package org.hngxfreelunch.LiquidApplicationApi.services.password;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.ChangePasswordDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.PasswordResetDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ResetResponse;
@@ -12,6 +13,7 @@ import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.FreeLunchException;
 import org.hngxfreelunch.LiquidApplicationApi.services.email.EmailService;
 import org.hngxfreelunch.LiquidApplicationApi.utils.DateUtils;
+import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,7 @@ public class PasswordServiceImpl implements PasswordService{
     private final UserRepository userRepository;
     private final PasswordResetRepository resetRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserUtils userUtils;
 
     @Override
     public ApiResponseDto<ResetResponse> forgotPassword(String email){
@@ -80,5 +83,16 @@ public class PasswordServiceImpl implements PasswordService{
         user.setPasswordHash(passwordEncoder.encode(passwordResetDto.getNewPassword()));
         userRepository.save(user);
         return new ApiResponseDto<>("Request Processed Successfully", 200, "Password Changed Successfully, Proceed to Login");
+    }
+
+    @Override
+    public ApiResponseDto<String> changePassword(ChangePasswordDto changePasswordDto){
+        User user = userUtils.getLoggedInUser();
+        if(!user.getPasswordHash().equals(passwordEncoder.encode(changePasswordDto.getOldPassword()))){
+            throw new FreeLunchException("Password is incorrect");
+        }
+        user.setPasswordHash(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+        userRepository.save(user);
+        return new ApiResponseDto<>("Request Processed Successfully", 200, "Password Changed Successfully");
     }
 }
