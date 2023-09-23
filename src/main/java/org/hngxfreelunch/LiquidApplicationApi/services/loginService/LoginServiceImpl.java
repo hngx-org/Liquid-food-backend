@@ -2,17 +2,24 @@ package org.hngxfreelunch.LiquidApplicationApi.services.loginService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.LoginRequestDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.PasswordResetDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.LoginResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.FreeLunchException;
 import org.hngxfreelunch.LiquidApplicationApi.security.JwtService;
+import org.hngxfreelunch.LiquidApplicationApi.services.email.EmailService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Service
 @RequiredArgsConstructor

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -18,32 +19,25 @@ public class SecurityConfig {
     private final AuthenticationEntryPoint authEntryPoint;
 
     private final String[] WHITE_LIST = {
-            "/api/auth/admin/**", "/api/organization/**", "api/auth/staff/**", "api/auth/**",
+            "/api/auth/**",
             "/swagger-ui.html", "/swagger-ui/**", "v3/api-docs", "v3/api-docs/**", "/"
     };
 
-    private final String[] SWAGGER = {"/swagger-ui.html", "/swagger-ui/**", "v3/api-docs", "v3/api-docs/**"};
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .exceptionHandling()
-                .authenticationEntryPoint(authEntryPoint)
-                .and()
-                .authorizeHttpRequests()
-                .requestMatchers(WHITE_LIST).permitAll()
-                .requestMatchers(SWAGGER).permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .logout(logout -> {
-                    logout.logoutUrl("/logout");
-                    logout.logoutSuccessHandler((((request, response, authentication) -> SecurityContextHolder.clearContext())));
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPoint))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests((authorize)->{
+                    authorize.requestMatchers(WHITE_LIST)
+                            .permitAll()
+                            .anyRequest()
+                            .authenticated();
                 })
-                .httpBasic();
-        http.addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
+                .logout(logout -> logout.logoutUrl("/logout")
+                        .logoutSuccessHandler(((request, response, authentication) -> SecurityContextHolder.clearContext())));
         return http.build();
     }
 }

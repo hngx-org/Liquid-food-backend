@@ -55,7 +55,7 @@ public class UserControllerTest {
         newStaffTest.setPassword(passwordEncoder.encode("7682$jahs!0jahwt"));
 
 
-        Mockito.when(userService.createUser(newStaffTest)).thenReturn(new ApiResponseDto<>(userSignupDto, "Staff created successfully", HttpStatus.CREATED.value()));
+        Mockito.when(userService.createUser(newStaffTest)).thenReturn(new ApiResponseDto<>("Staff created successfully", HttpStatus.CREATED.value(),userSignupDto));
 
         mockmvc.perform(post("/api/department")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -73,7 +73,7 @@ public class UserControllerTest {
     public void findUserByName() throws Exception{
         String staffName = "ifeanyichukwu";
 
-        Mockito.when(userService.getUserByEmail("Ifeanyichukwu")).thenReturn(new ApiResponseDto<>(staffName, "Staff created successfully", HttpStatus.CREATED.value()));
+        Mockito.when(userService.getUserByEmail("Ifeanyichukwu")).thenReturn(new ApiResponseDto<>("Staff created successfully", HttpStatus.CREATED.value(),staffName));
 
         mockmvc.perform(get("/search/${staffName}")
                         .contentType(MediaType.APPLICATION_JSON))

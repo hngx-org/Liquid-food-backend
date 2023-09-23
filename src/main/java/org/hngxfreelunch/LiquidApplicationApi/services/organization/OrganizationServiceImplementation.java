@@ -7,7 +7,6 @@ import org.apache.http.HttpStatus;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationInviteDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationRegistrationDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.SendLunchCreditToAllStaffRequest;
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponse;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.UsersResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organizations;
@@ -65,6 +64,10 @@ public class OrganizationServiceImplementation implements OrganizationService {
 
     @Override
     public ApiResponseDto sendOrganizationInviteToStaff(OrganizationInviteDto request) {
+        User sender = userUtils.getLoggedInUser();
+        if(!sender.getIsAdmin()){
+            throw new InvalidCredentials("Can't make this request");
+        }
         String token = RandomStringUtils.randomNumeric(5);
 
         LocalDateTime expirationTime = LocalDateTime.now().plusHours(24);
@@ -124,11 +127,13 @@ public class OrganizationServiceImplementation implements OrganizationService {
     }
 
     @Override
-    public ApiResponse sendLunchCreditToAllStaffs(SendLunchCreditToAllStaffRequest sendLunchCreditToAllStaffRequest) {
+    public ApiResponseDto sendLunchCreditToAllStaffs(SendLunchCreditToAllStaffRequest sendLunchCreditToAllStaffRequest) {
         User sender = userUtils.getLoggedInUser();
-        if(!sender.getIsAdmin()) throw new InvalidCredentials("Can't make this request");
-        return new ApiResponse(
-                lunchService.sendLunch(sendLunchCreditToAllStaffRequest.getNote(),sendLunchCreditToAllStaffRequest.getQuantity(), sender), true);
+        if(!sender.getIsAdmin()){
+            throw new InvalidCredentials("Can't make this request");
+        }
+        return new ApiResponseDto<>("Sent Lunch credit to all staff in this Org", HttpStatus.SC_OK,
+                lunchService.sendLunch(sendLunchCreditToAllStaffRequest.getNote(),sendLunchCreditToAllStaffRequest.getQuantity(), sender));
     }
 
     @Override
@@ -136,7 +141,7 @@ public class OrganizationServiceImplementation implements OrganizationService {
         User foundUser = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new UserNotFoundException("User  with email address not found"));
         foundUser.setLunchCreditBalance(foundUser.getLunchCreditBalance().and(BigInteger.valueOf(4)));
         userRepository.save(foundUser);
-        return new ApiResponseDto<>( "SUCCESSFUL",HttpStatus.SC_OK,null);
+        return new ApiResponseDto<>("SUCCESSFUL",HttpStatus.SC_OK,null);
     }
 
     @Override

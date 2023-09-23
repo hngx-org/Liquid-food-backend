@@ -26,5 +26,5 @@ public interface OrganizationService {
 
     Organizations findById(Long id);
 
-    ApiResponse sendLunchCreditToAllStaffs(SendLunchCreditToAllStaffRequest sendLunchCreditToAllStaffRequest);
+    ApiResponseDto sendLunchCreditToAllStaffs(SendLunchCreditToAllStaffRequest sendLunchCreditToAllStaffRequest);
 }
