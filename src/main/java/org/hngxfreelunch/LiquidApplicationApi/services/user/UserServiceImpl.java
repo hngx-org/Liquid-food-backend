@@ -39,7 +39,6 @@ public class UserServiceImpl implements UserService{
     private final PasswordEncoder passwordEncoder;
     private final UserUtils userUtils;
     private final CloudService cloudService;
-    private final JwtService jwtService;
 
     @Override
     public ApiResponseDto createUser(UserSignupDto signUpRequest) {
@@ -82,6 +81,7 @@ public class UserServiceImpl implements UserService{
                 .refreshToken(savedUser.getRefreshToken())
                 .phoneNumber(savedUser.getPhone())
                 .profilePicture(savedUser.getProfilePic())
+                .isAdmin(savedUser.getIsAdmin())
                 .build();
         return new ApiResponseDto<>(userDto, "Staff created successfully", HttpStatus.CREATED.value());
     }
@@ -174,19 +174,18 @@ public class UserServiceImpl implements UserService{
             return new ApiResponseDto<>(null, "Staff already exists", HttpStatus.BAD_REQUEST.value());
         }
 
-        ApiResponseDto<Organizations> organization = organizationService.createOrganization(new OrganizationRegistrationDto(signUpRequest.getOrganizationName(), BigInteger.valueOf(1000)));
-        Organizations foundOrganizations = organizationService.findById(organization.getData().getId());
+        Organizations organization = organizationService.createOrganization(new OrganizationRegistrationDto(signUpRequest.getOrganizationName(), BigInteger.valueOf(1000)));
 
         // create new user
         User staff = new User();
         String[] names = signUpRequest.getFullName().split(" ");
         staff.setFirstName(names[0]);
-        staff.setLastName(names[1]);
+        staff.setLastName(names[1] == null ? "" : names[1]);
         staff.setEmail(signUpRequest.getEmail());
         staff.setPhone(signUpRequest.getPhoneNumber());
         staff.setPasswordHash(passwordEncoder.encode(signUpRequest.getPassword())); // hash password
         staff.setIsAdmin(true);
-        return getApiResponseDto(foundOrganizations, staff);
+        return getApiResponseDto(organization, staff);
     }
 
     @Override

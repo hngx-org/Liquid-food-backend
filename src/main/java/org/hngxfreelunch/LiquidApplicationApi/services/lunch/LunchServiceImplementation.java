@@ -8,8 +8,8 @@ import org.hngxfreelunch.LiquidApplicationApi.data.entities.Lunches;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.LunchRepository;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
+import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
 import org.springframework.stereotype.Service;
-
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,14 +19,13 @@ import java.util.List;
 public class LunchServiceImplementation implements LunchService {
 
     private final LunchRepository lunchRepository;
-
     private final UserRepository staffRepository;
+    private final UserUtils userUtils;
 
 
     @Override
-    public List<LunchResponseDto> sendLunch(LunchRequestDto lunchRequestDto, HttpServletRequest request) {
-
-        User sender= getSender(request);
+    public List<LunchResponseDto> sendLunch(LunchRequestDto lunchRequestDto) {
+        User sender = userUtils.getLoggedInUser();
         List<User> user= staffRepository.findAllById(lunchRequestDto.getReceiverId());
         List<Lunches> lunchesList=user.stream()
                 .map(eachStaff->sendLunchToEachStaff(eachStaff, sender,lunchRequestDto))
@@ -34,10 +33,6 @@ public class LunchServiceImplementation implements LunchService {
         return lunchesList.stream()
                 .map(this::mapLunchToResponseDto)
                 .toList();
-    }
-
-    private User getSender(HttpServletRequest request) {
-        return (User) request.getAttribute("user");
     }
 
     private LunchResponseDto mapLunchToResponseDto(Lunches eachLunch) {

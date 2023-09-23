@@ -45,7 +45,7 @@ public class LoginServiceImpl implements LoginService {
             return new ApiResponseDto<>("User Logged in successfully",200, LoginResponseDto.builder()
                     .accessToken(response.getAccessToken())
                     .refreshToken(response.getRefreshToken())
-                    .isAdmin(false)
+                    .isAdmin(user.getUser().getIsAdmin())
                     .email(user.getUsername())
                     .id(user.getUser().getId())
                     .build());
