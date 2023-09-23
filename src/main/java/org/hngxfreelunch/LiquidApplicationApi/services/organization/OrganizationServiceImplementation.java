@@ -86,7 +86,7 @@ public class OrganizationServiceImplementation implements OrganizationService {
         organizationInvites.setEmail(request.getEmail());
         organizationInvites.setTTL(expirationTime);
         organizationInvitesRepository.save(organizationInvites);
-        organizationInvites.setOrganizations(organizationRepository.findById(request.getOrganizationId()).orElseThrow(OrganizationNotFoundException::new));
+        organizationInvites.setOrganizations(organizationRepository.findById(sender.getOrganizations().getId()).orElseThrow(OrganizationNotFoundException::new));
         organizationInvitesRepository.save(organizationInvites);
         return new ApiResponseDto<>("Success", HttpStatus.SC_OK,organizationInvites);
     }
