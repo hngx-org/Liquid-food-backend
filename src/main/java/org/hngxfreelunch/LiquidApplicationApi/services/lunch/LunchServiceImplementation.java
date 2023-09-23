@@ -11,6 +11,7 @@ import org.hngxfreelunch.LiquidApplicationApi.data.repositories.LunchRepository;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.UserNotFoundException;
 import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
