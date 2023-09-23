@@ -18,7 +18,18 @@ import java.util.Map;
 @Slf4j
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
+    public void commence(HttpServletRequest request,
+                         HttpServletResponse response,
+                         AuthenticationException authException) throws IOException {
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+        final Map<String, Object> body = new HashMap<>();
+        body.put("error", "Unauthorized");
+        body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
+        body.put("message", authException.getMessage());
+        body.put("path", request.getRequestURI());
+
+        new ObjectMapper().writeValue(response.getOutputStream(),body);
     }
 }

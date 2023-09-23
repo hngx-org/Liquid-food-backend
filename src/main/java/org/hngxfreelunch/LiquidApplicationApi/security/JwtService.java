@@ -5,65 +5,72 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.xml.bind.DatatypeConverter;
 import lombok.RequiredArgsConstructor;
-import org.hngxfreelunch.LiquidApplicationApi.utils.BeanConfig;
-import org.springframework.beans.factory.annotation.Value;
+import org.hngxfreelunch.LiquidApplicationApi.utils.DateUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import java.security.Key;
-import java.time.Instant;
 import java.util.Date;
-import java.util.Map;
 import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
 public class JwtService {
 
-    @Value("${Jwt_Secret_Key}")
-    private String jwtSecretKey;
+    private String generateSecret(){
+        return DatatypeConverter.printBase64Binary(new byte[512/2]);
+    }
+    private Key generateSigningKey(){
+        byte[] keyBytes = Decoders.BASE64.decode(generateSecret());
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
 
-    public String extractUsername(String token) {
-        return Jwts.parser()
-                .setSigningKey(jwtSecretKey)
+    public String generateAccessToken(Authentication authentication){
+        String userEmail = authentication.getName();
+
+        return Jwts.builder()
+                .setSubject(userEmail)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(DateUtils.getExpirationDate(4320))
+                .signWith(generateSigningKey(), SignatureAlgorithm.HS512)
+                .compact();
+    }
+    public String generateRefreshToken(Authentication authentication){
+        String userEmail = authentication.getName();
+
+        return Jwts.builder()
+                .setSubject(userEmail)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(DateUtils.getExpirationDate(43200))
+                .signWith(generateSigningKey(), SignatureAlgorithm.HS512)
+                .compact();
+    }
+
+    private Claims extractClaims(String token){
+        return Jwts.parserBuilder()
+                .setSigningKey(generateSigningKey())
+                .build()
                 .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+                .getBody();
+    }
+    private <T> T extractSingleClaim(String token, Function<Claims, T> claimResolver){
+        Claims claims = extractClaims(token);
+        return claimResolver.apply(claims);
     }
 
-    public String generateAccessToken(Map<String, Object> claims, String email) {
-        Date expiration = Date.from(Instant.now().plusSeconds(60 * 60 * 12));
-        return Jwts.builder()
-                .setIssuer(BeanConfig.ISSUER)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setClaims(claims)
-                .setExpiration(expiration)
-                .signWith(SignatureAlgorithm.HS512, jwtSecretKey)
-                .setSubject(email)
-                .compact();
+    public String extractUserEmail(String token){
+        return extractSingleClaim(token, Claims::getSubject);
+    }
+    private Date extractExpiration(String token){
+        return extractSingleClaim(token, Claims::getExpiration);
+    }
+    private boolean isTokenExpired(String token){
+        return extractExpiration(token).after(new Date());
     }
 
-    public String generateRefreshToken(String email) {
-        Date refreshExpiration = Date.from(Instant.now().plusSeconds(3600 * 24));
-        return Jwts.builder()
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setIssuer(BeanConfig.ISSUER)
-                .setExpiration(refreshExpiration)
-                .signWith(SignatureAlgorithm.HS512, jwtSecretKey)
-                .setSubject(email)
-                .compact();
-    }
-
-    public Boolean validateToken(String token) {
-        try {
-            Jwts.parser()
-                    .setSigningKey(jwtSecretKey)
-                    .parseClaimsJws(token);
-            return true; // Token is signed
-        } catch (SignatureException e) {
-            return false; //unsigned token
-        } catch (JwtException e) {
-            return false; // invalid token
-        }
+    public boolean isTokenValid(String token, UserDetails userDetails){
+        String userEmail = extractUserEmail(token);
+        return userEmail.equals(userDetails.getUsername())
+                && isTokenExpired(token);
     }
 }
