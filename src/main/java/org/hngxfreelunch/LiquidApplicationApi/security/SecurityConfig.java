@@ -10,9 +10,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @RequiredArgsConstructor
@@ -22,7 +19,7 @@ public class SecurityConfig {
     private final AuthenticationEntryPoint authEntryPoint;
 
     private final String[] WHITE_LIST = {
-            "/api/auth/admin/**", "/api/organization/**", "api/auth/staff/**", "api/auth/**",
+            "/api/auth/**",
             "/swagger-ui.html", "/swagger-ui/**", "v3/api-docs", "v3/api-docs/**", "/"
     };
 
@@ -42,20 +39,6 @@ public class SecurityConfig {
                 .logout(logout -> logout.logoutUrl("/logout")
                         .logoutSuccessHandler(((request, response, authentication) -> SecurityContextHolder.clearContext())));
         return http.build();
-    }
-
-    @Bean
-    public CorsFilter corsFilter() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("*");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        config.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-
-        return new CorsFilter(source);
     }
 }
 
