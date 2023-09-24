@@ -39,24 +39,21 @@ public class LunchServiceImplementation implements LunchService {
             throw new FreeLunchException("You cannot send lunch to yourself");
         }
         User theSender;
-        if(sender.getLunchCreditBalance().compareTo(BigInteger.valueOf(lunchRequestDto.getQuantity()))>=0){
-            BigInteger balanceSender = sender.getLunchCreditBalance().subtract(BigInteger.valueOf(lunchRequestDto.getQuantity()));
-            sender.setLunchCreditBalance(balanceSender);
-            theSender = userRepository.save(sender);
-            Lunches lunches = lunchRepository.save(Lunches.builder()
-                    .sender(theSender)
-                    .receiver(receiver)
-                    .quantity(lunchRequestDto.getQuantity())
-                    .note(lunchRequestDto.getNote())
-                    .organizations(theSender.getOrganizations())
-                    .redeemed(false)
-                    .createdAt(LocalDateTime.now())
-                    .updatedAt(LocalDateTime.now())
-                    .build());
-            return new ApiResponseDto<>("Lunch sent successfully", 200,lunchUtils.mapLunchesToDto(lunches));
-        }else{
-            return new ApiResponseDto<>("Insufficient Lunch Credits", 400, null);
-        }
+        theSender = userRepository.save(sender);
+        Lunches lunches = lunchRepository.save(Lunches.builder()
+                .sender(theSender)
+                .receiver(receiver)
+                .quantity(lunchRequestDto.getQuantity())
+                .note(lunchRequestDto.getNote())
+                .organizations(theSender.getOrganizations())
+                .redeemed(false)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build());
+        receiver.setLunchCreditBalance(receiver.getLunchCreditBalance()
+                .add(BigInteger.valueOf(lunchRequestDto.getQuantity())));
+        userRepository.save(receiver);
+        return new ApiResponseDto<>("Lunch sent successfully", 200,lunchUtils.mapLunchesToDto(lunches));
     }
 
     @Override
