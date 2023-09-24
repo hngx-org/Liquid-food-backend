@@ -10,6 +10,7 @@ import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.BankResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organizations;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
+import org.hngxfreelunch.LiquidApplicationApi.data.repositories.OrganizationRepository;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.FreeLunchException;
 import org.hngxfreelunch.LiquidApplicationApi.services.cloud.CloudService;
@@ -33,6 +34,7 @@ public class UserServiceImpl implements UserService{
     private final PasswordEncoder passwordEncoder;
     private final UserUtils userUtils;
     private final CloudService cloudService;
+    private final OrganizationRepository organizationRepository;
 
     @Override
     public ApiResponseDto<UserDto> createUser(UserSignupDto signUpRequest) {
@@ -166,5 +168,15 @@ public class UserServiceImpl implements UserService{
     public ApiResponseDto<UserDto> getLoggedInUser(){
         User user = userUtils.getLoggedInUser();
         return new ApiResponseDto<>("Request Successful", 200,userUtils.mapUserToDto(user));
+    }
+
+    @Override
+    public ApiResponseDto<UserDto> getAdminDetails(){
+        User user = userUtils.getLoggedInUser();
+        Organizations organizations = user.getOrganizations();
+        List<UserDto> users = userRepository.findAllByOrganizations(organizations)
+                .stream().filter(User::getIsAdmin).map(userUtils::mapUserToDto).toList();
+        UserDto userDto = users.get(0);
+        return new ApiResponseDto<>("Admin retrieved Successfully", 200, userDto);
     }
 }

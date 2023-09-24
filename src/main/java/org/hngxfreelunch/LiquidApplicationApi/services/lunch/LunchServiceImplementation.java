@@ -9,7 +9,6 @@ import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.LunchRepository;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.FreeLunchException;
-import org.hngxfreelunch.LiquidApplicationApi.utils.DateUtils;
 import org.hngxfreelunch.LiquidApplicationApi.utils.LunchUtils;
 import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
 import org.springframework.stereotype.Service;
@@ -51,8 +50,8 @@ public class LunchServiceImplementation implements LunchService {
                     .note(lunchRequestDto.getNote())
                     .organizations(theSender.getOrganizations())
                     .redeemed(false)
-                    .createdAt(DateUtils.saveDate(LocalDateTime.now()))
-                    .updatedAt(DateUtils.saveDate(LocalDateTime.now()))
+                    .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
                     .build());
             return new ApiResponseDto<>("Lunch sent successfully", 200,lunchUtils.mapLunchesToDto(lunches));
         }else{
@@ -133,7 +132,7 @@ public class LunchServiceImplementation implements LunchService {
         user.setLunchCreditBalance(balanceReceiver);
         userRepository.save(user);
         lunches.setRedeemed(true);
-        lunches.setUpdatedAt(DateUtils.saveDate(LocalDateTime.now()));
+        lunches.setUpdatedAt(LocalDateTime.now());
         Lunches theLunch = lunchRepository.save(lunches);
         return new ApiResponseDto<>("Lunch Redeemed Successfully", 200, lunchUtils.mapLunchesToDto(theLunch));
     }
@@ -152,7 +151,7 @@ public class LunchServiceImplementation implements LunchService {
         BigInteger balanceSender = sender.getLunchCreditBalance().add(BigInteger.valueOf(lunches.getQuantity()));
         sender.setLunchCreditBalance(balanceSender);
         userRepository.save(sender);
-        lunches.setUpdatedAt(DateUtils.saveDate(LocalDateTime.now()));
+        lunches.setUpdatedAt(LocalDateTime.now());
         Lunches theLunch = lunchRepository.save(lunches);
         return new ApiResponseDto<>("Lunch Redeemed Successfully", 200, lunchUtils.mapLunchesToDto(theLunch));
     }
