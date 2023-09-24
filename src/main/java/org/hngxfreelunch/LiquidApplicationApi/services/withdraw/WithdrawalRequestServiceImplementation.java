@@ -48,15 +48,16 @@ public class WithdrawalRequestServiceImplementation implements WithdrawalService
         // Step 5: Create a withdrawal entity
         Withdrawals withdrawal = new Withdrawals();
         withdrawal.setUser(loggedInUser);
-        withdrawal.setStatus(Status.PENDING);
+        withdrawal.setStatus(Status.not_redeemed);
         withdrawal.setAmount(lunchCreditBalance);
         withdrawal.setCreatedAt(LocalDateTime.now());
+        withdrawal.setIsDeleted(false);
 
         // Step 6: Update the user's lunch credit balance & save it
         loggedInUser.setLunchCreditBalance(BigInteger.ZERO);
         userRepository.save(loggedInUser);
 
-        withdrawal.setStatus(Status.SUCCESS);
+        withdrawal.setStatus(Status.redeemed);
         Withdrawals savedWithdrawal = withdrawalRepository.save(withdrawal);
 
         // Step 7: Create a response DTO

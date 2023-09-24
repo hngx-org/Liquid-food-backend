@@ -21,6 +21,7 @@ public class Withdrawals {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Enumerated(EnumType.STRING)
@@ -29,5 +30,7 @@ public class Withdrawals {
     private BigInteger amount;
 
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private Boolean isDeleted;
 
 }

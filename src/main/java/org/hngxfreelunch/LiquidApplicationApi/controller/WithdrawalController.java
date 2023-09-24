@@ -16,10 +16,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class WithdrawalController {
 
-    @Autowired
     private WithdrawalService withdrawalService;
 
-    @Autowired
     private final UserUtils userUtils;
 
     @PostMapping("request")
