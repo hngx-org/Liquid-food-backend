@@ -18,8 +18,8 @@ public class LunchUtils {
                 .quantity(lunches.getQuantity())
                 .redeemed(lunches.getRedeemed())
                 .note(lunches.getNote())
-                .createdAt(lunches.getCreatedAt())
-                .updatedAt(lunches.getUpdatedAt())
+                .createdAt(DateUtils.saveDate(lunches.getCreatedAt()))
+                .updatedAt(DateUtils.saveDate(lunches.getUpdatedAt()))
                 .build();
     }
 }

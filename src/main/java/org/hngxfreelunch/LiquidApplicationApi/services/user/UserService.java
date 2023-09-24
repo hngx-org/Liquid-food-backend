@@ -26,4 +26,6 @@ public interface UserService {
     ApiResponseDto<?> getUserBankDetails();
 
     ApiResponseDto<UserDto> getLoggedInUser();
+
+    ApiResponseDto<UserDto> getAdminDetails();
 }

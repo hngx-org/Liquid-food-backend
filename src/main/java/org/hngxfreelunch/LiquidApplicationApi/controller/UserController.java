@@ -80,5 +80,10 @@ public class UserController {
         return ResponseEntity.ok(passwordService.changePassword(changePasswordDto));
     }
 
+    @Operation(summary = "Get Admin Details for Organization")
+    @GetMapping("get-admin")
+    public ResponseEntity<?> getAdmin(){
+        return ResponseEntity.ok(userService.getAdminDetails());
+    }
 
 }
