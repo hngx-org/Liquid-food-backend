@@ -64,6 +64,7 @@ public class LoginServiceImpl implements LoginService {
                         .build();
             }
         }
+
         throw new FreeLunchException();
     }
 }
