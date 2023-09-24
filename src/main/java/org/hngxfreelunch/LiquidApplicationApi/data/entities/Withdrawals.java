@@ -25,12 +25,13 @@ public class Withdrawals {
     private User user;
 
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "ENUM('not_redeemed','redeemed')")
     private Status status;
 
     private BigInteger amount;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private Boolean isDeleted;
+    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime updatedAt = LocalDateTime.now();
+    private Boolean isDeleted = false;
 
 }
