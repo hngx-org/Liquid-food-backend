@@ -23,6 +23,7 @@ public class Withdrawals {
     @ManyToOne
     private User user;
 
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     private BigInteger amount;
