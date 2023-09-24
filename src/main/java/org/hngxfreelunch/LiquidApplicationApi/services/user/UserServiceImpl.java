@@ -60,7 +60,11 @@ public class UserServiceImpl implements UserService{
 
     private ApiResponseDto<UserDto> getApiResponseDto(Organizations foundOrganizations, User staff) {
         staff.setOrganizations(foundOrganizations);
-        staff.setLunchCreditBalance(BigInteger.ZERO);
+        if(staff.getIsAdmin()){
+            staff.setLunchCreditBalance(BigInteger.valueOf(1000));
+        }else{
+            staff.setLunchCreditBalance(BigInteger.ZERO);
+        }
         staff.setCurrencyCode("NGN");
         staff.setBankRegion("NGN");
         User savedUser = userRepository.save(staff);

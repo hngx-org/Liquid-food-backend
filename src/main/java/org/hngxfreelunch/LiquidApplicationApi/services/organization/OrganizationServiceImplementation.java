@@ -78,7 +78,7 @@ public class OrganizationServiceImplementation implements OrganizationService {
                         "<p style='font-size:30px'>" +token+"</p>";
         publisher.publishEvent(new EmailEvent(request.getEmail(),subject,from,htmlContent));
         OrganizationInvites organizationInvites = organizationInvitesRepository.save(OrganizationInvites.builder()
-                .email(sender.getEmail())
+                .email(request.getEmail())
                 .token(token)
                 .TTL(expirationTime)
                 .updatedAt(LocalDateTime.now())

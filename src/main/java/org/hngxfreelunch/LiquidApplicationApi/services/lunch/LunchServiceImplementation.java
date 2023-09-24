@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -64,9 +65,10 @@ public class LunchServiceImplementation implements LunchService {
         User user = userUtils.getLoggedInUser();
         Lunches lunches = lunchRepository.findById(lunchId)
                 .orElseThrow(()->new FreeLunchException("Lunch not found"));
-        if(!user.equals(lunches.getSender()) || !user.equals(lunches.getReceiver())){
+        if(!lunches.getSender().getEmail().equals(user.getEmail()) && !lunches.getReceiver().getEmail().equals(user.getEmail())){
             throw new FreeLunchException("Unauthorized to view this lunch");
         }
+
         return new ApiResponseDto<>("Lunch fetched Successfully", 200, lunchUtils.mapLunchesToDto(lunches));
     }
 
@@ -88,7 +90,7 @@ public class LunchServiceImplementation implements LunchService {
     @Override
     public ApiResponseDto<List<LunchResponse>> getAllRedeemedLunches(){
         List<LunchResponse> lunches = getAllUserLunches().getData()
-                .stream().filter(lunch -> lunch.getRedeemed()).toList();
+                .stream().filter(LunchResponse::getRedeemed).toList();
         return new ApiResponseDto<>("Lunches fetched Successfully", 200, lunches);
     }
 
@@ -96,7 +98,7 @@ public class LunchServiceImplementation implements LunchService {
     public  ApiResponseDto<List<LunchResponse>> getAllSentLunchesByUser(){
         User user = userUtils.getLoggedInUser();
         List<LunchResponse> lunches = getAllUserLunches().getData()
-                .stream().filter(lunch -> lunch.getSender().equals(user)).toList();
+                .stream().filter(lunch -> Objects.equals(lunch.getSender().getId(), user.getId())).toList();
         return new ApiResponseDto<>("Lunches fetched Successfully", 200, lunches);
     }
 
@@ -104,7 +106,7 @@ public class LunchServiceImplementation implements LunchService {
     public  ApiResponseDto<List<LunchResponse>> getAllReceivedLunchesByUser(){
         User user = userUtils.getLoggedInUser();
         List<LunchResponse> lunches = getAllUserLunches().getData()
-                .stream().filter(lunch -> lunch.getReceiver().equals(user)).toList();
+                .stream().filter(lunch -> Objects.equals(lunch.getReceiver().getId(), user.getId())).toList();
         return new ApiResponseDto<>("Lunches fetched Successfully", 200, lunches);
     }
 
@@ -114,7 +116,7 @@ public class LunchServiceImplementation implements LunchService {
         if(!user.getIsAdmin()){
             throw new FreeLunchException("User not authorized to view this");
         }
-        List<LunchResponse> lunches = lunchRepository.findAllByOrganization(user.getOrganizations())
+        List<LunchResponse> lunches = lunchRepository.findAllByOrganizations(user.getOrganizations())
                 .stream().map(lunchUtils::mapLunchesToDto).toList();
         return new ApiResponseDto<>("Lunches fetched Successfully", 200, lunches);
     }
@@ -140,7 +142,7 @@ public class LunchServiceImplementation implements LunchService {
         User user = userUtils.getLoggedInUser();
         Lunches lunches = lunchRepository.findById(lunchId)
                 .orElseThrow(()-> new FreeLunchException("Lunch not found"));
-        if(!user.equals(lunches.getReceiver()) || !user.equals(lunches.getReceiver())){
+        if(!Objects.equals(lunches.getReceiver().getId(), user.getId()) && !Objects.equals(lunches.getSender().getId(), user.getId())){
             throw new FreeLunchException("User cannot redeem this lunch");
         }
         if(lunches.getRedeemed()){

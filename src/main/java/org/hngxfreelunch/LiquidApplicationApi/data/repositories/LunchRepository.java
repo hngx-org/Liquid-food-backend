@@ -14,5 +14,5 @@ import java.util.List;
 public interface LunchRepository extends JpaRepository<Lunches, Long> {
     List<Lunches> findAllBySenderOrReceiver(User user, User user1);
 
-    List<Lunches> findAllByOrganization(Organizations organizations);
+    List<Lunches> findAllByOrganizations(Organizations organizations);
 }
