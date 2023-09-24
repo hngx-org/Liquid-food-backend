@@ -16,14 +16,13 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class WithdrawalController {
 
-    private WithdrawalService withdrawalService;
+    private final WithdrawalService withdrawalService;
 
     private final UserUtils userUtils;
 
     @PostMapping("request")
     @Operation(summary = "User attempts to withdraw their credits")
-    public ResponseEntity<?> makeANewWithDraw(@RequestBody
-            @Parameter(required = true) WithdrawalRequestDto withdrawalRequestDto){
+    public ResponseEntity<?> makeANewWithDraw(@RequestBody WithdrawalRequestDto withdrawalRequestDto){
         return ResponseEntity.ok(withdrawalService.processWithdrawalRequest(withdrawalRequestDto));
     }
 
