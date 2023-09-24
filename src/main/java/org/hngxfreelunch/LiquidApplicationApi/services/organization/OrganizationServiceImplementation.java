@@ -19,10 +19,11 @@ import org.hngxfreelunch.LiquidApplicationApi.exceptions.FreeLunchException;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.InvalidCredentials;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.OrganizationNotFoundException;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.UserNotFoundException;
-import org.hngxfreelunch.LiquidApplicationApi.services.email.EmailService;
+import org.hngxfreelunch.LiquidApplicationApi.services.email.EmailEvent;
 import org.hngxfreelunch.LiquidApplicationApi.services.lunch.LunchService;
+import org.hngxfreelunch.LiquidApplicationApi.utils.DateUtils;
 import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -38,14 +39,15 @@ public class OrganizationServiceImplementation implements OrganizationService {
 
     private final OrganizationRepository organizationRepository;
     private final OrganizationInvitesRepository organizationInvitesRepository;
-    private final EmailService emailService;
+//    private final EmailService emailService;
+    private final ApplicationEventPublisher publisher;
 
     private final LunchService lunchService;
     private final UserUtils userUtils;
     private final UserRepository userRepository;
 
-    @Value("${url_prefix}")
-    private String url_prefix;
+//    @Value("${url_prefix}")
+//    private String url_prefix;
 
     @Override
     public Organizations createOrganization(OrganizationRegistrationDto request) {
@@ -71,16 +73,16 @@ public class OrganizationServiceImplementation implements OrganizationService {
 
         LocalDateTime expirationTime = LocalDateTime.now().plusHours(24);
         String subject = "Lunch Invite";
+        String from = "liquid.freelunch@gmail.com";
         String htmlContent =
-                "We're delighted to invite you to a complimentary lunch as a token of our appreciation for your hard work and dedication.\n" +
+                "<p>We're delighted to invite you to a complimentary lunch as a token of our appreciation for your hard work and dedication.</p> " +
+                        "<p>Download the FREE LUNCH app and register as a staff using this OTP below</p> " +
+                        "<p>Date: " + LocalDate.now()+"</p>" +
+                        "<p>Time: " + LocalTime.now()+"</p>" +
                         "\n" +
-                        "\nDate: " + LocalDate.now() +
-                        "\nTime: " + LocalTime.now() +
-                        "\n" +
-                        "RSVP before " + expirationTime + " hours with this unique RSVP Token: " +
-                        "<p><a href=\"" + url_prefix + "?token=?" + token + "\">Accept Invitation<a/>";
-
-        emailService.sendEmail(request.getEmail(), subject, htmlContent);
+                        "<p>RSVP before " + DateUtils.saveDate(expirationTime) + " hours with this unique RSVP Token: </p>" +
+                        "<p style='font-size:30px'>" +token+"</p>";
+        publisher.publishEvent(new EmailEvent(request.getEmail(),subject,from,htmlContent));
         OrganizationInvites organizationInvites = new OrganizationInvites();
         organizationInvites.setToken(token);
         organizationInvites.setEmail(request.getEmail());
@@ -97,8 +99,10 @@ public class OrganizationServiceImplementation implements OrganizationService {
                 .orElseThrow(()-> new FreeLunchException("Invalid Credentials"));
         if(organizationInvites.getTTL().isAfter(LocalDateTime.now())){
             return organizationInvites.getOrganizations();
+        }else{
+            organizationInvitesRepository.delete(organizationInvites);
+            return null;
         }
-        return null;
     }
 
     @Override
@@ -107,7 +111,7 @@ public class OrganizationServiceImplementation implements OrganizationService {
     }
 
     @Override
-    public ApiResponseDto sendLunchCreditToAllStaffs(SendLunchCreditToAllStaffRequest sendLunchCreditToAllStaffRequest) {
+    public ApiResponseDto<?> sendLunchCreditToAllStaffs(SendLunchCreditToAllStaffRequest sendLunchCreditToAllStaffRequest) {
         User sender = userUtils.getLoggedInUser();
         if(!sender.getIsAdmin()){
             throw new InvalidCredentials("Can't make this request");
@@ -117,7 +121,7 @@ public class OrganizationServiceImplementation implements OrganizationService {
     }
 
     @Override
-    public ApiResponseDto sendLunchCredit(OrganizationInviteDto request) {
+    public ApiResponseDto<?> sendLunchCredit(OrganizationInviteDto request) {
         User foundUser = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new UserNotFoundException("User  with email address not found"));
         foundUser.setLunchCreditBalance(foundUser.getLunchCreditBalance().and(BigInteger.valueOf(4)));
         userRepository.save(foundUser);
@@ -125,7 +129,7 @@ public class OrganizationServiceImplementation implements OrganizationService {
     }
 
     @Override
-    public ApiResponseDto getAllStaffInOrganization() {
+    public ApiResponseDto<?> getAllStaffInOrganization() {
         User loggedInUser = userUtils.getLoggedInUser();
         List<User> users = userRepository.findAllByOrganizations_Id(loggedInUser.getOrganizations().getId());
         List<UsersResponseDto> usersResponseDtoList = users.stream().map(this::mapToDto).toList();

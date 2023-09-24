@@ -12,6 +12,7 @@ import org.hngxfreelunch.LiquidApplicationApi.data.repositories.OrganizationInvi
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.FreeLunchException;
 import org.hngxfreelunch.LiquidApplicationApi.services.email.EmailEvent;
+import org.hngxfreelunch.LiquidApplicationApi.utils.DateUtils;
 import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,7 +37,7 @@ public class PasswordServiceImpl implements PasswordService{
                 .orElseThrow(()-> new FreeLunchException("User is not registered"));
         String token = RandomStringUtils.randomNumeric(5);
 
-        LocalDateTime expirationTime = LocalDateTime.now().plusHours(24);
+        LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(10);
         String subject = "Password Reset";
         String from = "liquid.freelunch@gmail.com";
         String htmlContent =
@@ -44,7 +45,7 @@ public class PasswordServiceImpl implements PasswordService{
                         "<p>Date: " + LocalDate.now()+"</p>" +
                         "<p>Time: " + LocalTime.now()+"</p>" +
                         "\n" +
-                        "<p>RSVP before " + expirationTime + " hours with this unique RSVP Token: </p>" +
+                        "<p>RSVP before " + DateUtils.saveDate(expirationTime) + " hours with this unique RSVP Token: </p>" +
                         "<p style='font-size:30px'>" +token+"</p>";
 
         publisher.publishEvent(new EmailEvent(user.getEmail(), subject, from, htmlContent));

@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService{
         Organizations inviteResponse = organizationService
                 .verifyOrganizationInvite(signUpRequest.getOtpToken(), signUpRequest.getEmail());
         if(inviteResponse == null){
-            throw new FreeLunchException("Invalid Credentials Passed, Check your token and email");
+            throw new FreeLunchException("Token Expired.");
         }
         // check if user has already signed up
         boolean isExists = checkIfStaffAlreadyExists(signUpRequest.getEmail());
