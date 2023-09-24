@@ -7,7 +7,6 @@ import org.apache.http.HttpStatus;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.UserDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationInviteDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationRegistrationDto;
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.SendLunchCreditToAllStaffRequest;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organizations;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.OrganizationInvites;
@@ -17,15 +16,12 @@ import org.hngxfreelunch.LiquidApplicationApi.data.repositories.OrganizationRepo
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.FreeLunchException;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.InvalidCredentials;
-import org.hngxfreelunch.LiquidApplicationApi.exceptions.UserNotFoundException;
 import org.hngxfreelunch.LiquidApplicationApi.services.email.EmailEvent;
-import org.hngxfreelunch.LiquidApplicationApi.services.lunch.LunchService;
 import org.hngxfreelunch.LiquidApplicationApi.utils.DateUtils;
 import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -41,7 +37,6 @@ public class OrganizationServiceImplementation implements OrganizationService {
 //    private final EmailService emailService;
     private final ApplicationEventPublisher publisher;
 
-    private final LunchService lunchService;
     private final UserUtils userUtils;
     private final UserRepository userRepository;
 
@@ -102,24 +97,6 @@ public class OrganizationServiceImplementation implements OrganizationService {
             organizationInvitesRepository.delete(organizationInvites);
             return null;
         }
-    }
-
-    @Override
-    public ApiResponseDto<?> sendLunchCreditToAllStaffs(SendLunchCreditToAllStaffRequest sendLunchCreditToAllStaffRequest) {
-        User sender = userUtils.getLoggedInUser();
-        if(!sender.getIsAdmin()){
-            throw new InvalidCredentials("Can't make this request");
-        }
-        return new ApiResponseDto<>("Sent Lunch credit to all staff in this Org", HttpStatus.SC_OK,
-                lunchService.sendLunch(sendLunchCreditToAllStaffRequest.getNote(),sendLunchCreditToAllStaffRequest.getQuantity(), sender));
-    }
-
-    @Override
-    public ApiResponseDto<?> sendLunchCredit(OrganizationInviteDto request) {
-        User foundUser = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new UserNotFoundException("User  with email address not found"));
-        foundUser.setLunchCreditBalance(foundUser.getLunchCreditBalance().and(BigInteger.valueOf(4)));
-        userRepository.save(foundUser);
-        return new ApiResponseDto<>("SUCCESSFUL",HttpStatus.SC_OK,null);
     }
 
     @Override
