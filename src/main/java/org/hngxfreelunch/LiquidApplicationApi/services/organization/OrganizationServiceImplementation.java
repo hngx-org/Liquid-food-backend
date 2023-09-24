@@ -4,11 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.http.HttpStatus;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.UserDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationInviteDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationRegistrationDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.SendLunchCreditToAllStaffRequest;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.UsersResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organizations;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.OrganizationInvites;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
@@ -17,7 +17,6 @@ import org.hngxfreelunch.LiquidApplicationApi.data.repositories.OrganizationRepo
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.FreeLunchException;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.InvalidCredentials;
-import org.hngxfreelunch.LiquidApplicationApi.exceptions.OrganizationNotFoundException;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.UserNotFoundException;
 import org.hngxfreelunch.LiquidApplicationApi.services.email.EmailEvent;
 import org.hngxfreelunch.LiquidApplicationApi.services.lunch.LunchService;
@@ -106,11 +105,6 @@ public class OrganizationServiceImplementation implements OrganizationService {
     }
 
     @Override
-    public Organizations findById(Long id) {
-        return organizationRepository.findById(id).orElseThrow(OrganizationNotFoundException::new);
-    }
-
-    @Override
     public ApiResponseDto<?> sendLunchCreditToAllStaffs(SendLunchCreditToAllStaffRequest sendLunchCreditToAllStaffRequest) {
         User sender = userUtils.getLoggedInUser();
         if(!sender.getIsAdmin()){
@@ -131,17 +125,9 @@ public class OrganizationServiceImplementation implements OrganizationService {
     @Override
     public ApiResponseDto<?> getAllStaffInOrganization() {
         User loggedInUser = userUtils.getLoggedInUser();
-        List<User> users = userRepository.findAllByOrganizations_Id(loggedInUser.getOrganizations().getId());
-        List<UsersResponseDto> usersResponseDtoList = users.stream().map(this::mapToDto).toList();
-        return new ApiResponseDto<>("All users in this Organization", HttpStatus.SC_OK,usersResponseDtoList);
-    }
-
-    private UsersResponseDto mapToDto(User user){
-        UsersResponseDto usersResponseDto = new UsersResponseDto();
-        usersResponseDto.setEmail(user.getEmail());
-        usersResponseDto.setFullName(user.getFirstName() + " " + user.getLastName());
-        usersResponseDto.setOrganizationName(user.getOrganizations().getName());
-        return usersResponseDto;
+        List<UserDto> users = userRepository.findAllByOrganizations(loggedInUser.getOrganizations())
+                .stream().map(userUtils::mapUserToDto).toList();
+        return new ApiResponseDto<>("All users in this Organization", HttpStatus.SC_OK,users);
     }
 
 }

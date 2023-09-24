@@ -1,6 +1,5 @@
 package org.hngxfreelunch.LiquidApplicationApi.services.lunch;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.LunchRequestDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.LunchResponseDto;
@@ -37,7 +36,7 @@ public class LunchServiceImplementation implements LunchService {
 
     @Override
     public List<LunchResponseDto> sendLunch(String note, Integer quantity, User sender) {
-        List<User> user= staffRepository.findAllByOrganizations_Id(sender.getOrganizations().getId());
+        List<User> user= staffRepository.findAllByOrganizations(sender.getOrganizations());
         List<Lunches> lunchesList=user.stream()
                 .map(eachStaff->sendLunchToEachStaff(eachStaff, sender,note,quantity))
                 .toList();

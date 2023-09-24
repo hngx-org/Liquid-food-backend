@@ -16,14 +16,12 @@ public interface OrganizationService {
     // TODO: VERIFY STAFF
 
     // TODO: SEND LUNCH CREDIT TO STAFF
-    ApiResponseDto sendLunchCredit(OrganizationInviteDto request);
+    ApiResponseDto<?> sendLunchCredit(OrganizationInviteDto request);
 
     // TODO: GET ALL STAFF IN ORGANIZATION
-    ApiResponseDto getAllStaffInOrganization();
+    ApiResponseDto<?> getAllStaffInOrganization();
 
     Organizations verifyOrganizationInvite(String otpToken, String email);
-
-    Organizations findById(Long id);
 
     ApiResponseDto sendLunchCreditToAllStaffs(SendLunchCreditToAllStaffRequest sendLunchCreditToAllStaffRequest);
 }
