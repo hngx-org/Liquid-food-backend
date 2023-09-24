@@ -35,7 +35,7 @@ public class UserController {
 
     @Operation(summary = "Update User's bank details",
             description = "Returns an ApiResponse Response entity containing the user's bank details")
-    @PutMapping("bank")
+    @PatchMapping("bank")
     public ResponseEntity<?> addBankAccount(@Valid @RequestBody BankRequestDto bankRequestDto){
         return ResponseEntity.ok(userService.addBankDetails(bankRequestDto));
     }
@@ -64,7 +64,7 @@ public class UserController {
 
     @Operation(summary = "Update A Particular User's profile picture",
             description = "Returns an ApiResponse Response entity containing the operation details")
-    @PostMapping(value = "/upload-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(value = "/upload-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadProfilePicture(@RequestParam(value = "file") MultipartFile file) {
         try {
             String response = userService.uploadProfileImage(file);
