@@ -21,17 +21,16 @@ public class Withdrawals {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
-    //@Enumerated(EnumType.STRING)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
-    private Double amount;
+    private BigInteger amount;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    private LocalDateTime updatedAt = createdAt;
-
-    private Boolean isDeleted = false;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private Boolean isDeleted;
 
 }

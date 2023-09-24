@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.Status;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -14,10 +15,10 @@ import java.math.BigInteger;
 @Builder
 public class WithdrawalResponseDto {
 
-    private String id;
-    private String userId;
-    private String status;
-    private Double amount;
-    private String createdAt;
+    private Long id;
+    private Long userId;
+    private Status status;
+    private BigInteger amount;
+    private LocalDateTime createdAt;
 
 }

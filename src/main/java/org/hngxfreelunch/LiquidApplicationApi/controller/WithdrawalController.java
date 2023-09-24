@@ -2,6 +2,7 @@ package org.hngxfreelunch.LiquidApplicationApi.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import lombok.RequiredArgsConstructor;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.WithdrawalRequestDto;
 import org.hngxfreelunch.LiquidApplicationApi.services.withdraw.WithdrawalService;
 import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
@@ -12,13 +13,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/withdrawal/")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class WithdrawalController {
 
-    @Autowired
     private WithdrawalService withdrawalService;
 
-    @Autowired
-    private UserUtils userUtils;
+    private final UserUtils userUtils;
 
     @PostMapping("request")
     @Operation(summary = "User attempts to withdraw their credits")
@@ -26,4 +26,5 @@ public class WithdrawalController {
             @Parameter(required = true) WithdrawalRequestDto withdrawalRequestDto){
         return ResponseEntity.ok(withdrawalService.processWithdrawalRequest(withdrawalRequestDto));
     }
+
 }

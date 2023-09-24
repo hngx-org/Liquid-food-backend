@@ -18,6 +18,4 @@ public class WithdrawalRequestDto {
     private String bankCode;
     @NotBlank(message = "bank name is required")
     private String bankName;
-    @NotBlank(message = "amount is required")
-    private BigInteger amount;
 }
