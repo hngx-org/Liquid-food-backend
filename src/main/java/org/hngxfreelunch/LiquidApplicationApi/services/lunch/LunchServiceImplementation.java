@@ -1,100 +1,159 @@
 package org.hngxfreelunch.LiquidApplicationApi.services.lunch;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.LunchRequestDto;
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.LunchResponseDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.LunchResponse;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.Lunches;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.LunchRepository;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
+import org.hngxfreelunch.LiquidApplicationApi.exceptions.FreeLunchException;
+import org.hngxfreelunch.LiquidApplicationApi.utils.DateUtils;
+import org.hngxfreelunch.LiquidApplicationApi.utils.LunchUtils;
 import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
 import org.springframework.stereotype.Service;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class LunchServiceImplementation implements LunchService {
 
     private final LunchRepository lunchRepository;
-    private final UserRepository staffRepository;
+    private final UserRepository userRepository;
     private final UserUtils userUtils;
+    private final LunchUtils lunchUtils;
 
 
     @Override
-    public List<LunchResponseDto> sendLunch(LunchRequestDto lunchRequestDto) {
+    public ApiResponseDto<LunchResponse> sendLunch(Long receiverId, LunchRequestDto lunchRequestDto){
         User sender = userUtils.getLoggedInUser();
-        List<User> user= staffRepository.findAllById(lunchRequestDto.getReceiverId());
-        List<Lunches> lunchesList=user.stream()
-                .map(eachStaff->sendLunchToEachStaff(eachStaff, sender,lunchRequestDto))
-                .toList();
-        return lunchesList.stream()
-                .map(this::mapLunchToResponseDto)
-                .toList();
+        User receiver = userRepository.findById(receiverId)
+                .orElseThrow(()-> new FreeLunchException("User does not exist"));
+        if(!sender.getOrganizations().equals(receiver.getOrganizations())){
+            throw new FreeLunchException("Receiver must be in your organization");
+        }
+        if(sender.equals(receiver)){
+            throw new FreeLunchException("You cannot send lunch to yourself");
+        }
+        User theSender;
+        if(sender.getLunchCreditBalance().compareTo(BigInteger.valueOf(lunchRequestDto.getQuantity()))>=0){
+            BigInteger balanceSender = sender.getLunchCreditBalance().subtract(BigInteger.valueOf(lunchRequestDto.getQuantity()));
+            sender.setLunchCreditBalance(balanceSender);
+            theSender = userRepository.save(sender);
+            Lunches lunches = lunchRepository.save(Lunches.builder()
+                    .sender(theSender)
+                    .receiver(receiver)
+                    .quantity(lunchRequestDto.getQuantity())
+                    .note(lunchRequestDto.getNote())
+                    .organizations(theSender.getOrganizations())
+                    .redeemed(false)
+                    .createdAt(DateUtils.saveDate(LocalDateTime.now()))
+                    .updatedAt(DateUtils.saveDate(LocalDateTime.now()))
+                    .build());
+            return new ApiResponseDto<>("Lunch sent successfully", 200,lunchUtils.mapLunchesToDto(lunches));
+        }else{
+            return new ApiResponseDto<>("Insufficient Lunch Credits", 400, null);
+        }
     }
 
     @Override
-    public List<LunchResponseDto> sendLunch(String note, Integer quantity, User sender) {
-        List<User> user= staffRepository.findAllByOrganizations_Id(sender.getOrganizations().getId());
-        List<Lunches> lunchesList=user.stream()
-                .map(eachStaff->sendLunchToEachStaff(eachStaff, sender,note,quantity))
-                .toList();
-        return lunchesList.stream()
-                .map(this::mapLunchToResponseDto)
-                .toList();
-    }
+    public ApiResponseDto<LunchResponse> getLunch(Long lunchId){
+        User user = userUtils.getLoggedInUser();
+        Lunches lunches = lunchRepository.findById(lunchId)
+                .orElseThrow(()->new FreeLunchException("Lunch not found"));
+        if(!lunches.getSender().getEmail().equals(user.getEmail()) && !lunches.getReceiver().getEmail().equals(user.getEmail())){
+            throw new FreeLunchException("Unauthorized to view this lunch");
+        }
 
-    private LunchResponseDto mapLunchToResponseDto(Lunches eachLunch) {
-        return LunchResponseDto.builder()
-                .sender(eachLunch.getSender())
-                .receiver(eachLunch.getReceiver())
-                .quantity(eachLunch.getQuantity())
-                .redeemed(eachLunch.getRedeemed())
-                .createdAt(eachLunch.getCreatedAt())
-                .build();
-    }
-
-    private Lunches sendLunchToEachStaff(User eachStaff, User sender,LunchRequestDto lunchRequestDto) {
-        User receiver = staffRepository.findById(eachStaff.getId()).get();
-        Lunches newLunch= Lunches.builder()
-                .sender(sender)
-                .receiver(receiver)
-                .redeemed(false)
-                .note(lunchRequestDto.getNote())
-                .createdAt(LocalDateTime.now())
-                .quantity(lunchRequestDto.getQuantity())
-                .build();
-        receiver.setLunchCreditBalance(receiver.getLunchCreditBalance().add(BigInteger.valueOf(lunchRequestDto.getQuantity())));
-        staffRepository.save(receiver);
-        return lunchRepository.save(newLunch);
-    }
-
-    private Lunches sendLunchToEachStaff(User eachStaff, User sender,String note, Integer quantity) {
-        Lunches newLunch= Lunches.builder()
-                .sender(sender)
-                .receiver(staffRepository.findById(eachStaff.getId()).get())
-                .redeemed(false)
-                .note(note)
-                .createdAt(LocalDateTime.now())
-                .quantity(quantity)
-                .build();
-        return lunchRepository.save(newLunch);
+        return new ApiResponseDto<>("Lunch fetched Successfully", 200, lunchUtils.mapLunchesToDto(lunches));
     }
 
     @Override
-    public List<LunchResponseDto> getAllLunch() {
-        List<Lunches> lunchesList=lunchRepository.findAll();
-        return lunchesList.stream()
-                .map(this::mapLunchToResponseDto)
-                .toList();
+    public ApiResponseDto<List<LunchResponse>> getAllUserLunches(){
+        User user = userUtils.getLoggedInUser();
+        List<LunchResponse> lunches = lunchRepository.findAllBySenderOrReceiver(user, user)
+                .stream().map(lunchUtils::mapLunchesToDto).toList();
+        return new ApiResponseDto<>("Lunches fetched Successfully", 200, lunches);
     }
 
     @Override
-    public LunchResponseDto getLunch(Long lunch_id) {
-        Lunches lunches= lunchRepository.findById(lunch_id).get();
-        return mapLunchToResponseDto(lunches);
+    public ApiResponseDto<List<LunchResponse>> getAllPendingLunches(){
+        List<LunchResponse> lunches = getAllUserLunches().getData()
+                .stream().filter(lunch -> !lunch.getRedeemed()).toList();
+        return new ApiResponseDto<>("Lunches fetched Successfully", 200, lunches);
     }
 
+    @Override
+    public ApiResponseDto<List<LunchResponse>> getAllRedeemedLunches(){
+        List<LunchResponse> lunches = getAllUserLunches().getData()
+                .stream().filter(LunchResponse::getRedeemed).toList();
+        return new ApiResponseDto<>("Lunches fetched Successfully", 200, lunches);
+    }
+
+    @Override
+    public  ApiResponseDto<List<LunchResponse>> getAllSentLunchesByUser(){
+        User user = userUtils.getLoggedInUser();
+        List<LunchResponse> lunches = getAllUserLunches().getData()
+                .stream().filter(lunch -> Objects.equals(lunch.getSender().getId(), user.getId())).toList();
+        return new ApiResponseDto<>("Lunches fetched Successfully", 200, lunches);
+    }
+
+    @Override
+    public  ApiResponseDto<List<LunchResponse>> getAllReceivedLunchesByUser(){
+        User user = userUtils.getLoggedInUser();
+        List<LunchResponse> lunches = getAllUserLunches().getData()
+                .stream().filter(lunch -> Objects.equals(lunch.getReceiver().getId(), user.getId())).toList();
+        return new ApiResponseDto<>("Lunches fetched Successfully", 200, lunches);
+    }
+
+    @Override
+    public ApiResponseDto<List<LunchResponse>> getAllOrganizationLunches(){
+        User user = userUtils.getLoggedInUser();
+        if(!user.getIsAdmin()){
+            throw new FreeLunchException("User not authorized to view this");
+        }
+        List<LunchResponse> lunches = lunchRepository.findAllByOrganizations(user.getOrganizations())
+                .stream().map(lunchUtils::mapLunchesToDto).toList();
+        return new ApiResponseDto<>("Lunches fetched Successfully", 200, lunches);
+    }
+
+    @Override
+    public ApiResponseDto<LunchResponse> redeemLunch(Long lunchId){
+        User user = userUtils.getLoggedInUser();
+        Lunches lunches = lunchRepository.findById(lunchId)
+                .orElseThrow(()-> new FreeLunchException("Lunch not found"));
+        if(!user.equals(lunches.getReceiver())){
+            throw new FreeLunchException("User cannot redeem this lunch");
+        }
+        BigInteger balanceReceiver = user.getLunchCreditBalance().add(BigInteger.valueOf(lunches.getQuantity()));
+        user.setLunchCreditBalance(balanceReceiver);
+        userRepository.save(user);
+        lunches.setRedeemed(true);
+        lunches.setUpdatedAt(DateUtils.saveDate(LocalDateTime.now()));
+        Lunches theLunch = lunchRepository.save(lunches);
+        return new ApiResponseDto<>("Lunch Redeemed Successfully", 200, lunchUtils.mapLunchesToDto(theLunch));
+    }
+    @Override
+    public ApiResponseDto<LunchResponse> cancelLunch(Long lunchId){
+        User user = userUtils.getLoggedInUser();
+        Lunches lunches = lunchRepository.findById(lunchId)
+                .orElseThrow(()-> new FreeLunchException("Lunch not found"));
+        if(!Objects.equals(lunches.getReceiver().getId(), user.getId()) && !Objects.equals(lunches.getSender().getId(), user.getId())){
+            throw new FreeLunchException("User cannot redeem this lunch");
+        }
+        if(lunches.getRedeemed()){
+            throw new FreeLunchException("Lunch has already been redeemed");
+        }
+        User sender = lunches.getSender();
+        BigInteger balanceSender = sender.getLunchCreditBalance().add(BigInteger.valueOf(lunches.getQuantity()));
+        sender.setLunchCreditBalance(balanceSender);
+        userRepository.save(sender);
+        lunches.setUpdatedAt(DateUtils.saveDate(LocalDateTime.now()));
+        Lunches theLunch = lunchRepository.save(lunches);
+        return new ApiResponseDto<>("Lunch Redeemed Successfully", 200, lunchUtils.mapLunchesToDto(theLunch));
+    }
 }

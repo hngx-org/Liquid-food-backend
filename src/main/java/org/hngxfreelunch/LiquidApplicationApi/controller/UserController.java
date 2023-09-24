@@ -9,8 +9,6 @@ import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.ChangePasswordDt
 import org.hngxfreelunch.LiquidApplicationApi.services.organization.OrganizationService;
 import org.hngxfreelunch.LiquidApplicationApi.services.password.PasswordService;
 import org.hngxfreelunch.LiquidApplicationApi.services.user.UserService;
-import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,14 +24,13 @@ public class UserController {
 
     private final UserService userService;
     private final OrganizationService organizationService;
-    private final UserUtils userUtils;
     private final PasswordService passwordService;
 
     @Operation(summary = "Get the logged in User",
             description = "Returns an ApiResponse Response entity containing the user's details")
     @GetMapping("profile")
     public ResponseEntity<?> getProfile(){
-        return ResponseEntity.ok(userService.getUserByEmail(userUtils.getLoggedInUser().getEmail()));
+        return ResponseEntity.ok(userService.getLoggedInUser());
     }
 
     @Operation(summary = "Update User's bank details",
@@ -41,6 +38,13 @@ public class UserController {
     @PutMapping("bank")
     public ResponseEntity<?> addBankAccount(@Valid @RequestBody BankRequestDto bankRequestDto){
         return ResponseEntity.ok(userService.addBankDetails(bankRequestDto));
+    }
+
+    @Operation(summary = "Search for users within an organization",
+            description = "You can search by first name, last name, or both names, or email")
+    @GetMapping("all-users")
+    public ResponseEntity<?> searchForUsers(@RequestParam("keyword") String keyword){
+        return ResponseEntity.ok(userService.searchByNameOrEmail(keyword));
     }
 
     @Operation(summary = "Get all staff in this User's organization",
@@ -70,18 +74,6 @@ public class UserController {
         }
     }
 
-    @Operation(summary = "Search for user by email")
-    @GetMapping("search/email/{Email}")
-    public ResponseEntity<?> searchForUser(@PathVariable String Email){
-        return ResponseEntity.ok(userService.getUserByEmail(Email));
-    }
-
-    @Operation(summary = "Search for user by first name or last name",
-    description = "Search for user by firstname or lastname and return a List of users with that name.")
-    @GetMapping("search/name/{firstNameOrLastName}")
-    public ResponseEntity<?> searchForUserByName(@PathVariable String firstNameOrLastName){
-        return ResponseEntity.ok(userService.getUsersByName(firstNameOrLastName));
-    }
     @Operation(summary = "A logged in user tries to change his password from the app")
     @PatchMapping("change-password")
     public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordDto changePasswordDto){

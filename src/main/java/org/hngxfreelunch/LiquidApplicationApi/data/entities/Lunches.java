@@ -23,11 +23,11 @@ public class Lunches {
     @JoinColumn(name = "org_id")
     private Organizations organizations;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "sender_id")
     private User sender;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "receiver_id")
     private User receiver;
 
@@ -37,9 +37,9 @@ public class Lunches {
 
     private Boolean redeemed;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private String createdAt;
 
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    private String updatedAt;
 
     private final Boolean isDeleted = false;
 

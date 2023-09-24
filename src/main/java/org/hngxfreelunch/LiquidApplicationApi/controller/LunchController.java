@@ -2,62 +2,81 @@ package org.hngxfreelunch.LiquidApplicationApi.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import lombok.RequiredArgsConstructor;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.LunchRequestDto;
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponse;
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.LunchResponseDto;
-import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
 import org.hngxfreelunch.LiquidApplicationApi.services.lunch.LunchService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/lunch")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class LunchController {
 
-
-    @Autowired
-    private LunchService lunchService;
-
-    @Autowired
-    private UserUtils userUtils;
+    private final LunchService lunchService;
 
 
     @Operation(summary = "Send lunch to staff")
-    @PostMapping("/send")
+    @PostMapping("/send/{receiverId}")
     public ResponseEntity<?> sendLunch(
             @Parameter(description = "Quantity of lunch & Staff Id are required while Note is optional")
-            @RequestBody LunchRequestDto lunchRequestDto) {
-        System.out.println("1");
-        List<LunchResponseDto> responseDto= lunchService.sendLunch(lunchRequestDto);
-        System.out.println("end");
-        return ResponseEntity.ok(new ApiResponseDto<>("Sent Lunch to Staff", HttpStatus.OK.value(),responseDto));
+            @RequestBody LunchRequestDto lunchRequestDto, @PathVariable Long receiverId) {
+        return ResponseEntity.ok(lunchService.sendLunch(receiverId,lunchRequestDto));
     }
 
     @Operation(summary = "Staff attempts to fetch lunch by id")
-    @GetMapping("/{id}")
+    @GetMapping("/{lunchId}")
     public ResponseEntity<?> getLunch(
-            @Parameter(required = true, description = "Lunch Id") @PathVariable Long id ) {
-        LunchResponseDto responseDto= lunchService.getLunch(id);
-        return ResponseEntity.ok(new ApiResponseDto<>("Fetched Lunch", HttpStatus.OK.value(),responseDto));
+            @Parameter(required = true, description = "Lunch Id") @PathVariable Long lunchId ) {
+        return ResponseEntity.ok(lunchService.getLunch(lunchId));
     }
 
-    @Operation(summary = "Staff attempts to fetch all lunch history")
+    @Operation(summary = "Staff attempts to fetch all his lunch history")
     @GetMapping("/all")
-    public ResponseEntity<?> getAllLunch(){
-        List<LunchResponseDto> responseDtoList=lunchService.getAllLunch();
-        return ResponseEntity.ok(new ApiResponseDto("Staff Lunch History" , HttpStatus.OK.value(),responseDtoList));
+    public ResponseEntity<?> getAllLunchByStaff(){
+        return ResponseEntity.ok(lunchService.getAllUserLunches());
     }
 
-    @Operation(summary = "Staff attempts to get lunch credit balance")
-    @GetMapping("/balance")
-    public ResponseEntity<?> getLunchBalance(){
-        User loggedInUser = userUtils.getLoggedInUser();
-        return ResponseEntity.ok(new ApiResponseDto("User's Lunch Credits", HttpStatus.OK.value(),loggedInUser.getLunchCreditBalance()));
+    @Operation(summary = "Staff attempts to fetch all his pending lunch history")
+    @GetMapping("/pending")
+    public ResponseEntity<?> getAllPendingLunchByStaff(){
+        return ResponseEntity.ok(lunchService.getAllPendingLunches());
+    }
+
+    @Operation(summary = "Staff attempts to fetch all his redeemed lunch history")
+    @GetMapping("/redeemed")
+    public ResponseEntity<?> getAllRedeemedLunchByStaff(){
+        return ResponseEntity.ok(lunchService.getAllRedeemedLunches());
+    }
+
+    @Operation(summary = "Staff attempts to fetch all lunches sent by him")
+    @GetMapping("/sent")
+    public ResponseEntity<?> getAllSentLunchByStaff(){
+        return ResponseEntity.ok(lunchService.getAllSentLunchesByUser());
+    }
+
+    @Operation(summary = "Staff attempts to fetch all lunches received by him")
+    @GetMapping("/received")
+    public ResponseEntity<?> getAllReceivedLunchByStaff(){
+        return ResponseEntity.ok(lunchService.getAllReceivedLunchesByUser());
+    }
+
+    @Operation(summary = "Admin attempts to fetch all organization lunch history")
+    @GetMapping("/organization")
+    public ResponseEntity<?> getAllOrganizationLunch(){
+        return ResponseEntity.ok(lunchService.getAllOrganizationLunches());
+    }
+
+    @Operation(summary = "Staff attempts to redeem lunch")
+    @PatchMapping("/redeem-lunch/{lunchId}")
+    public ResponseEntity<?> redeemLunch(@PathVariable Long lunchId){
+        return ResponseEntity.ok(lunchService.redeemLunch(lunchId));
+    }
+
+    @Operation(summary = "Staff attempts to cancel lunch")
+    @PatchMapping("/cancel-lunch/{lunchId}")
+    public ResponseEntity<?> cancelLunch(@PathVariable Long lunchId){
+        return ResponseEntity.ok(lunchService.cancelLunch(lunchId));
     }
 }
