@@ -12,7 +12,7 @@ public interface OrganizationService {
     Organizations createOrganization(OrganizationRegistrationDto request);
 
     // TODO: ADD STAFF
-    ApiResponseDto sendOrganizationInviteToStaff(OrganizationInviteDto request);
+    ApiResponseDto<?> sendOrganizationInviteToStaff(OrganizationInviteDto request);
     // TODO: VERIFY STAFF
 
     // TODO: SEND LUNCH CREDIT TO STAFF

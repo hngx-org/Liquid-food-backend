@@ -83,13 +83,13 @@ public class OrganizationServiceImplementation implements OrganizationService {
                         "<p>RSVP before " + DateUtils.saveDate(expirationTime) + " hours with this unique RSVP Token: </p>" +
                         "<p style='font-size:30px'>" +token+"</p>";
         publisher.publishEvent(new EmailEvent(request.getEmail(),subject,from,htmlContent));
-        OrganizationInvites organizationInvites = new OrganizationInvites();
-        organizationInvites.setToken(token);
-        organizationInvites.setEmail(request.getEmail());
-        organizationInvites.setTTL(expirationTime);
-        organizationInvitesRepository.save(organizationInvites);
-        organizationInvites.setOrganizations(organizationRepository.findById(sender.getOrganizations().getId()).orElseThrow(OrganizationNotFoundException::new));
-        organizationInvitesRepository.save(organizationInvites);
+        OrganizationInvites organizationInvites = organizationInvitesRepository.save(OrganizationInvites.builder()
+                .email(sender.getEmail())
+                .token(token)
+                .TTL(expirationTime)
+                .updatedAt(LocalDateTime.now())
+                .organizations(sender.getOrganizations())
+                .build());
         return new ApiResponseDto<>("Success", HttpStatus.SC_OK,organizationInvites);
     }
 
