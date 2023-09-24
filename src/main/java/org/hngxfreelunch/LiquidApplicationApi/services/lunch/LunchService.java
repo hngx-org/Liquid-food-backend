@@ -1,6 +1,7 @@
 package org.hngxfreelunch.LiquidApplicationApi.services.lunch;
 
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.LunchRequestDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.LunchResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
@@ -13,11 +14,13 @@ public interface LunchService {
     // TODO: GET LUNCH BY ID
     // TODO: REDEEM A LUNCH
 
-    public List<LunchResponseDto> sendLunch(LunchRequestDto lunchRequestDto, User sender);
+    List<LunchResponseDto> sendLunch(LunchRequestDto lunchRequestDto);
 
-    public List<LunchResponseDto> getAllLunch(Long staff_id);
+    List<LunchResponseDto> sendLunch(String note, Integer quantity, User sender);
 
-    public LunchResponseDto getLunch(Long lunch_id);
-//    public LunchResponseDto redeemLunch(Long lunch_id);
+    List<LunchResponseDto> getAllLunch();
+
+    LunchResponseDto getLunch(Long lunch_id);
+
 
 }

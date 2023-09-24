@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Getter
@@ -20,25 +19,26 @@ public class User {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "org_id")
-    private Organization organization;
+    private Organizations organizations;
 
-    private String profilePicture;
+    private String profilePic;
 
     private String firstName;
 
     private String lastName;
 
+    @Column(unique = true)
     private String email;
 
-    private String phoneNumber;
+    private String phone;
 
     private String refreshToken;
 
     private String passwordHash;
 
-    private LocalDateTime updatedAt;
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     private String bankNumber;
 
@@ -50,11 +50,10 @@ public class User {
 
     private String currencyCode;
 
+    private String currency = "NGN";
+
     private Boolean isAdmin;
 
-    private BigInteger lunchCreditBalance;
-
-    @OneToMany(mappedBy = "user")
-    private List<Withdrawals> withdrawals;
+    private BigInteger lunchCreditBalance = BigInteger.ZERO;
 
 }

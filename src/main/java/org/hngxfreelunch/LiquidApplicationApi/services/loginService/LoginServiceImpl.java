@@ -1,69 +1,69 @@
 package org.hngxfreelunch.LiquidApplicationApi.services.loginService;
 
 import lombok.RequiredArgsConstructor;
-
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.LoginRequestDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.PasswordResetDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.LoginResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.FreeLunchException;
-import org.hngxfreelunch.LiquidApplicationApi.exceptions.InvalidCredentials;
-import org.hngxfreelunch.LiquidApplicationApi.exceptions.UserNotFoundException;
-import org.hngxfreelunch.LiquidApplicationApi.security.CustomUserServiceImpl;
 import org.hngxfreelunch.LiquidApplicationApi.security.JwtService;
+import org.hngxfreelunch.LiquidApplicationApi.services.email.EmailService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LoginServiceImpl implements LoginService {
+
     private final UserRepository userRepository;
-    private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
-    private final CustomUserServiceImpl userService;
+    private final JwtService jwtUtils;
 
     @Override
-    public LoginResponseDto loginUser(LoginRequestDto loginRequest){
+    public ApiResponseDto<LoginResponseDto> loginUser(LoginRequestDto loginRequest){
         User user = userRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(()-> new UserNotFoundException("Invalid Credentials"));
-        if(passwordEncoder.matches(loginRequest.getPassword(), user.getPasswordHash())){
-            Authentication authentication = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPasswordHash());
-            String accessToken = jwtService.generateToken(authentication);
-            String refreshToken = jwtService.generateRefreshToken(authentication);
-            user.setRefreshToken(refreshToken);
-            userRepository.save(user);
-            return LoginResponseDto.builder()
-                    .accessToken(accessToken)
-                    .isAdmin((user.getIsAdmin()))
-                    .email(user.getEmail())
-                    .id(user.getId())
-                    .build();
-        }else{
-            throw new InvalidCredentials("Invalid Credentials");
+                .orElseThrow(()-> new FreeLunchException("User is not registered"));
+        if(!passwordEncoder.matches(loginRequest.getPassword(),user.getPasswordHash())){
+            throw  new FreeLunchException("Invalid Credentials");
         }
+        Authentication authentication = new UsernamePasswordAuthenticationToken(user.getEmail(),
+                        user.getPasswordHash());
+        String accessToken = jwtUtils.generateAccessToken(authentication);
+        String refreshToken = jwtUtils.generateRefreshToken(authentication);
+        return new ApiResponseDto<>("User Logged in successfully",200, LoginResponseDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .isAdmin(user.getIsAdmin())
+                .email(user.getEmail())
+                .id(user.getId())
+                .build());
     }
 
     @Override
-    public LoginResponseDto refreshUserToken(String refreshToken){
-        String userEmail = jwtService.extractUsername(refreshToken);
-        if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null){
-            org.springframework.security.core.userdetails.User user = userService.loadUserByUsername(userEmail);
-            if(jwtService.isTokenValid(refreshToken, user)){
-                User theUser = userRepository.findByEmail(userEmail)
-                        .orElseThrow(()-> new UserNotFoundException("Invalid Credentials"));
-                Authentication authentication = new UsernamePasswordAuthenticationToken(theUser.getEmail(), theUser.getPasswordHash());
-                String accessToken = jwtService.generateToken(authentication);
-                return LoginResponseDto.builder()
-                        .accessToken(accessToken)
-                        .isAdmin((theUser.getIsAdmin()))
-                        .email(theUser.getEmail())
-                        .id(theUser.getId())
-                        .build();
-            }
-        }
-        throw new FreeLunchException();
+    public ApiResponseDto<LoginResponseDto> refreshUserToken(String refreshToken){
+        String userEmail = jwtUtils.extractUserEmail(refreshToken);
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(()-> new FreeLunchException("User is not registered"));
+        Authentication authentication = new UsernamePasswordAuthenticationToken(user.getEmail(),
+                user.getPasswordHash());
+        String accessToken = jwtUtils.generateAccessToken(authentication);
+        return new ApiResponseDto<>("User Logged in successfully",200, LoginResponseDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .isAdmin(user.getIsAdmin())
+                .email(user.getEmail())
+                .id(user.getId())
+                .build());
     }
 }

@@ -1,5 +1,6 @@
 package org.hngxfreelunch.LiquidApplicationApi.data.dtos.response;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,11 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LoginResponseDto {
-    private String accessToken;
-    private String refreshToken;
+public class BankResponseDto {
+    private String bankNumber;
+    private String bankCode;
+    private String bankName;
     private String email;
-    private Long id;
-    private boolean isAdmin;
-
+    private String user_id;
+    private String org_id;
 }

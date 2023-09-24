@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "withdrawals")
 public class Withdrawals {
 
     @Id
@@ -22,10 +21,9 @@ public class Withdrawals {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "userId")
     private User user;
 
-    private String status;
+    private Status status;
 
     private BigInteger amount;
 

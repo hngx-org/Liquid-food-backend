@@ -2,14 +2,15 @@ package org.hngxfreelunch.LiquidApplicationApi.services.user;
 
 import lombok.RequiredArgsConstructor;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.UserDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.AdminSignupDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.BankRequestDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationRegistrationDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.UserSignupDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.BankResponseDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.UsersResponseDto;
-import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organization;
-import org.hngxfreelunch.LiquidApplicationApi.data.entities.OrganizationInvites;
+import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organizations;
 import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
-import org.hngxfreelunch.LiquidApplicationApi.data.repositories.OrganizationInvitesRepository;
 import org.hngxfreelunch.LiquidApplicationApi.data.repositories.UserRepository;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.InvalidCredentials;
 import org.hngxfreelunch.LiquidApplicationApi.exceptions.UserNotFoundException;
@@ -22,51 +23,65 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigInteger;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService{
+
     private final UserRepository userRepository;
     private final OrganizationService organizationService;
     private final PasswordEncoder passwordEncoder;
     private final UserUtils userUtils;
     private final CloudService cloudService;
-    private final OrganizationInvitesRepository organizationInvitesRepository;
 
     @Override
-    public ApiResponseDto createUser(UserSignupDto signUpRequest) {
+    public ApiResponseDto<UserDto> createUser(UserSignupDto signUpRequest) {
         // verify the invite otp
-        Organization inviteResponse = organizationService
+        Organizations inviteResponse = organizationService
                 .verifyOrganizationInvite(signUpRequest.getOtpToken(), signUpRequest.getEmail());
         if(inviteResponse == null){throw new InvalidCredentials("Organization not found");}
 
         // check if user has already signed up
         boolean isExists = checkIfStaffAlreadyExists(signUpRequest.getEmail());
         if (isExists){
-            return new ApiResponseDto<>(null, "Staff already exists", HttpStatus.BAD_REQUEST.value());
+            return new ApiResponseDto<>("Staff already exists", HttpStatus.BAD_REQUEST.value(),null);
         }
 
-        Organization foundOrganization = organizationService.findById(inviteResponse.getId());
+        Organizations foundOrganizations = organizationService.findById(inviteResponse.getId());
         // create new user
         User staff = new User();
         staff.setFirstName(signUpRequest.getFirstName());
         staff.setLastName(signUpRequest.getLastName());
         staff.setEmail(signUpRequest.getEmail());
-        staff.setPhoneNumber(signUpRequest.getPhoneNumber());
+        staff.setPhone(signUpRequest.getPhoneNumber());
         staff.setPasswordHash(passwordEncoder.encode(signUpRequest.getPassword())); // hash password
         staff.setIsAdmin(false);
-        staff.setOrganization(foundOrganization);
-        staff.setCreatedAt(LocalDateTime.now());
-        staff.setUpdatedAt(LocalDateTime.now());
+        return getApiResponseDto(foundOrganizations, staff);
+    }
+
+    private ApiResponseDto<UserDto> getApiResponseDto(Organizations foundOrganizations, User staff) {
+        staff.setOrganizations(foundOrganizations);
         staff.setLunchCreditBalance(BigInteger.ZERO);
         staff.setCurrencyCode("NGN");
         staff.setBankRegion("NGN");
-        userRepository.save(staff);
-        return new ApiResponseDto<>(null, "Staff created successfully", HttpStatus.CREATED.value());
+        User savedUser = userRepository.save(staff);
+
+        UserDto userDto = UserDto.builder()
+                .id(savedUser.getId())
+                .firstName(savedUser.getFirstName())
+                .lastName(savedUser.getLastName())
+                .organizationName(savedUser.getOrganizations().getName())
+                .email(savedUser.getEmail())
+                .refreshToken(savedUser.getRefreshToken())
+                .phoneNumber(savedUser.getPhone())
+                .profilePicture(savedUser.getProfilePic())
+                .isAdmin(savedUser.getIsAdmin())
+                .build();
+        return new ApiResponseDto<>("Staff created successfully", HttpStatus.CREATED.value(), userDto);
     }
 
     private boolean checkIfStaffAlreadyExists(String email) {
@@ -75,9 +90,8 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public ApiResponseDto getUserByName(String firstName) {
-        Optional<User> userByName = userRepository.findByFirstName(firstName);
-        UsersResponseDto usersResponseDto = new UsersResponseDto();
+    public ApiResponseDto<?> getUserByEmail(String email) {
+        Optional<User> userByName = userRepository.findByEmail(email);
         if (userByName.isPresent()){
             User user = userByName.get();
             UserDto userDto = UserDto.builder()
@@ -87,17 +101,18 @@ public class UserServiceImpl implements UserService{
                     .bankName(user.getBankName())
                     .bankCode(user.getBankCode())
                     .bankNumber(user.getBankNumber())
-                    .profilePicture(user.getProfilePicture())
-                    .organizationName(user.getOrganization().getName())
+                    .profilePicture(user.getProfilePic())
+                    .refreshToken(user.getRefreshToken())
+                    .organizationName(user.getOrganizations().getName())
                     .build();
-            return new ApiResponseDto(userDto,"Successfully returned user profile", HttpStatus.OK.value());
+            return new ApiResponseDto<>("Successfully returned user profile", HttpStatus.OK.value(), userDto);
         }
-        throw  new UserNotFoundException("Staff with name " + firstName + " not found");
+        throw  new UserNotFoundException("Staff with name " + email + " not found");
     }
 
 
     @Override
-    public ApiResponseDto getUsersByName(String name) {
+    public ApiResponseDto<?> getUsersByName(String name) {
         List<User> usersByName = userRepository.findByFirstNameContainsIgnoreCaseOrLastNameContainsIgnoreCase(name, name);
         List<UsersResponseDto> usersResponseDtoList = new ArrayList<>();
         if (!usersByName.isEmpty()){
@@ -106,17 +121,17 @@ public class UserServiceImpl implements UserService{
                 usersResponseDto.setEmail(user.getEmail());
                 usersResponseDto.setFullName(user.getFirstName()
                         + " " + user.getLastName());
-                usersResponseDto.setOrganizationName(user.getOrganization().getName());
+                usersResponseDto.setOrganizationName(user.getOrganizations().getName());
                 usersResponseDtoList.add(usersResponseDto);
             }
 
-            return new ApiResponseDto(usersResponseDtoList,"Successfully returned users profile", HttpStatus.OK.value());
+            return new ApiResponseDto<>("Successfully returned users profile", HttpStatus.OK.value(), usersResponseDtoList);
         }
         throw  new UserNotFoundException("Staff with name " + name + " not found");
     }
 
     @Override
-    public ApiResponseDto addBankDetails(BankRequestDto bankRequestDto) {
+    public ApiResponseDto<UserDto> addBankDetails(BankRequestDto bankRequestDto) {
         User user = userUtils.getLoggedInUser();
         user.setBankCode(bankRequestDto.getBankCode());
         user.setBankName(bankRequestDto.getBankName());
@@ -133,19 +148,58 @@ public class UserServiceImpl implements UserService{
                 .bankName(user.getBankName())
                 .bankCode(user.getBankCode())
                 .bankNumber(user.getBankNumber())
-                .profilePicture(user.getProfilePicture())
-                .organizationName(user.getOrganization().getName())
+                .profilePicture(user.getProfilePic())
+                .organizationName(user.getOrganizations().getName())
                 .build();
 
-        return new ApiResponseDto(userDto,"Successfully added user bank details", HttpStatus.OK.value());
+        return new ApiResponseDto<>("Successfully added user bank details", HttpStatus.OK.value(), userDto);
     }
 
     @Override
     public String uploadProfileImage(MultipartFile profileImage) {
         User foundUser = userUtils.getLoggedInUser();
         String imageUrl = cloudService.upload(profileImage);
-        foundUser.setProfilePicture(imageUrl);
+        foundUser.setProfilePic(imageUrl);
         userRepository.save(foundUser);
         return imageUrl;
     }
+
+    @Override
+    public ApiResponseDto<?> createAdmin(AdminSignupDto signUpRequest) {
+        boolean isExists = checkIfStaffAlreadyExists(signUpRequest.getEmail());
+        if (isExists){
+            return new ApiResponseDto<>("Staff already exists", HttpStatus.BAD_REQUEST.value(), null);
+        }
+
+        Organizations organization = organizationService.createOrganization(new OrganizationRegistrationDto(signUpRequest.getOrganizationName(), BigInteger.valueOf(1000)));
+
+        // create new user
+        User staff = new User();
+        String[] names = signUpRequest.getFullName().split(" ");
+        staff.setFirstName(names[0]);
+        staff.setLastName(names[1] == null ? "" : names[1]);
+        staff.setEmail(signUpRequest.getEmail());
+        staff.setPhone(signUpRequest.getPhoneNumber());
+        staff.setPasswordHash(passwordEncoder.encode(signUpRequest.getPassword())); // hash password
+        staff.setIsAdmin(true);
+        return getApiResponseDto(organization, staff);
+    }
+
+    @Override
+    public ApiResponseDto<BankResponseDto> getUserBankDetails() {
+        User user = userUtils.getLoggedInUser();
+        if (Objects.isNull(user)){
+            return new ApiResponseDto<>( "No bank details",HttpStatus.BAD_REQUEST.value(), null);
+        }
+
+        BankResponseDto bankResponseDto = BankResponseDto.builder()
+                .bankCode(user.getBankCode())
+                .bankName(user.getBankName())
+                .bankNumber(user.getBankNumber())
+                .email(user.getEmail())
+                .user_id(user.getId().toString())
+                .org_id(user.getOrganizations().getId().toString())
+                .build();
+
+        return new ApiResponseDto<>("successfully got bank details",HttpStatus.OK.value(),bankResponseDto);    }
 }

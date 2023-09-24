@@ -3,8 +3,11 @@ package org.hngxfreelunch.LiquidApplicationApi.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.BankRequestDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.ChangePasswordDto;
 import org.hngxfreelunch.LiquidApplicationApi.services.organization.OrganizationService;
+import org.hngxfreelunch.LiquidApplicationApi.services.password.PasswordService;
 import org.hngxfreelunch.LiquidApplicationApi.services.user.UserService;
 import org.hngxfreelunch.LiquidApplicationApi.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,29 +20,41 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/user/")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private OrganizationService organizationService;
 
-    @Autowired
-    private UserUtils userUtils;
+    private final UserService userService;
+    private final OrganizationService organizationService;
+    private final UserUtils userUtils;
+    private final PasswordService passwordService;
 
+    @Operation(summary = "Get the logged in User",
+            description = "Returns an ApiResponse Response entity containing the user's details")
     @GetMapping("profile")
     public ResponseEntity<?> getProfile(){
-        return ResponseEntity.ok(userService.getUserByName(userUtils.getLoggedInUser().getFirstName()));
+        return ResponseEntity.ok(userService.getUserByEmail(userUtils.getLoggedInUser().getEmail()));
     }
 
-    @PostMapping("bank")
+    @Operation(summary = "Update User's bank details",
+            description = "Returns an ApiResponse Response entity containing the user's bank details")
+    @PutMapping("bank")
     public ResponseEntity<?> addBankAccount(@Valid @RequestBody BankRequestDto bankRequestDto){
         return ResponseEntity.ok(userService.addBankDetails(bankRequestDto));
     }
 
+    @Operation(summary = "Get all staff in this User's organization",
+            description = "Returns an ApiResponse Response entity containing a list of the user's in this org")
     @GetMapping("all")
     public ResponseEntity<?> getAllUsers(){
     return ResponseEntity.ok(organizationService.getAllStaffInOrganization());
+    }
+
+    @Operation(summary = "Get the logged in User's bank details",
+            description = "Returns an ApiResponse Response entity containing the user's bank details")
+    @GetMapping("bank-details")
+    public ResponseEntity<?> getUserBankDetails(){
+        return ResponseEntity.ok(userService.getUserBankDetails());
     }
 
 
@@ -55,9 +70,22 @@ public class UserController {
         }
     }
 
-    @GetMapping("search/{nameOrEmail}")
-    public ResponseEntity<?> searchForUser(@PathVariable String nameOrEmail){
-        return ResponseEntity.ok(null);
+    @Operation(summary = "Search for user by email")
+    @GetMapping("search/email/{Email}")
+    public ResponseEntity<?> searchForUser(@PathVariable String Email){
+        return ResponseEntity.ok(userService.getUserByEmail(Email));
+    }
+
+    @Operation(summary = "Search for user by first name or last name",
+    description = "Search for user by firstname or lastname and return a List of users with that name.")
+    @GetMapping("search/name/{firstNameOrLastName}")
+    public ResponseEntity<?> searchForUserByName(@PathVariable String firstNameOrLastName){
+        return ResponseEntity.ok(userService.getUsersByName(firstNameOrLastName));
+    }
+    @Operation(summary = "A logged in user tries to change his password from the app")
+    @PatchMapping("change-password")
+    public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordDto changePasswordDto){
+        return ResponseEntity.ok(passwordService.changePassword(changePasswordDto));
     }
 
 

@@ -3,12 +3,14 @@ package org.hngxfreelunch.LiquidApplicationApi.services.organization;
 
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationInviteDto;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.OrganizationRegistrationDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.SendLunchCreditToAllStaffRequest;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponse;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
-import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organization;
+import org.hngxfreelunch.LiquidApplicationApi.data.entities.Organizations;
 
 public interface OrganizationService {
     // TODO: CREATE ORGANIZATION
-    ApiResponseDto createOrganization(OrganizationRegistrationDto request);
+    Organizations createOrganization(OrganizationRegistrationDto request);
 
     // TODO: ADD STAFF
     ApiResponseDto sendOrganizationInviteToStaff(OrganizationInviteDto request);
@@ -20,7 +22,9 @@ public interface OrganizationService {
     // TODO: GET ALL STAFF IN ORGANIZATION
     ApiResponseDto getAllStaffInOrganization();
 
-    Organization verifyOrganizationInvite(String otpToken, String email);
+    Organizations verifyOrganizationInvite(String otpToken, String email);
 
-    Organization findById(Long id);
+    Organizations findById(Long id);
+
+    ApiResponseDto sendLunchCreditToAllStaffs(SendLunchCreditToAllStaffRequest sendLunchCreditToAllStaffRequest);
 }
