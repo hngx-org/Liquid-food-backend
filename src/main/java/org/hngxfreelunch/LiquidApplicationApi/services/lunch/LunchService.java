@@ -1,10 +1,9 @@
 package org.hngxfreelunch.LiquidApplicationApi.services.lunch;
 
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.hngxfreelunch.LiquidApplicationApi.data.dtos.payload.LunchRequestDto;
-import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.LunchResponseDto;
-import org.hngxfreelunch.LiquidApplicationApi.data.entities.User;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.ApiResponseDto;
+import org.hngxfreelunch.LiquidApplicationApi.data.dtos.response.LunchResponse;
 
 import java.util.List;
 
@@ -14,13 +13,23 @@ public interface LunchService {
     // TODO: GET LUNCH BY ID
     // TODO: REDEEM A LUNCH
 
-    List<LunchResponseDto> sendLunch(LunchRequestDto lunchRequestDto);
+    ApiResponseDto<LunchResponse> sendLunch(Long receiverId, LunchRequestDto lunchRequestDto);
 
-    List<LunchResponseDto> sendLunch(String note, Integer quantity, User sender);
+    ApiResponseDto<LunchResponse> getLunch(Long lunchId);
 
-    List<LunchResponseDto> getAllLunch();
+    ApiResponseDto<List<LunchResponse>> getAllUserLunches();
 
-    LunchResponseDto getLunch(Long lunch_id);
+    ApiResponseDto<List<LunchResponse>> getAllPendingLunches();
 
+    ApiResponseDto<List<LunchResponse>> getAllRedeemedLunches();
 
+    ApiResponseDto<List<LunchResponse>> getAllSentLunchesByUser();
+
+    ApiResponseDto<List<LunchResponse>> getAllReceivedLunchesByUser();
+
+    ApiResponseDto<List<LunchResponse>> getAllOrganizationLunches();
+
+    ApiResponseDto<LunchResponse> redeemLunch(Long lunchId);
+
+    ApiResponseDto<LunchResponse> cancelLunch(Long lunchId);
 }

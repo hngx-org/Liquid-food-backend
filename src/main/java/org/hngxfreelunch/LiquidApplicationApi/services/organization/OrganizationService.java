@@ -15,13 +15,9 @@ public interface OrganizationService {
     ApiResponseDto<?> sendOrganizationInviteToStaff(OrganizationInviteDto request);
     // TODO: VERIFY STAFF
 
-    // TODO: SEND LUNCH CREDIT TO STAFF
-    ApiResponseDto<?> sendLunchCredit(OrganizationInviteDto request);
 
     // TODO: GET ALL STAFF IN ORGANIZATION
     ApiResponseDto<?> getAllStaffInOrganization();
 
     Organizations verifyOrganizationInvite(String otpToken, String email);
-
-    ApiResponseDto sendLunchCreditToAllStaffs(SendLunchCreditToAllStaffRequest sendLunchCreditToAllStaffRequest);
 }

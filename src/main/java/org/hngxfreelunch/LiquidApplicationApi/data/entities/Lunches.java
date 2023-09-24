@@ -37,9 +37,9 @@ public class Lunches {
 
     private Boolean redeemed;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private String createdAt;
 
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    private String updatedAt;
 
     private final Boolean isDeleted = false;
 
