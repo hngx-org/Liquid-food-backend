@@ -19,7 +19,7 @@ public class AdminSignupDto {
     private String organizationName;
 
     @NotBlank(message = "email is required")
-    private String organizationEmail;
+    private String email;
 
     @NotBlank(message = "password is required")
     private String password;
